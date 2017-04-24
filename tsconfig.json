@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es5",
+    "sourceMap": true,
+    "rootDir": "ts",
+    "outDir": "oplayer/js"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
