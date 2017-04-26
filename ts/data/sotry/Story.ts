@@ -2,8 +2,16 @@
  * Created by ShanFeng on 4/10/2017.
  */
 
-namespace org.data{
-    export class Story{
+interface Header {
+    name?: string
+    size?: number
+    md5?: string
+    info?: any
+    obj?: any
+}
 
-    }
+export default class Story {
+    static header: Header = {};
+
+
 }

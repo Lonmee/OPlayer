@@ -9,9 +9,22 @@
 <script>
     require(["verdor/laya/laya.core"], function () {
         require(["verdor/laya/laya.webgl"], function () {
-            require(["js/OPlayer"]);
+            require(["verdor/laya/laya.debugtool"], function () {
+                require(["js/OPlayer"], function () {
+                    start('af2bcd0f04ebf7e74a8328e9c07d2189',
+                        '2445', '', '', '32',
+                        'web/af2bcd0f04ebf7e74a8328e9c07d2189/2445/Game_mini.bin', '0');
+                });
+            });
         })
     });
+
+    function start(gid, version, m, s, q, gamebinpath, game_screen, gindex, plat) {
+        if (window.oplayer) {
+            window.oplayer.init(
+                gid, version, m, s, q, gamebinpath, game_screen, gindex, plat)
+        }
+    }
 </script>
 </body>
 </html>

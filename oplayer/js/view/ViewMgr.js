@@ -20,11 +20,10 @@ define(["require", "exports", "../data/Conf"], function (require, exports, Conf_
         __extends(ViewMgr, _super);
         function ViewMgr() {
             var _this = _super.call(this) || this;
-            var fwSettings = Conf_1.default.frameworks;
-            if (fwSettings.bgColor) {
-                Laya.stage.bgColor = fwSettings.bgColor;
+            if (Conf_1.default.frameworks.bgColor) {
+                Laya.stage.bgColor = Conf_1.default.frameworks.bgColor;
             }
-            if (fwSettings.showStatus) {
+            if (Conf_1.default.frameworks.showStatus) {
                 Stat.show();
             }
             return _this;

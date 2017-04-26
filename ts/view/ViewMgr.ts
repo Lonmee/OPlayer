@@ -1,6 +1,7 @@
 import Sprite = laya.display.Sprite;
-import Settings from "../data/Conf";
 import Stat = laya.utils.Stat;
+import WebGL = laya.webgl.WebGL;
+import Conf from "../data/Conf";
 /**
  * Created by Lonmee on 4/23/2017.
  */
@@ -9,12 +10,12 @@ export class ViewMgr extends Sprite {
 
     constructor() {
         super();
-        let fwSettings = Settings.frameworks;
-        if (fwSettings.bgColor) {
-            Laya.stage.bgColor = fwSettings.bgColor;
+
+        if (Conf.frameworks.bgColor) {
+            Laya.stage.bgColor = Conf.frameworks.bgColor;
         }
 
-        if (fwSettings.showStatus) {
+        if (Conf.frameworks.showStatus) {
             Stat.show();
         }
     }
