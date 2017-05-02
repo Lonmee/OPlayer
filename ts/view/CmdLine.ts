@@ -1,4 +1,4 @@
-import {Chapter} from "../data/sotry/Story";
+import {Chapter, Cmd, Scene} from "../data/sotry/Story";
 import Conf from "../data/Conf";
 import DH from "../data/DH";
 /**
@@ -8,6 +8,10 @@ import DH from "../data/DH";
 export default class CmdLine {
     dh: DH = DH.instance;
     chapter: Chapter;
+    len: number;
+    idx: number = 0;
+    end: boolean = true;
+    private cmdArr: Cmd[];
 
     constructor() {
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
@@ -15,9 +19,18 @@ export default class CmdLine {
 
     playHandler(c: Chapter) {
         this.chapter = c;
-        for (let cmd of c.cmdArr) {
-            console.log(`${cmd.code} : ${cmd.para}`);
-        }
+        this.cmdArr = c.cmdArr;
+        this.len = c.cmdArr.length;
+        this.idx = 0;
+        this.end = false;
+    }
 
+    nextCmd(): Cmd {
+        this.end = this.idx == this.len - 1;
+        return this.cmdArr[this.idx++];
+    }
+
+    nextScene(): Scene {
+        return {link: 50};
     }
 }
