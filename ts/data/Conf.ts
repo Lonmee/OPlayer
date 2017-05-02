@@ -2,6 +2,8 @@
  * Created by Lonmee on 4/23/2017.
  * 框架静态数据预置
  */
+import Story from "./sotry/Story";
+
 interface Frameworks {
     width?: number
     height?: number
@@ -21,10 +23,12 @@ interface LoaderConf {
 }
 
 interface Info {
+    storyArr?: Story[];
     miniPath?: string;
     gid?: string
-    ver?: string
+    ver?: number
     qlty?: string
+    single?: boolean
 }
 
 /**
@@ -32,13 +36,14 @@ interface Info {
  * 单包、分包
  */
 interface StarName {
-    single:string
-    multiple:string
+    single: string
+    multiple: string
 }
 
 export default class Conf {
     //Event
-    static EVN_READY:string = "evn_ready";
+    static EVN_READY: string = "evn_ready";
+    static PLAY_CHAPTER: string = "play_chapter";
 
     //static
     static domain: Domain = {
@@ -55,4 +60,16 @@ export default class Conf {
     //dynamic
     static frameworks: Frameworks = {bgColor: "#AAAAAA", showStatus: true};
     static info: Info = {};
+
+    constructor() {
+        //TODO:平台适配设置
+        /*this.isMobile = Laya.Browser.onMobile;
+         this.isIos = Laya.Browser.onIOS;
+         this.isAndroid = Laya.Browser.onAndriod;
+         this.isAndroidBox = (GloableData.getInstance().mark== 'aBox');
+         this.isSafrai = Laya.Browser.onSafari;
+         var ua:string = window.navigator.userAgent.toLowerCase();
+         if(ua.indexOf('micromessenger') !=-1){
+         this.isWX = true;*/
+    }
 }

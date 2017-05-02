@@ -4,15 +4,16 @@
 import {ViewMgr} from "./view/ViewMgr";
 import {BinLoader} from "./mod/loader/BinLoader";
 import Conf from "./data/Conf";
+import DH from "./data/DH";
+import CmdLine from "./view/CmdLine";
 import Browser = laya.utils.Browser;
 import WebGL = laya.webgl.WebGL;
-import DH from "./data/DH";
 export class OPlayer {
     constructor() {
 
     }
 
-    init(gid: string, ver: string, m: string, s: string,
+    init(gid: string, ver: number, m: string, s: string,
          qlty: string, path: string, gs: string, gi: string, pf: string) {
         Conf.info.gid = gid;
         Conf.info.ver = ver;
@@ -21,7 +22,7 @@ export class OPlayer {
 
         Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
-        DH.instance.viewMgr = new ViewMgr();
+        DH.instance.viewMgr = new ViewMgr(new CmdLine());
         DH.instance.binLoader = new BinLoader();
     }
 
@@ -56,3 +57,5 @@ Browser.window.oplayer = new OPlayer();
  * dispatchEvent(new CustomEvent(Conf.EVN_READY, {"detail": this.bufArr.length == 1}));
  * addEventListener(Conf.EVN_READY, this.init)
  */
+
+//console.log('%c this is color! ', 'background: #222; color: #bada55‘);

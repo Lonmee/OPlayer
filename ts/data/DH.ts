@@ -1,16 +1,23 @@
 import Dictionary = laya.utils.Dictionary;
 import Conf from "./Conf";
-import {BinLoader} from "../mod/loader/BinLoader";
 import {ViewMgr} from "../view/ViewMgr";
+import Story from "./sotry/Story";
+import EventDispatcher = laya.events.EventDispatcher;
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
  */
+export interface IBinloader {
+    loadChapter(id: number);
+}
+
 export default class DH {
     private static _instance: DH;
+    eventPoxy:EventDispatcher = new EventDispatcher();
     resMap: Dictionary = new Dictionary();
-    binLoader: BinLoader;
+    binLoader: IBinloader;
     viewMgr: ViewMgr;
+    story: Story;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();
