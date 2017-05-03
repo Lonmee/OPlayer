@@ -5,7 +5,7 @@ import {ViewMgr} from "./view/ViewMgr";
 import {BinLoader} from "./mod/loader/BinLoader";
 import Conf from "./data/Conf";
 import DH from "./data/DH";
-import CmdLine from "./view/CmdLine";
+import CmdLine from "./mod/CmdLine";
 import Browser = laya.utils.Browser;
 import WebGL = laya.webgl.WebGL;
 export class OPlayer {

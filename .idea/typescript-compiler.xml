@@ -5,6 +5,7 @@
     <option name="typeScriptServiceDirectory" value="C:\Users\sf\AppData\Roaming\npm\node_modules\typescript\lib" />
     <option name="scopeName" value="Current File" />
     <option name="useConfig" value="true" />
+    <option name="showAllErrors" value="true" />
     <option name="versionType" value="SERVICE_DIRECTORY" />
   </component>
 </project>
