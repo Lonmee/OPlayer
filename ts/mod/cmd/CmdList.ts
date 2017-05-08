@@ -2,6 +2,14 @@ import Dictionary = laya.utils.Dictionary;
 /**
  * Created by ShanFeng on 5/3/2017.
  */
+export interface IPause {
+    duration: number
+}
+
+export interface UICaller {
+    uiNo: number
+}
+
 export default class CmdList extends Dictionary {
     constructor() {
         super();

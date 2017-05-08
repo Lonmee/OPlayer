@@ -33,7 +33,7 @@ export default class StepLoader implements IBinloader {
             id: byte.getInt32(),
             cmdArr: parseCmdArr()
         };
-        this.dh.eventPoxy.event(Conf.PLAY_CHAPTER, chapter);
+        DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, chapter);
 
         function parseCmdArr(): Cmd[] {
             let arr: Cmd[] = [];

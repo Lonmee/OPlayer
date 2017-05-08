@@ -44,20 +44,22 @@ export class BinLoader implements IBinloader {
     private bufArr: any[] = [];
 
     constructor() {
+        //本地测试
+        Conf.localTest.on = true;
+
+        if (Conf.localTest.on) {
+            this.load(Conf.localTest.mb);
+            return;
+        }
         let url: string = Conf.domain.cdn + "web/" +
             Conf.info.gid + "/" + Conf.info.ver + "/Map" +
             (Conf.info.qlty != "0" ? "_" + Conf.info.qlty : "") + ".bin";
         this.load(url);
 
-
         if (Conf.info.miniPath) {
             url = Conf.domain.cdn + Conf.info.miniPath;
             this.load(url);
         }
-    }
-
-    loadChapter(id: number) {
-        //保持接口统一
     }
 
     private load(url: string) {
@@ -92,7 +94,7 @@ export class BinLoader implements IBinloader {
                 byte.clear();
             }
             Conf.info.single = this.single = this.bufArr.length == 1;
-            this.loadStory(this.single ? Conf.starName.single : Conf.starName.multiple);
+            this.loadChapter(this.single ? Conf.starName.single : Conf.starName.multiple);
         }
 
         function fullyLoadedTester(ele: any, idx: number, arr: any[]): boolean {
@@ -105,11 +107,11 @@ export class BinLoader implements IBinloader {
      * 单包数据含剧情
      * @param s
      */
-    loadStory(s: string | number) {
+    loadChapter(s: string | number) {
         if (typeof s == "number") {
             s = `game${s}.bin`;
         }
-        Laya.loader.load(DH.instance.getResLink(s),
+        Laya.loader.load(Conf.localTest.on ? Conf.localTest.sb : DH.instance.getResLink(s),
             Handler.create(this, this.sCompleteHandler, null, true),
             Handler.create(this, this.sProgressHandler, null, true),
             Loader.BUFFER, 0, false, "bin", false);
@@ -174,7 +176,7 @@ export class BinLoader implements IBinloader {
             story.sys.BGM = parseBGM();//BGM
             story.sys.SaveData = parseSaveData();//SAVE
             story.sys.MessageBox = parseMsgBox();//对话框
-            story.sys.Replay = parseReplay()///回放
+            story.sys.Replay = parseReplay();//回放
             story.sys.Setting = parseSetting();//设置
             story.sys.Buttons = parseImgBtnArr();
 
@@ -207,6 +209,7 @@ export class BinLoader implements IBinloader {
 
             byte.clear();
             if (this.single) {
+                story.gotoChapter(story.sys.startStoryId);
                 delete DH.instance.binLoader;
             } else {
                 //Todo:该处可提前至开始剧情赋值之后实现提前载入，但实际意义待考
@@ -567,6 +570,7 @@ export class BinLoader implements IBinloader {
         }
 
         function parseChapter(): Chapter {
+            byte.pos += 4;
             return {
                 name: parseUTF(),
                 id: byte.getInt32(),

@@ -31,6 +31,12 @@ interface Info {
     single?: boolean
 }
 
+interface LocalTest {
+    on: boolean
+    mb: string
+    sb: string
+}
+
 /**
  * 起始游戏文件名
  * 单包、分包
@@ -46,6 +52,7 @@ export default class Conf {
     static PLAY_CHAPTER: string = "play_chapter";
 
     //static
+    static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};
     static domain: Domain = {
         cdn: "http://dlcdn1.cgyouxi.com/",
         resCdn: "http://dlcdn1.cgyouxi.com/shareres/"
@@ -54,7 +61,7 @@ export default class Conf {
         cdn: "http://testcdn.66rpg.com/",
         resCdn: "http://testcdn.66rpg.com/shareres/"
     };
-    static loader: LoaderConf = {};
+    static loaderConf: LoaderConf = {};
     static starName: StarName = {single: "data/game.bin", multiple: "game00.bin"};
 
     //dynamic

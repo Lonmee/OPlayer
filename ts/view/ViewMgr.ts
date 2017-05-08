@@ -38,7 +38,7 @@ export class ViewMgr extends Sprite {
     }
 
     update() {
-        if (this.cl.end)
+        if (this.cl.pause)
             return;
         let cmd: Cmd = this.cl.nextCmd();
         console.log(cmd.code, this.cmdlist.get(cmd.code));

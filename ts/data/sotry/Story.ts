@@ -1,5 +1,6 @@
 import Conf from "../Conf";
 import DH from "../DH";
+import {IChapter} from "./Chapter";
 
 import Color = laya.utils.Color
 /**
@@ -243,14 +244,8 @@ export interface FLayerItem {
     color: Color
 }
 
-export interface Chapter {
-    name?: string
-    id?: number
-    cmdArr?: Cmd[]
-}
-
-export interface Scene {
-    link: number
+export interface ILinkage {
+    link?: number
 }
 
 export interface Cmd {
@@ -265,14 +260,14 @@ export default class Story {
     header: Header = {};
     sys: any = {};
     fLayerArr: FLayer[] = [];
-    chapter: Chapter;
-    chapterArr: Chapter[];
+    chapter: IChapter;
+    chapterArr: IChapter[];
 
     gotoChapter(id: number) {
         if (Conf.info.single) {
             for (let c of this.chapterArr) {
                 if (c.id == id) {
-                    dispatchEvent(new CustomEvent(Conf.PLAY_CHAPTER, {"detail": this.chapter = c}));
+                    DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, c);
                 }
             }
         } else {
