@@ -1,6 +1,6 @@
 import Dictionary = laya.utils.Dictionary;
 import Conf from "./Conf";
-import {ViewMgr} from "../view/ViewMgr";
+import {ViewMgr} from "../mod/ViewMgr";
 import Story from "./sotry/Story";
 import EventDispatcher = laya.events.EventDispatcher;
 /**

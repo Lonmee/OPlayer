@@ -4,7 +4,7 @@ define(["require", "exports", "./Scene"], function (require, exports, Scene_1) {
     var Chapter = (function () {
         function Chapter() {
         }
-        Chapter.prototype.getScent = function (link) {
+        Chapter.prototype.getScene = function (link) {
             var s = new Scene_1.default();
             var cmd = this.cmdArr[link];
             switch (cmd.code) {

@@ -2,23 +2,17 @@ import Sprite = laya.display.Sprite;
 import Stat = laya.utils.Stat;
 import WebGL = laya.webgl.WebGL;
 import Conf from "../data/Conf";
-import CmdLine from "../mod/CmdLine";
-import {Cmd} from "../data/sotry/Story";
-import CmdList from "../mod/cmd/CmdList";
 import Event = laya.events.Event;
 /**
  * Created by Lonmee on 4/23/2017.
  */
 
 export class ViewMgr extends Sprite {
-    cmdlist: CmdList;
-
-    constructor(private cl: CmdLine) {
+    constructor() {
         super();
         this.initStage();
         this.initListener();
 
-        this.cmdlist = new CmdList();
         Laya.stage.addChild(this);
     }
 
@@ -37,13 +31,17 @@ export class ViewMgr extends Sprite {
         Laya.stage.on(Event.CLICK, this, this.clickHandler);
     }
 
+    /**
+     * 渲染句柄，视图更新唯一频刷器
+     */
     update() {
-        if (this.cl.pause)
-            return;
-        let cmd: Cmd = this.cl.nextCmd();
-        console.log(cmd.code, this.cmdlist.get(cmd.code));
+
     }
 
+    /**
+     * 交互事件分发器
+     * @param e
+     */
     clickHandler(e: Event) {
         e;
     }

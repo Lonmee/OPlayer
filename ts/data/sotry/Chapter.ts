@@ -8,7 +8,7 @@ export interface IChapter extends ILinkage {
     name?: string
     id?: number
     cmdArr?: Cmd[]
-    getScent(link: number): IScene
+    getScene(link: number): IScene
 }
 
 export class Chapter implements IChapter {
@@ -17,7 +17,7 @@ export class Chapter implements IChapter {
     id: number;
     cmdArr: Cmd[];
 
-    getScent(link: number): IScene {
+    getScene(link: number): IScene {
         let s: Scene = new Scene();
         let cmd: Cmd = this.cmdArr[link];
         switch (cmd.code) {

@@ -10,7 +10,6 @@ import Story, {
     BGMItem,
     CG,
     CGItem,
-    Chapter,
     Cmd,
     CusUI,
     CusUIItem,
@@ -30,6 +29,7 @@ import Story, {
     Title,
     VPRect
 } from "../../data/sotry/Story";
+import {Chapter} from "../../data/sotry/Chapter";
 import Byte = laya.utils.Byte;
 import Color = laya.utils.Color;
 /**
@@ -43,9 +43,9 @@ export class BinLoader implements IBinloader {
     single: boolean;
     private bufArr: any[] = [];
 
-    constructor() {
+    constructor(localTest: boolean) {
         //本地测试
-        Conf.localTest.on = true;
+        Conf.localTest.on = localTest;
 
         if (Conf.localTest.on) {
             this.load(Conf.localTest.mb);
