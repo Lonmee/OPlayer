@@ -1,9 +1,8 @@
+import Story from "./sotry/Story";
 /**
  * Created by Lonmee on 4/23/2017.
  * 框架静态数据预置
  */
-import Story from "./sotry/DStory";
-
 interface Frameworks {
     width?: number
     height?: number

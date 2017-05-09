@@ -243,10 +243,6 @@ export interface FLayerItem {
     color: Color
 }
 
-export interface ILinkage {
-    link?: number
-}
-
 export interface Cmd {
     code: number
     idt: number

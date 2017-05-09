@@ -57,3 +57,13 @@ export class ViewMgr extends Sprite {
         e;
     }
 }
+
+/*
+ this.spr = new Sprite();
+ this.spr.graphics.drawTexture(e);
+ this.spr.x = this.spr.y = 400;
+ Laya.stage.addChild(this.spr);
+
+ Laya.timer.loop(10, this, this.animateTimeBased);
+ Laya.timer.frameLoop(1, this, this.animateFrameRateBased);
+ */

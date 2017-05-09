@@ -71,11 +71,11 @@ export class BinLoader implements IBinloader {
 
         Laya.loader.load(url,
             Handler.create(this, this.completeHandler, [idx], true),
-            Handler.create(this, this.progressHandler, [url], true),
+            Handler.create(this, BinLoader.progressHandler, [url], true),
             Loader.BUFFER, 0, true, "bin", false);
     }
 
-    private progressHandler(fName: string, p: number) {
+    private static progressHandler(fName: string, p: number) {
         DH.instance.eventPoxy.event(Conf.LOADING_PROGRESS, [fName, p]);
     }
 
@@ -116,12 +116,8 @@ export class BinLoader implements IBinloader {
         }
         Laya.loader.load(Conf.localTest.on ? Conf.localTest.sb : DH.instance.getResLink(s),
             Handler.create(this, this.sCompleteHandler, null, true),
-            Handler.create(this, this.sProgressHandler, [s], true),
+            Handler.create(this, BinLoader.progressHandler, [s], true),
             Loader.BUFFER, 0, false, "bin", false);
-    }
-
-    private sProgressHandler(fName, p) {
-        DH.instance.eventPoxy.event(Conf.LOADING_PROGRESS, [fName, p]);
     }
 
     private sCompleteHandler(ab: ArrayBuffer) {
@@ -413,7 +409,7 @@ export class BinLoader implements IBinloader {
                 FaceBorderImage: parsePath(),
                 FaceBorderX: byte.getInt32(),
                 FaceBorderY: byte.getInt32()
-            }
+            };
             tw.textX = byte.getInt32();
             byte.pos += 4;
             tw.textY = byte.getInt32();

@@ -1,20 +1,26 @@
 import Scene from "./Scene";
-import {DChapter} from "../../data/sotry/Story";
+import {Cmd, DChapter} from "../../data/sotry/Story";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
 
 export default class Chapter extends DChapter {
+    sceneArr: Scene[];
+
     constructor(dc: DChapter) {
         super(dc);
+        this.formScene();
     }
 
-    getScene(): Scene {
-        let s: Scene = new Scene();
-        // let cmd: Cmd = this.cmdArr[link];
-        // switch (cmd.code) {
-        //     case 204:
-        // }
-        return s;
+    getScene(idx: number): Scene {
+        return null;
+    }
+
+    private formScene() {
+        let repeatLog: Cmd[] = [];
+        let ifLog: Cmd[] = [];
+        for (let cmd of this.cmdArr) {
+            console.log(cmd.code);
+        }
     }
 }

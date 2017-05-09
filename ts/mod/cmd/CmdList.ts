@@ -83,12 +83,7 @@ export default class CmdList extends Dictionary {
 }
 
 /*
- for (let cmd of c.cmdArr) {
- switch (cmd.code) {
 
-
- case 204: {//按钮分歧(205, "按钮分歧结束")(212, "按钮分歧内容")
- // this.pause = true;
  Laya.timer.once(parseInt("2000"), null, () => {
  this.pause = false;
  });
@@ -96,21 +91,28 @@ export default class CmdList extends Dictionary {
  break;
  }
 
- //状态指令
- case 210: {//等待
  Laya.timer.once(parseInt(cmd.para[0]), null, () => {
  this.pause = false
  });
  this.pause = true;
  break;
  }
- case 103://"自动播放剧情"
- case 104://"快进剧情"
 
- case 202://循环(203, "以上反复");(209, "中断循环");
+ 等待集合:
+ case 100://"显示文章"
+ 101    "剧情分歧"
+ 1010   "剧情分歧EX"
+ 1011   "剧情分歧EX2" (108://"分支选项内容" 102://"剧情分歧结束")
+ 204    按钮分歧(212:"按钮分歧内容" 205:"按钮分歧结束")
 
  case 200://条件分歧(201, "条件分歧结束")(211, "除此之外的场合")
+ case 202://循环(203, "以上反复");(209, "中断循环");
  case 217://"高级条件分歧"
+
+ //状态指令
+ case 210://等待
+ case 103://"自动播放剧情"
+ case 104://"快进剧情"
 
  //数值
  case 105://"数值输入"
@@ -119,11 +121,13 @@ export default class CmdList extends Dictionary {
  case 215://"字符串"
  case 216://"高级数值操作"
 
- //指令
- case 110://"打开指定网页");
- case 111://"禁用开启菜单功能");
- case 112://"悬浮组件开关");
- case 405://"资源预加载(仅web用)");
+ //显示控制指令
+ case 110://"打开指定网页";
+ case 111://"禁用开启菜单功能";
+ case 112://"悬浮组件开关";
+
+ //资源管理指令
+ case 405://"资源预加载(仅web用)";
 
  //剧情指令
  case 206://"跳转剧情"
@@ -167,5 +171,5 @@ export default class CmdList extends Dictionary {
  case 506://"停止音效"
  case 507://"停止语音"
  case 508://"淡出音效"
- }
- }*/
+
+ */

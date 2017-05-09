@@ -1,4 +1,5 @@
-import {Cmd, ILinkage} from "../../data/sotry/DStory";
+import {ILinkage} from "./CmdList";
+import {Cmd} from "../../data/sotry/Story";
 /**
  * Created by ShanFeng on 5/8/2017.
  */

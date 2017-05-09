@@ -1,9 +1,9 @@
-import {Cmd, DChapter} from "../../data/sotry/DStory";
 import DH, {IBinloader} from "../../data/DH";
 import Conf from "../../data/Conf";
 import Byte = laya.utils.Byte;
 import Handler = laya.utils.Handler;
 import Loader = laya.net.Loader;
+import {Cmd, DChapter} from "../../data/sotry/Story";
 /**
  * Created by ShanFeng on 5/2/2017.
  * alias "ChapterLoader"
@@ -30,7 +30,7 @@ export default class StepLoader implements IBinloader {
     private completeHandler(ab: ArrayBuffer) {
         let byte: Byte = new Byte(ab);
         byte.pos += 4;
-        let c: DChapter = this.dh.story.dChapter = {
+        let c: DChapter = {
             name: parseUTF(),
             id: byte.getInt32(),
             cmdArr: parseCmdArr()
