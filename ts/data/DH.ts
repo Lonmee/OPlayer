@@ -1,7 +1,8 @@
 import Dictionary = laya.utils.Dictionary;
 import Conf from "./Conf";
 import {ViewMgr} from "../mod/ViewMgr";
-import Story from "./sotry/Story";
+import Story from "./sotry/DStory";
+import CmdLine from "../mod/CmdLine";
 import EventDispatcher = laya.events.EventDispatcher;
 /**
  * Created by ShanFeng on 4/24/2017.
@@ -13,11 +14,12 @@ export interface IBinloader {
 
 export default class DH {
     private static _instance: DH;
-    eventPoxy:EventDispatcher = new EventDispatcher();
+    eventPoxy: EventDispatcher = new EventDispatcher();
     resMap: Dictionary = new Dictionary();
     binLoader: IBinloader;
     viewMgr: ViewMgr;
     story: Story;
+    cmdLine: CmdLine;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();

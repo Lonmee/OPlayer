@@ -1,4 +1,4 @@
-import {Chapter, Cmd} from "../../data/sotry/Story";
+import {Cmd, DChapter} from "../../data/sotry/DStory";
 import DH, {IBinloader} from "../../data/DH";
 import Conf from "../../data/Conf";
 import Byte = laya.utils.Byte;
@@ -9,31 +9,33 @@ import Loader = laya.net.Loader;
  * alias "ChapterLoader"
  */
 export default class StepLoader implements IBinloader {
-    dh:DH = DH.instance;
+    dh: DH = DH.instance;
+
     constructor(id: number) {
         this.loadChapter(id);
     }
 
     loadChapter(id: number) {
-        Laya.loader.load(this.dh.getResLink(`game${id}.bin`),
+        let fn: string = `game${id}.bin`;
+        Laya.loader.load(this.dh.getResLink(fn),
             Handler.create(this, this.completeHandler, null, false),
-            Handler.create(this, this.progressHandler, null, false),
+            Handler.create(this, this.progressHandler, [fn], false),
             Loader.BUFFER, 0, true, "bin", false);
     }
 
-    private progressHandler(p: number) {
-        p;
+    private progressHandler(fn: string, p: number) {
+        DH.instance.eventPoxy.event(Conf.LOADING_PROGRESS, [fn, p]);
     }
 
     private completeHandler(ab: ArrayBuffer) {
         let byte: Byte = new Byte(ab);
         byte.pos += 4;
-        let chapter: Chapter = this.dh.story.chapter = {
+        let c: DChapter = this.dh.story.dChapter = {
             name: parseUTF(),
             id: byte.getInt32(),
             cmdArr: parseCmdArr()
         };
-        DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, chapter);
+        DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, c);
 
         function parseCmdArr(): Cmd[] {
             let arr: Cmd[] = [];

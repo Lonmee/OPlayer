@@ -2,7 +2,7 @@
  * Created by Lonmee on 4/23/2017.
  * 框架静态数据预置
  */
-import Story from "./sotry/Story";
+import Story from "./sotry/DStory";
 
 interface Frameworks {
     width?: number
@@ -48,7 +48,7 @@ interface StarName {
 
 export default class Conf {
     //Event
-    static EVN_READY: string = "evn_ready";
+    static LOADING_PROGRESS: string = "loading_progress";
     static PLAY_CHAPTER: string = "play_chapter";
 
     //static

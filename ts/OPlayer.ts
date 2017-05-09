@@ -7,7 +7,10 @@ import Conf from "./data/Conf";
 import DH from "./data/DH";
 import Browser = laya.utils.Browser;
 import WebGL = laya.webgl.WebGL;
+import CmdLine from "./mod/CmdLine";
 export class OPlayer {
+    dh: DH = DH.instance;
+
     constructor() {
 
     }
@@ -21,8 +24,8 @@ export class OPlayer {
 
         Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
-        DH.instance.viewMgr = new ViewMgr();
-        DH.instance.binLoader = new BinLoader();
+        this.dh.viewMgr = new ViewMgr(new CmdLine());
+        this.dh.binLoader = new BinLoader(true);
     }
 
 }

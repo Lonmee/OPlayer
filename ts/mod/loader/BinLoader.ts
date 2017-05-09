@@ -5,14 +5,14 @@ import Sprite = laya.display.Sprite;
 import Browser = laya.utils.Browser;
 import Conf from "../../data/Conf";
 import DH, {IBinloader} from "../../data/DH";
-import Story, {
+import DStory, {
     BGM,
     BGMItem,
     CG,
     CGItem,
     Cmd,
     CusUI,
-    CusUIItem,
+    CusUIItem, DChapter,
     FLayer,
     FLayerItem,
     GameMenu,
@@ -29,7 +29,6 @@ import Story, {
     Title,
     VPRect
 } from "../../data/sotry/Story";
-import {Chapter} from "../../data/sotry/Chapter";
 import Byte = laya.utils.Byte;
 import Color = laya.utils.Color;
 /**
@@ -43,7 +42,12 @@ export class BinLoader implements IBinloader {
     single: boolean;
     private bufArr: any[] = [];
 
-    constructor(localTest: boolean) {
+    /**
+     * bin加载器
+     * 负责mapbin/gamebin的加载及解析
+     * @param localTest 是否本地测试模式（数据文件放在oplayer/local）
+     */
+    constructor(localTest: boolean = false) {
         //本地测试
         Conf.localTest.on = localTest;
 
@@ -67,18 +71,17 @@ export class BinLoader implements IBinloader {
 
         Laya.loader.load(url,
             Handler.create(this, this.completeHandler, [idx], true),
-            Handler.create(this, this.progressHandler, [idx], true),
+            Handler.create(this, this.progressHandler, [url], true),
             Loader.BUFFER, 0, true, "bin", false);
     }
 
-    private progressHandler(p: number) {
-        p;
+    private progressHandler(fName: string, p: number) {
+        DH.instance.eventPoxy.event(Conf.LOADING_PROGRESS, [fName, p]);
     }
 
-    private completeHandler(idx: number) {
-        let resUrl: string = this.bufArr[idx - 1];
-        this.bufArr[idx - 1] = new Byte(laya.net.Loader.getRes(resUrl));
-        laya.net.Loader.clearRes(resUrl);
+    private completeHandler(idx: number, ab: ArrayBuffer) {
+        this.bufArr[idx - 1] = new Byte(ab);
+        laya.net.Loader.clearResByGroup("bin");
 
         if (this.bufArr.every(fullyLoadedTester)) {
             for (let i: number = 0; i < this.bufArr.length; i++) {
@@ -97,7 +100,7 @@ export class BinLoader implements IBinloader {
             this.loadChapter(this.single ? Conf.starName.single : Conf.starName.multiple);
         }
 
-        function fullyLoadedTester(ele: any, idx: number, arr: any[]): boolean {
+        function fullyLoadedTester(ele: any): boolean {
             return ele instanceof Byte;
         }
     }
@@ -113,19 +116,19 @@ export class BinLoader implements IBinloader {
         }
         Laya.loader.load(Conf.localTest.on ? Conf.localTest.sb : DH.instance.getResLink(s),
             Handler.create(this, this.sCompleteHandler, null, true),
-            Handler.create(this, this.sProgressHandler, null, true),
+            Handler.create(this, this.sProgressHandler, [s], true),
             Loader.BUFFER, 0, false, "bin", false);
     }
 
-    private sProgressHandler(p: number) {
-        p;
+    private sProgressHandler(fName, p) {
+        DH.instance.eventPoxy.event(Conf.LOADING_PROGRESS, [fName, p]);
     }
 
     private sCompleteHandler(ab: ArrayBuffer) {
         let byte: Byte = new Byte(ab);
         if (byte.readUTFBytes(6) == "ORGDAT") {
             //reset story
-            let story: Story = DH.instance.story = new Story();
+            let story: DStory = DH.instance.story = new DStory();
             //for header
             Conf.info.ver = story.header.ver = byte.getInt32();
             Conf.frameworks.width = story.header.gWidth = byte.getInt32();
@@ -192,11 +195,10 @@ export class BinLoader implements IBinloader {
             //for commands
             //兼容单包、分包策略
             story.fLayerArr = [];
-            story.chapterArr = [];
             if (this.single) {
                 byte.pos += 4;
                 story.name = parseUTF();
-                story.chapterArr = parseChapterArr();
+                story.dChapterArr = parseChapterArr();
             }
 
             if (Conf.info.ver >= 104) {
@@ -560,16 +562,16 @@ export class BinLoader implements IBinloader {
             }
         }
 
-        function parseChapterArr(): Chapter[] {
-            let arr: Chapter[] = [];
+        function parseChapterArr(): DChapter[] {
+            let arr: DChapter[] = [];
             let len = byte.getInt32();
             for (let i = 0; i < len; i++) {
-                arr.push(parseChapter());
+                arr.push(parseDchapter());
             }
             return arr;
         }
 
-        function parseChapter(): Chapter {
+        function parseDchapter(): DChapter {
             byte.pos += 4;
             return {
                 name: parseUTF(),

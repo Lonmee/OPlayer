@@ -1,6 +1,5 @@
 import Conf from "../Conf";
 import DH from "../DH";
-import {IChapter} from "./Chapter";
 
 import Color = laya.utils.Color
 /**
@@ -254,18 +253,29 @@ export interface Cmd {
     para: string[]
 }
 
+export class DChapter {
+    name: string;
+    id: number;
+    cmdArr: Cmd[];
+
+    constructor({name, id, cmdArr}) {
+        this.name = name;
+        this.id = id;
+        this.cmdArr = cmdArr;
+    }
+}
+
 export default class Story {
     name: string;
     id: number;
     header: Header = {};
     sys: any = {};
     fLayerArr: FLayer[] = [];
-    chapter: IChapter;
-    chapterArr: IChapter[];
+    dChapterArr: DChapter[];
 
     gotoChapter(id: number) {
         if (Conf.info.single) {
-            for (let c of this.chapterArr) {
+            for (let c of this.dChapterArr) {
                 if (c.id == id) {
                     DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, c);
                 }
