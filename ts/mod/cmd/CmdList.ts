@@ -3,7 +3,7 @@ import Dictionary = laya.utils.Dictionary;
  * Created by ShanFeng on 5/3/2017.
  */
 export interface ILinkage {
-    link: number
+    link?: number
 }
 
 export interface IPausable {
@@ -100,14 +100,6 @@ export default class CmdList extends Dictionary {
 
  等待集合:
  case 100://"显示文章"
- 101    "剧情分歧"
- 1010   "剧情分歧EX"
- 1011   "剧情分歧EX2" (108://"分支选项内容" 102://"剧情分歧结束")
- 204    按钮分歧(212:"按钮分歧内容" 205:"按钮分歧结束")
-
- case 200://条件分歧(201, "条件分歧结束")(211, "除此之外的场合")
- case 202://循环(203, "以上反复");(209, "中断循环");
- case 217://"高级条件分歧"
 
  //状态指令
  case 210://等待
