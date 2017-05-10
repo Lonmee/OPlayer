@@ -18,7 +18,7 @@ export default class CmdLine {
     soundMgr: AudioMgr = new AudioMgr();
     videoMgr: VideoMgr = new VideoMgr();
 
-    state:IState;
+    state: IState;
 
     dh: DH = DH.instance;
     chapter: Chapter;
@@ -37,10 +37,7 @@ export default class CmdLine {
         this.pause = false;
     }
 
-    nextScene(sid: number = NaN): Scene {
-        if (this.pause) {
-            return;
-        }
-        return this.chapter.getScene(0);
+    gotoScene(sid: number): Scene {
+        return this.chapter.getScene(sid);
     }
 }

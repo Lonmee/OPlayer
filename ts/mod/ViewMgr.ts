@@ -5,12 +5,15 @@ import Conf from "../data/Conf";
 import Event = laya.events.Event;
 import DH from "../data/DH";
 import CmdLine from "./CmdLine";
+import Scene from "./cmd/Scene";
 /**
  * Created by Lonmee on 4/23/2017.
  */
 enum layers {ui, float, game}
 
 export class ViewMgr extends Sprite {
+    SID: number = 0;
+
     constructor(private cmdLine: CmdLine) {
         super();
         this.initStage();
@@ -46,7 +49,14 @@ export class ViewMgr extends Sprite {
     update() {
         if (this.cmdLine.pause)
             return;
-        this.cmdLine.nextScene();
+        let s: Scene = this.cmdLine.gotoScene(this.SID);
+        for (let cmd of s.cmdArr) {
+            console.log(cmd.code, cmd.para);
+            if (cmd.code == 0) {
+                this.SID = parseInt(cmd.para[0]);
+                this.cmdLine.pause = this.SID < 0;
+            }
+        }
     }
 
     /**
