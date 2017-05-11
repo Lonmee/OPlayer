@@ -123,13 +123,13 @@ export default class CmdList extends Dictionary {
 
  //剧情指令
  case 206://"跳转剧情"
+ case 251: //"呼叫子剧情"
 
  //界面指令
  case 150:// "刷新UI画面"
  case 151: //"返回游戏界面"
  case 208: //"返回标题画面"
  case 214: //"呼叫游戏界面"
- case 251: //"呼叫子剧情"
  case 218: //"强制存档读档"
 
  //显示

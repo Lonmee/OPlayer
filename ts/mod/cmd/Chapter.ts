@@ -1,15 +1,25 @@
 import Scene from "./Scene";
 import {Cmd, DChapter} from "../../data/sotry/Story";
+import CmdList from "./CmdList";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
 
 export default class Chapter extends DChapter {
     sceneArr: Scene[] = [];
+    cmdList: CmdList = new CmdList();
+    private linkArr: number[] = [];
 
     constructor(dc: DChapter) {
         super(dc);
         this.formScene(dc.cmdArr);
+        for (let s of this.sceneArr) {
+            for (let cmd of s.cmdArr) {
+                console.log("code:", cmd.code, this.cmdList.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "");
+            }
+            console.log("                    next scene: ", s.link);
+        }
+        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
     getScene(idx: number): Scene {
@@ -25,88 +35,74 @@ export default class Chapter extends DChapter {
      * 217  "高级条件分歧"   (211:"除此之外的场合")     (201:"条件分歧结束")
      * 202  "循环"          (209:"中断循环")          (203:"以上反复")
      */
-    private c108: string[] = [];
-    private c212: string[] = [];
-    private c211: string[] = [];
-    private c209: string[] = [];
 
     private formScene(cmdArr: Cmd[]) {
-        let s = new Scene();
-        //linkage cache
+        let s: Scene;
+        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         while (cmdArr.length > 0) {
             let cmd: Cmd = cmdArr.shift();
-            s.cmdArr.push(cmd);
-
             switch (cmd.code) {
                 case 100: {
-                    s.cmdArr.push({code: 0, para: [this.sceneArr.length.toString()], idt: 0});
+                    s.cmdArr.push(cmd);
+                    if (cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
                     break;
                 }//显示文章
                 case 101://剧情分歧
                 case 1010:
-                case 1011: {
-                    s.cmdArr.push({code: 0, para: this.c108, idt: 0});
-                    this.sceneArr.push(s);
-                    this.formScene(cmdArr);
-                    break;
-                }
-                case 204: {
-                    s.cmdArr.push({code: 0, para: this.c212, idt: 0});
-                    break;
-                } //按钮分歧
+                case 1011:
+                case 204://按钮分歧
                 case 200://条件分歧
                 case 217: {//高级条件分歧
-                    s.cmdArr.push({code: 0, para: this.c211, idt: 0});
+                    s.cmdArr.push(cmd);
+                    // this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    this.formScene(cmdArr);
+                    while (this.linkArr.length) {//回填分支线索引
+                        cmd.para.push(this.linkArr.shift().toString());
+                    }
+                    this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     break;
                 }
 
-                case 108: {
-                    this.sceneArr.push(s);
-                    this.formScene(cmdArr);
-                    this.c108.push(this.sceneArr.length.toString());
-                    return;
-                }//分支选项内容
-                case 212: {
-                    break;
-                }//按钮分歧内容
+                case 108: //分支选项内容
+                case 212: //按钮分歧内容
                 case 211: {//条件分歧else内容
+                    // this.formScene(cmdArr);
+                    s.cmdArr.push(cmd);
+                    this.linkArr.push(this.sceneArr.length - 1);
                     break;
                 }
 
                 //循环
                 case 202 : {
-                    s.cmdArr.push({code: 0, para: this.c209, idt: 0});
+                    // this.formScene(cmdArr);
                     break;
                 }
+                //循环跳出
                 case 209 : {
-                    s.cmdArr.pop();
+                    // s.link = 999;
                     return;
                 }
 
                 //闭包结束
-                case 102: {
-                    this.sceneArr.push(s);
-                    s.cmdArr.pop();
+                case 102://剧情分歧
+                case 205://按钮分歧
+                case 201: {//条件分歧
+                    this.sceneArr.pop();
                     return;
                 }
-                case 205: {
-                    s.cmdArr.pop();
-                    return;
-                }
-                case 201: {
-                    s.cmdArr.pop();
-                    return;
-                }
-                case 203 : {
-                    s.cmdArr.pop();
-                    this.c209.push();
-                    return;
+                case 203 : {//循环
+                    // s.link -= 1;
+                    // this.sceneArr.push(s);
+                    // return;
                 }
 
                 default: {
-
+                    s.cmdArr.push(cmd);
                 }
             }
         }
+        s.link = -1;
     }
 }

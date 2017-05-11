@@ -12,6 +12,7 @@ import Scene from "./cmd/Scene";
 enum layers {ui, float, game}
 
 export class ViewMgr extends Sprite {
+    choise: string;
     SID: number = 0;
 
     constructor(private cmdLine: CmdLine) {
@@ -49,13 +50,27 @@ export class ViewMgr extends Sprite {
     update() {
         if (this.cmdLine.pause)
             return;
-        let s: Scene = this.cmdLine.gotoScene(this.SID);
-        for (let cmd of s.cmdArr) {
-            console.log(cmd.code, cmd.para);
-            if (cmd.code == 0) {
-                this.SID = parseInt(cmd.para[0]);
-                this.cmdLine.pause = this.SID < 0;
+
+        for (let cmd of this.cmdLine.gotoScene(this.SID).cmdArr) {
+            console.log(cmd.code);
+            if (cmd.code == 100) {
+                console.log(cmd.para[2]);
             }
+            if (cmd.code == 101) {
+                this.choise = window.prompt("input your choise below");
+                this.SID = parseInt(cmd.para[cmd.para.length / 2 + parseInt(this.choise) - 1]);
+                this.cmdLine.pause = false;
+                return;
+            }
+        }
+
+        this.cmdLine.pause = true;
+
+        this.SID = this.cmdLine.chapter.getScene(this.SID).link;
+
+        if (this.SID < 0) {
+            this.cmdLine.pause = true;
+            console.log("chapter complete");
         }
     }
 
@@ -64,7 +79,8 @@ export class ViewMgr extends Sprite {
      * @param e
      */
     clickHandler(e: Event) {
-        e;
+        // console.log(e.currentTarget);
+        this.cmdLine.pause = false;
     }
 }
 
