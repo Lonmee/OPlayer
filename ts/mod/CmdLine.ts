@@ -8,12 +8,14 @@ import {DChapter} from "../data/sotry/Story";
 import Scene from "./cmd/Scene";
 import {IState} from "./state/State";
 import CmdList from "./cmd/CmdList";
+import AssMgr from "./AssMgr";
 /**
  * 负责命令分发至各管理器
  * Created by ShanFeng on 5/2/2017.
  * alias "TimeLine"
  */
 export default class CmdLine {
+    assMgr: AssMgr = new AssMgr();
     valueMgr: ValueMgr = new ValueMgr();
     soundMgr: AudioMgr = new AudioMgr();
     videoMgr: VideoMgr = new VideoMgr();
@@ -106,10 +108,7 @@ export default class CmdLine {
 }
 
 /*
-
- //资源管理指令
- case 405://"资源预加载(仅web用)";
-
  //剧情指令
  case 206://"跳转剧情"   story.gotoChapter();
- case 251: //"呼叫子剧情"*/
+ case 251: //"呼叫子剧情"  snapper + story;
+ */
