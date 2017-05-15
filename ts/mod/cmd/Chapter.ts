@@ -8,19 +8,10 @@ import CmdList from "./CmdList";
 export default class Chapter extends DChapter {
     arrow: number;
     sceneArr: Scene[] = [];
-    cmdList: CmdList = new CmdList();
 
     constructor(dc: DChapter) {
         super(dc);
-        this.formScene(dc.cmdArr, []);
-        for (let s of this.sceneArr) {
-            console.log("Scene:", this.sceneArr.indexOf(s));
-            for (let cmd of s.cmdArr) {
-                console.log("      code:", cmd.code, this.cmdList.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "");
-            }
-            console.log("                    next scene: ", s.link);
-        }
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        this.formScene(dc.cmdArr, [0, [], [[], [], []]]);//递归层级，需回填目标的scene（分歧用），循环目标
     }
 
     getScene(idx: number): Scene {
@@ -37,7 +28,7 @@ export default class Chapter extends DChapter {
      * 202  "循环"          (209:"中断循环")          (203:"以上反复")
      */
 
-    private formScene(cmdArr: Cmd[], itemArr:Scene[]): number[] {
+    private formScene(cmdArr: Cmd[], itemArr: [number, Scene[], [number[], Cmd[], number[]]]): number[] {
         let s: Scene;
         let linkArr: number[] = [];
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
@@ -45,6 +36,8 @@ export default class Chapter extends DChapter {
             let cmd: Cmd = cmdArr.shift();
             switch (cmd.code) {
                 case 100: {
+                    itemArr[1].pop();
+                    itemArr[1].push(s);
                     s.cmdArr.push(cmd);
                     if (cmdArr.length > 0) {
                         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
@@ -58,7 +51,8 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217: {//高级条件分歧
                     s.cmdArr.push(cmd);
-                    itemArr.pop( );
+                    itemArr[0] += 1;
+                    itemArr[1].pop();
                     let links: number[] = this.formScene(cmdArr, itemArr);
                     while (links.length) {//回填分支线索引
                         cmd.para.push(links.shift().toString());
@@ -68,44 +62,62 @@ export default class Chapter extends DChapter {
                 }
 
                 case 108: {//分支选项内容
+                    if (s.cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
                     s.cmdArr.push(cmd);
-                    // linkArr[0].push(this.sceneArr.length - 1);
-                    itemArr.push(s);
+                    itemArr[1].push(s);
                     linkArr.push(this.sceneArr.length - 1);
                     break;
                 }
                 case 212: {//按钮分歧内容
+                    if (s.cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
                     s.cmdArr.push(cmd);
-                    itemArr.push(s);
+                    itemArr[1].push(s);
                     linkArr.push(this.sceneArr.length - 1);
-                    // linkArr[1].push(this.sceneArr.length - 1);
                     break;
                 }
                 case 211: {//条件分歧else内容
-                    // this.formScene(cmdArr);
+                    if (s.cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
                     s.cmdArr.push(cmd);
-                    itemArr.push(s);
+                    itemArr[1].push(s);
                     linkArr.push(this.sceneArr.length - 1);
-                    // linkArr[2].push(this.sceneArr.length - 1);
                     break;
                 }
 
                 //循环
                 case 202 : {
-                    // this.formScene(cmdArr);
+                    // s.cmdArr.push(cmd);//不必要元素
+                    itemArr[2][0].push(this.sceneArr.length - 1);
                     break;
                 }
-                //循环跳出
+
+                // 中断循环
                 case 209 : {
-                    // s.link = 999;
-                    return;
+                    s.cmdArr.push(cmd);
+                    itemArr[2][1].push(cmd);
+                    if (s.cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
+                    break;
                 }
 
                 //闭包结束
                 case 102: {//剧情分歧
-                    this.sceneArr.pop();
-                    while (itemArr.length > 0) {
-                        itemArr.pop().link = this.sceneArr.length;
+                    if (itemArr[0] == 1) {
+                        itemArr[0] = 0;
+                        while (itemArr[1].length > 0) {
+                            itemArr[1].pop().link = this.sceneArr.length - 1;
+                        }
+                    } else {
+                        itemArr[0] -= 1;
+                    }
+                    if (s.cmdArr.length == 0) {
+                        this.sceneArr.pop();
                     }
                     return linkArr;
                 }
@@ -117,10 +129,23 @@ export default class Chapter extends DChapter {
                     this.sceneArr.pop();
                     return linkArr;
                 }
-                case 203 : {//循环
-                    // s.link -= 1;
-                    // this.sceneArr.push(s);
-                    // return;
+
+                case 203 : {//以上反复
+                    s.cmdArr.push(cmd);
+                    s.link = itemArr[2][0].pop();
+                    itemArr[2][2].push(this.cmdArr.length == 0 ? -1 : this.sceneArr.length);
+                    //回填中断循环情况下的目标索引
+                    if (itemArr[2][0].length == 0) {
+                        for (let rCmd of itemArr[2][1]) {
+                            rCmd.para.push((itemArr[2][2][parseInt(rCmd.para[0]) - 1]).toString());
+                        }
+                        itemArr[2][1] = [];
+                        itemArr[2][2] = [];
+                    }
+                    if (cmdArr.length > 0) {
+                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    }
+                    break;
                 }
 
                 default: {
@@ -128,6 +153,8 @@ export default class Chapter extends DChapter {
                 }
             }
         }
-        s.link = -1;
+        if (s.link >= this.sceneArr.length) {
+            s.link = -1;
+        }
     }
 }

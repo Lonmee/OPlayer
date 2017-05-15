@@ -12,9 +12,6 @@ import Scene from "./cmd/Scene";
 enum layers {ui, float, game}
 
 export class ViewMgr extends Sprite {
-    choise: string;
-    SID: number = 0;
-
     constructor(private cmdLine: CmdLine) {
         super();
         this.initStage();
@@ -48,30 +45,7 @@ export class ViewMgr extends Sprite {
      * 渲染句柄，视图更新唯一频刷器
      */
     update() {
-        if (this.cmdLine.pause)
-            return;
-
-        for (let cmd of this.cmdLine.gotoScene(this.SID).cmdArr) {
-            console.log(cmd.code);
-            if (cmd.code == 100) {
-                console.log(cmd.para[2]);
-            }
-            if (cmd.code == 101) {
-                this.choise = window.prompt("input your choise below");
-                this.SID = parseInt(cmd.para[cmd.para.length / 2 + parseInt(this.choise) - 1]);
-                this.cmdLine.pause = false;
-                return;
-            }
-        }
-
-        this.cmdLine.pause = true;
-
-        this.SID = this.cmdLine.chapter.getScene(this.SID).link;
-
-        if (this.SID < 0) {
-            this.cmdLine.pause = true;
-            console.log("chapter complete");
-        }
+        this.cmdLine.nextScene();
     }
 
     /**
