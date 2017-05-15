@@ -44,30 +44,62 @@ export class ViewMgr extends Sprite {
     /**
      * 渲染句柄，视图更新唯一频刷器
      */
-    update() {
-        this.cmdLine.nextScene();
+    update(sid: number = NaN) {
+        let s: Scene = this.cmdLine.nextScene(sid);
+        if (s == null) {
+            return;
+        }
+        for (let cmd of s.cmdArr) {
+            switch (cmd.code) {
+                case 100 : {//显示文字
+                    console.log("                   ", cmd.para[2]);
+                    this.cmdLine.pause = true;
+                    break;
+                }
 
-        //显示
-        /*case 100://"显示文章"
-         case 106://"提示消息框"
-         case 107://"注释"
-         case 109://"消失对话框"
-         case 219://"气泡式效果"
-         case 301://"天气"
-         case 302://"震动"
-         case 303://"画面闪烁"
-         case 304://"准备转场"
-         case 305://"转场开始"
-         case 306://"更改场景色调"
-         case 307://"插入到BGM鉴赏"
-         case 308://"插入到CG鉴赏"
-         case 400://"显示图片"
-         case 401://"淡出图片"
-         case 402://"移动图片"
-         case 403://"显示心情"
-         case 404://"旋转图片"
-         case 406://"显示动态图片"
-         case 407://"变色"*/
+                case 101: {//剧情分歧
+                    let choise: string = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                    while (choise == "") {
+                        choise = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                    }
+                    // break;
+                    return this.update(parseInt(cmd.para[cmd.para.length / 2 + parseInt(choise) - 1]));
+                }
+
+                case 1010: {//剧情分歧EX
+
+                }
+
+                case 1011: {//剧情分歧EX2
+
+                }
+
+                case 204: {//按钮分歧
+
+                }
+
+                /*case 100://"显示文章"
+                 case 106://"提示消息框"
+                 case 107://"注释"
+                 case 109://"消失对话框"
+                 case 219://"气泡式效果"
+                 case 301://"天气"
+                 case 302://"震动"
+                 case 303://"画面闪烁"
+                 case 304://"准备转场"
+                 case 305://"转场开始"
+                 case 306://"更改场景色调"
+                 case 307://"插入到BGM鉴赏"
+                 case 308://"插入到CG鉴赏"
+                 case 400://"显示图片"
+                 case 401://"淡出图片"
+                 case 402://"移动图片"
+                 case 403://"显示心情"
+                 case 404://"旋转图片"
+                 case 406://"显示动态图片"
+                 case 407://"变色"*/
+            }
+        }
     }
 
     /**

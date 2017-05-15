@@ -83,21 +83,6 @@ export default class CmdList extends Dictionary {
 }
 
 /*
-
- Laya.timer.once(parseInt("2000"), null, () => {
- this.pause = false;
- });
- this.pause = true;
- break;
- }
-
- Laya.timer.once(parseInt(cmd.para[0]), null, () => {
- this.pause = false
- });
- this.pause = true;
- break;
- }
-
  等待集合:
  case 100://"显示文章"
 

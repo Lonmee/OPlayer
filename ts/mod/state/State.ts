@@ -1,15 +1,21 @@
 /**
  * Created by ShanFeng on 5/9/2017.
  */
+export enum StateNo {Normal, Auto, FF}
+
 export interface IState {
 
 }
 
-export class FFState implements IState {
+export class NormalState implements IState {
 
 }
 
 export class AutoState implements IState {
+
+}
+
+export class FFState implements IState {
 
 }
 

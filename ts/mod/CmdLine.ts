@@ -6,7 +6,7 @@ import AudioMgr from "./AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {DChapter} from "../data/sotry/Story";
 import Scene from "./cmd/Scene";
-import {IState} from "./state/State";
+import {AutoState, FFState, IState, StateNo} from "./state/State";
 import CmdList from "./cmd/CmdList";
 import AssMgr from "./AssMgr";
 /**
@@ -19,7 +19,7 @@ export default class CmdLine {
     valueMgr: ValueMgr = new ValueMgr();
     soundMgr: AudioMgr = new AudioMgr();
     videoMgr: VideoMgr = new VideoMgr();
-    state: IState;
+    states: IState[] = [new AutoState(), new FFState()];
 
     dh: DH = DH.instance;
 
@@ -42,6 +42,10 @@ export default class CmdLine {
         this.pause = false;
     }
 
+    changeState(state: number) {
+        //this.nextScene = StateNo.Auto;
+    }
+
     nextScene(sid: number = NaN): Scene {
         if (this.pause)
             return null;
@@ -54,40 +58,35 @@ export default class CmdLine {
         }
 
         //过滤逻辑跳转专属CMD
-        let s: Scene = this.chapter.getScene(this.curSid);
+        let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
+        this.curSid = s.link;
         for (let cmd of s.cmdArr) {
             console.log("senceID:", this.curSid, cmd.code, this.cmdList.get(cmd.code));
-
             switch (cmd.code) {
-                case 100 : {
-                    console.log("                   ", cmd.para[2]);
-                    this.pause = true;
+                case 200: {//条件分歧
+                    this.valueMgr;
+                }
+
+                case 217: {//高级条件分歧
+                    this.valueMgr;
+                }
+
+                case 209 : {//跳出循环
+                    //return this.nextScene(this.curSid = parseInt(cmd.para[cmd.para.length - 1]));
+                    this.curSid = parseInt(cmd.para[cmd.para.length - 1]);
                     break;
                 }
 
-                case 101: {
-                    let choise: string = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
-                    while (choise == "") {
-                        choise = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
-                    }
-                    return this.chapter.getScene(this.curSid = parseInt(cmd.para[cmd.para.length / 2 + parseInt(choise) - 1]));
-                }
-
-                case 1010: {
-
-                }
-
-                case 1011: {
-
-                }
-
-                case 209 : {
-                    return this.nextScene(this.curSid = parseInt(cmd.para[cmd.para.length - 1]));
+                case 210: {//等待
+                    Laya.timer.once(parseInt(cmd.para[0]) / 60 * 1000, null, () => {
+                        this.pause = false
+                    });
+                    this.pause = true;
+                    break;
                 }
             }
         }
 
-        this.curSid = s.link;
         return s;
     }
 
@@ -105,7 +104,7 @@ export default class CmdLine {
         }
         console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
-}
+};
 
 /*
  //剧情指令
