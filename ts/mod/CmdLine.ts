@@ -54,20 +54,34 @@ export default class CmdLine {
         //过滤逻辑跳转专属CMD
         let s: Scene = this.chapter.getScene(this.curSid);
         for (let cmd of s.cmdArr) {
-            console.log(cmd.code,);
+            console.log("senceID:", this.curSid, cmd.code, this.cmdList.get(cmd.code));
 
-            if (cmd.code == 100) {
-                console.log(cmd.para[2]);
-                this.pause = true;
-            }
+            switch (cmd.code) {
+                case 100 : {
+                    console.log("                   ", cmd.para[2]);
+                    this.pause = true;
+                    break;
+                }
 
-            if (cmd.code == 101) {
-                let choise: string = window.prompt("input your choise below");
-                return this.chapter.getScene(this.curSid = parseInt(cmd.para[cmd.para.length / 2 + parseInt(choise) - 1]));
-            }
+                case 101: {
+                    let choise: string = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                    while (choise == "") {
+                        choise = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                    }
+                    return this.chapter.getScene(this.curSid = parseInt(cmd.para[cmd.para.length / 2 + parseInt(choise) - 1]));
+                }
 
-            if (cmd.code == 209) {
-                return this.nextScene(this.curSid = parseInt(cmd.para[cmd.para.length - 1]));
+                case 1010: {
+
+                }
+
+                case 1011: {
+
+                }
+
+                case 209 : {
+                    return this.nextScene(this.curSid = parseInt(cmd.para[cmd.para.length - 1]));
+                }
             }
         }
 
@@ -75,8 +89,10 @@ export default class CmdLine {
         return s;
     }
 
+    /**
+     * 打印解析结果
+     */
     private printChater() {
-        //打印解析结果
         for (let s of this.chapter.sceneArr) {
             console.log("Scene:", this.chapter.sceneArr.indexOf(s));
             for (let cmd of s.cmdArr) {
@@ -88,3 +104,12 @@ export default class CmdLine {
         console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 }
+
+/*
+
+ //资源管理指令
+ case 405://"资源预加载(仅web用)";
+
+ //剧情指令
+ case 206://"跳转剧情"   story.gotoChapter();
+ case 251: //"呼叫子剧情"*/
