@@ -1,6 +1,5 @@
 import Scene from "./Scene";
 import {Cmd, DChapter} from "../../data/sotry/Story";
-import CmdList from "./CmdList";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
@@ -71,21 +70,21 @@ export default class Chapter extends DChapter {
                     break;
                 }
                 case 212: {//按钮分歧内容
-                    if (s.cmdArr.length > 0) {
-                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                    }
-                    s.cmdArr.push(cmd);
-                    itemArr[1].push(s);
-                    linkArr.push(this.sceneArr.length - 1);
+                    // if (s.cmdArr.length > 0) {
+                    //     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    // }
+                    // s.cmdArr.push(cmd);
+                    // itemArr[1].push(s);
+                    // linkArr.push(this.sceneArr.length - 1);
                     break;
                 }
                 case 211: {//条件分歧else内容
-                    if (s.cmdArr.length > 0) {
-                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                    }
-                    s.cmdArr.push(cmd);
-                    itemArr[1].push(s);
-                    linkArr.push(this.sceneArr.length - 1);
+                    // if (s.cmdArr.length > 0) {
+                    //     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    // }
+                    // s.cmdArr.push(cmd);
+                    // itemArr[1].push(s);
+                    // linkArr.push(this.sceneArr.length - 1);
                     break;
                 }
 
@@ -122,11 +121,11 @@ export default class Chapter extends DChapter {
                     return linkArr;
                 }
                 case 205: {//按钮分歧
-                    this.sceneArr.pop();
+                    // this.sceneArr.pop();
                     return linkArr;
                 }
                 case 201: {//条件分歧
-                    this.sceneArr.pop();
+                    // this.sceneArr.pop();
                     return linkArr;
                 }
 

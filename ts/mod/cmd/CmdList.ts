@@ -6,14 +6,6 @@ export interface ILinkage {
     link?: number
 }
 
-export interface IPausable {
-    duration: number
-}
-
-export interface IUICallable {
-    uiNo: number
-}
-
 export default class CmdList extends Dictionary {
     constructor() {
         super();

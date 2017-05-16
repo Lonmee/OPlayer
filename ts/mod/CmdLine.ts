@@ -6,7 +6,7 @@ import AudioMgr from "./AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {DChapter} from "../data/sotry/Story";
 import Scene from "./cmd/Scene";
-import {AutoState, FFState, IState, StateNo} from "./state/State";
+import {AutoState, FFState, IState} from "./state/State";
 import CmdList from "./cmd/CmdList";
 import AssMgr from "./AssMgr";
 /**
@@ -15,6 +15,8 @@ import AssMgr from "./AssMgr";
  * alias "TimeLine"
  */
 export default class CmdLine {
+    appending: boolean = false;
+    chapters: [[number, Chapter]] = [[0, null]];
     assMgr: AssMgr = new AssMgr();
     valueMgr: ValueMgr = new ValueMgr();
     soundMgr: AudioMgr = new AudioMgr();
@@ -37,7 +39,12 @@ export default class CmdLine {
      * @param c
      */
     playHandler(c: DChapter) {
+        //呼叫子剧情时缓存当前剧情及播放进度
+        if (this.appending) {
+            this.chapters.push([this.curSid, this.chapter]);
+        }
         this.chapter = new Chapter(c);
+        this.curSid = 0;
         this.printChater();
         this.pause = false;
     }
@@ -52,9 +59,18 @@ export default class CmdLine {
 
         //结束标识
         if (this.curSid < 0) {
-            this.pause = true;
-            console.log("chapter complete");
-            return null;
+            if (this.appending && this.chapters.length > 0) {//还原父剧情
+                let reS: [number, Chapter] = this.chapters.pop();
+                this.curSid = reS[0];
+                this.chapter = reS[1];
+                if (this.chapters.length == 0) {
+                    this.appending = false;
+                }
+            } else {
+                this.pause = true;
+                console.log("chapter complete");
+                return null;
+            }
         }
 
         //过滤逻辑跳转专属CMD
@@ -63,12 +79,19 @@ export default class CmdLine {
         for (let cmd of s.cmdArr) {
             console.log("senceID:", this.curSid, cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
+                case 100: {//显示文字
+                    this.pause = true;
+                    break;
+                }
+
                 case 200: {//条件分歧
                     this.valueMgr;
+                    break;
                 }
 
                 case 217: {//高级条件分歧
                     this.valueMgr;
+                    break;
                 }
 
                 case 209 : {//跳出循环
@@ -82,6 +105,18 @@ export default class CmdLine {
                         this.pause = false
                     });
                     this.pause = true;
+                    break;
+                }
+
+                case 206 : {//跳转剧情
+                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
+                    this.pause = true;
+                    break;
+                }
+
+                case 251: {//呼叫子剧情
+                    this.appending = this.pause = true;
+                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     break;
                 }
             }

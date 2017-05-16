@@ -51,7 +51,7 @@ export class ViewMgr extends Sprite {
         }
         for (let cmd of s.cmdArr) {
             switch (cmd.code) {
-                case 100 : {//显示文字
+                case 100 : {//"显示文章"
                     console.log("                   ", cmd.para[2]);
                     this.cmdLine.pause = true;
                     break;
@@ -74,30 +74,29 @@ export class ViewMgr extends Sprite {
 
                 }
 
+
+                case 106://"提示消息框"
+                case 107://"注释"
+                case 109://"消失对话框"
                 case 204: {//按钮分歧
 
                 }
-
-                /*case 100://"显示文章"
-                 case 106://"提示消息框"
-                 case 107://"注释"
-                 case 109://"消失对话框"
-                 case 219://"气泡式效果"
-                 case 301://"天气"
-                 case 302://"震动"
-                 case 303://"画面闪烁"
-                 case 304://"准备转场"
-                 case 305://"转场开始"
-                 case 306://"更改场景色调"
-                 case 307://"插入到BGM鉴赏"
-                 case 308://"插入到CG鉴赏"
-                 case 400://"显示图片"
-                 case 401://"淡出图片"
-                 case 402://"移动图片"
-                 case 403://"显示心情"
-                 case 404://"旋转图片"
-                 case 406://"显示动态图片"
-                 case 407://"变色"*/
+                case 219://"气泡式效果"
+                case 301://"天气"
+                case 302://"震动"
+                case 303://"画面闪烁"
+                case 304://"准备转场"
+                case 305://"转场开始"
+                case 306://"更改场景色调"
+                case 307://"插入到BGM鉴赏"
+                case 308://"插入到CG鉴赏"
+                case 400://"显示图片"
+                case 401://"淡出图片"
+                case 402://"移动图片"
+                case 403://"显示心情"
+                case 404://"旋转图片"
+                case 406://"显示动态图片"
+                case 407://"变色"
             }
         }
     }
