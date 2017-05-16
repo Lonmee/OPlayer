@@ -45,7 +45,6 @@ export default class CmdLine {
         }
         this.chapter = new Chapter(c);
         this.curSid = 0;
-        this.printChater();
         this.pause = false;
     }
 
@@ -53,96 +52,7 @@ export default class CmdLine {
         //this.nextScene = StateNo.Auto;
     }
 
-    nextScene(sid: number = NaN): Scene {
-        if (this.pause)
-            return null;
-
-        //结束标识
-        if (this.curSid < 0) {
-            if (this.appending && this.chapters.length > 0) {//还原父剧情
-                let reS: [number, Chapter] = this.chapters.pop();
-                this.curSid = reS[0];
-                this.chapter = reS[1];
-                if (this.chapters.length == 0) {
-                    this.appending = false;
-                }
-            } else {
-                this.pause = true;
-                console.log("chapter complete");
-                return null;
-            }
-        }
-
-        //过滤逻辑跳转专属CMD
-        let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
-        this.curSid = s.link;
-        for (let cmd of s.cmdArr) {
-            console.log("senceID:", this.curSid, cmd.code, this.cmdList.get(cmd.code));
-            switch (cmd.code) {
-                case 100: {//显示文字
-                    this.pause = true;
-                    break;
-                }
-
-                case 200: {//条件分歧
-                    this.valueMgr;
-                    break;
-                }
-
-                case 217: {//高级条件分歧
-                    this.valueMgr;
-                    break;
-                }
-
-                case 209 : {//跳出循环
-                    //return this.nextScene(this.curSid = parseInt(cmd.para[cmd.para.length - 1]));
-                    this.curSid = parseInt(cmd.para[cmd.para.length - 1]);
-                    break;
-                }
-
-                case 210: {//等待
-                    Laya.timer.once(parseInt(cmd.para[0]) / 60 * 1000, null, () => {
-                        this.pause = false
-                    });
-                    this.pause = true;
-                    break;
-                }
-
-                case 206 : {//跳转剧情
-                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    this.pause = true;
-                    break;
-                }
-
-                case 251: {//呼叫子剧情
-                    this.appending = this.pause = true;
-                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    break;
-                }
-            }
-        }
-
-        return s;
+    nextScene(sid: number): Scene {
+        return this.chapter.getScene(isNaN(sid) ? this.curSid : sid);
     }
-
-    /**
-     * 打印解析结果
-     */
-    private printChater() {
-        for (let s of this.chapter.sceneArr) {
-            console.log("Scene:", this.chapter.sceneArr.indexOf(s));
-            for (let cmd of s.cmdArr) {
-                console.log("      code:", cmd.code, this.cmdList.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "",
-                    cmd.code == 101 ? cmd.para.slice(cmd.para.length / 2) : "", cmd.code == 209 ? cmd.para[cmd.para.length - 1] : "");
-            }
-            console.log("                    next scene: ", s.link);
-        }
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    }
-};
-
-/*
- //剧情指令
- case 206://"跳转剧情"   story.gotoChapter();
- case 251: //"呼叫子剧情"  snapper + story;
- */
+}
