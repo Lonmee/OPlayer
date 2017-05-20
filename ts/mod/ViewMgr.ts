@@ -4,15 +4,17 @@ import WebGL = laya.webgl.WebGL;
 import Conf from "../data/Conf";
 import DH from "../data/DH";
 import CmdLine from "./CmdLine";
-import Scene from "./cmd/Scene";
 import UILayer from "./view/UILayer";
 import GameLayer from "./view/GameLayer";
+import CmdList from "./cmd/CmdList";
 import Event = laya.events.Event;
+import Scene from "./cmd/Scene";
 /**
  * Created by Lonmee on 4/23/2017.
  */
 enum layers {ui, float, game}
 export class ViewMgr extends Sprite {
+    cmdList: CmdList = new CmdList();
     gameLayer: GameLayer = new GameLayer();
     uiLayer: UILayer = new UILayer();
 
@@ -58,16 +60,27 @@ export class ViewMgr extends Sprite {
         if (this.cmdLine.pause) {
             return;
         }
-
-        for (let cmd of this.cmdLine.nextScene(sid).cmdArr) {
+        let s: Scene = this.cmdLine.nextScene(sid);
+        if (s.link < 0) {
+            //todo:chapter complete
+            return;
+        }
+        for (let cmd of s.cmdArr) {
+            console.log("   code:", cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //视图交互类
                 case 100 : {//"显示文章"
-                    console.log("                   ", cmd.para[2]);
+                    console.log("       ", cmd.para[2]);
                     break;
                 }
 
                 case 204: {//按钮分歧
+
+                }
+
+                case 200://条件分歧
+
+                case 217: {//高级条件分歧
 
                 }
 
@@ -80,12 +93,12 @@ export class ViewMgr extends Sprite {
                 }
 
                 case 1011: {//剧情分歧EX2
-                    let choise: string = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                    let choise: string = window.prompt(cmd.para.toString() + "\n input your choise below   option [" + cmd.links + "]");
                     while (choise == "") {
-                        choise = window.prompt("input your choise below   option[" + cmd.para.slice(cmd.para.length / 2).toString() + "]");
+                        choise = window.prompt("input your choise below   option [" + cmd.links + "]");
                     }
                     // break;
-                    return this.update(parseInt(cmd.para[cmd.para.length / 2 + parseInt(choise) - 1]));
+                    return this.update(cmd.links[parseInt(choise) - 1]);
                 }
 
                 //视图操作命令
@@ -121,6 +134,7 @@ export class ViewMgr extends Sprite {
                 case 112: //"悬浮组件开关";
             }
         }
+        // console.log("           link", s.link);
     }
 
     /**

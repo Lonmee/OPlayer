@@ -45,7 +45,6 @@ export default class CmdLine {
         }
         this.chapter = new Chapter(c);
         this.curSid = 0;
-        this.printChater();
         this.pause = false;
     }
 
@@ -123,21 +122,6 @@ export default class CmdLine {
         }
 
         return s;
-    }
-
-    /**
-     * 打印解析结果
-     */
-    private printChater() {
-        for (let s of this.chapter.sceneArr) {
-            console.log("Scene:", this.chapter.sceneArr.indexOf(s));
-            for (let cmd of s.cmdArr) {
-                console.log("      code:", cmd.code, this.cmdList.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "",
-                    cmd.code == 101 ? cmd.para.slice(cmd.para.length / 2) : "", cmd.code == 209 ? cmd.para[cmd.para.length - 1] : "");
-            }
-            console.log("                    next scene: ", s.link);
-        }
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 };
 

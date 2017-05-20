@@ -1,4 +1,5 @@
 import Dictionary = laya.utils.Dictionary;
+import Scene from "./Scene";
 /**
  * Created by ShanFeng on 5/3/2017.
  */
@@ -71,6 +72,22 @@ export default class CmdList extends Dictionary {
         this.set(506, "停止音效");
         this.set(507, "停止语音");
         this.set(508, "淡出音效");
+    }
+
+    /**
+     * 打印解析结果
+     */
+    printChater(s: Scene, sceneArr: Scene[]) {
+        console.log("~~~~~~~~~~~~~Scene:", sceneArr.indexOf(s), "~~~~~~~~~~~~~");
+        if (s == null) {
+            return;
+        }
+        for (let cmd of s.cmdArr) {
+            console.log("      code:", cmd.code, this.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "",
+                cmd.code == 101 ? cmd.links : "", cmd.code == 209 ? cmd.para[cmd.para.length - 1] : "");
+        }
+        console.log("                    next scene: ", s.link);
+        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 }
 

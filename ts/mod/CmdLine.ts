@@ -4,7 +4,7 @@ import ValueMgr from "./ValueMgr";
 import VideoMgr from "./VideoMgr";
 import AudioMgr from "./AudioMgr";
 import Chapter from "./cmd/Chapter";
-import {DChapter} from "../data/sotry/Story";
+import {Cmd, DChapter} from "../data/sotry/Story";
 import Scene from "./cmd/Scene";
 import {AutoState, FFState, IState} from "./state/State";
 import CmdList from "./cmd/CmdList";
@@ -16,19 +16,21 @@ import AssMgr from "./AssMgr";
  */
 export default class CmdLine {
     appending: boolean = false;
-    chapters: [[number, Chapter]] = [[0, null]];
+    chapters: [number, Chapter][] = [];
+
     assMgr: AssMgr = new AssMgr();
     valueMgr: ValueMgr = new ValueMgr();
     soundMgr: AudioMgr = new AudioMgr();
     videoMgr: VideoMgr = new VideoMgr();
-    states: IState[] = [new AutoState(), new FFState()];
 
-    dh: DH = DH.instance;
+    states: IState[] = [new AutoState(), new FFState()];
 
     chapter: Chapter;
     cmdList: CmdList = new CmdList();
     curSid: number = 0;
     pause: boolean = true;
+
+    dh: DH = DH.instance;
 
     constructor() {
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
@@ -52,7 +54,65 @@ export default class CmdLine {
         //this.nextScene = StateNo.Auto;
     }
 
+    /**
+     * 过滤逻辑跳转
+     * @param sid
+     * @returns {Scene}
+     */
     nextScene(sid: number): Scene {
-        return this.chapter.getScene(isNaN(sid) ? this.curSid : sid);
+        if (this.curSid < 0) {
+            this.curSid = 0;
+        }
+        console.log("No.", isNaN(sid) ? this.curSid : sid);
+        let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : sid)
+        this.curSid = s.link;
+        if (this.curSid < 0) {
+            this.pause = true;
+            //todo:cmlLine complete
+            console.log("chapter completed");
+            return s;
+        }
+        let keyCmd: Cmd = s.cmdArr[s.cmdArr.length - 1];
+        switch (keyCmd.code) {
+            case 100 : {//显示文章
+                this.pause = true;
+                break;
+            }
+            case 101://剧情分歧
+            case 1010:
+            case 1011:
+            case 204://按钮分歧
+            case 200://条件分歧
+            case 217: {//高级条件分歧
+                break;
+            }
+            case 210: {//等待
+                this.pause = true;
+                Laya.timer.once(parseInt(keyCmd.para[0]) / 60 * 1000, null, () => {
+                    this.pause = false
+                });
+                break;
+            }
+
+            case 209: {
+
+                break;
+            }
+
+            case 206 : {//跳转剧情
+                this.pause = true;
+                console.log("       ", keyCmd.para[0]);
+                this.dh.story.gotoChapter(parseInt(keyCmd.para[0]));
+                break;
+            }
+
+            case 251: {//呼叫子剧情
+                this.appending = this.pause = true;
+                console.log("       ", keyCmd.para[0]);
+                this.dh.story.gotoChapter(parseInt(keyCmd.para[0]));
+                break;
+            }
+        }
+        return s;
     }
 }

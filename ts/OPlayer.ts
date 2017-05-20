@@ -25,8 +25,8 @@ export class OPlayer {
         Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
         this.dh.viewMgr = new ViewMgr(new CmdLine());
-        this.dh.binLoader = new BinLoader();
-        // this.dh.binLoader = new BinLoader(true);
+        // this.dh.binLoader = new BinLoader();
+        this.dh.binLoader = new BinLoader(true);
     }
 
 }

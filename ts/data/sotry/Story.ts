@@ -2,6 +2,7 @@ import Conf from "../Conf";
 import DH from "../DH";
 
 import Color = laya.utils.Color
+import {ILinkage} from "../../mod/cmd/CmdList";
 /**
  * Created by ShanFeng on 4/10/2017.
  */
@@ -247,6 +248,7 @@ export interface Cmd {
     code: number
     idt: number
     para: string[]
+    links?: number[]
 }
 
 export class DChapter {
