@@ -68,30 +68,11 @@ export class ViewMgr extends Sprite {
         for (let cmd of s.cmdArr) {
             console.log("   code:", cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
-                //视图交互类
-                case 100 : {//"显示文章"
-                    console.log("       ", cmd.para[2]);
-                    break;
-                }
-
-                case 204: {//按钮分歧
-
-                }
-
+                case 204: //按钮分歧
                 case 200://条件分歧
-
-                case 217: {//高级条件分歧
-
-                }
-
-                case 101: {//剧情分歧
-
-                }
-
-                case 1010: {//剧情分歧EX
-
-                }
-
+                case 217: //高级条件分歧
+                case 101: //剧情分歧
+                case 1010: //剧情分歧EX
                 case 1011: {//剧情分歧EX2
                     let choise: string = window.prompt(cmd.para.toString() + "\n input your choise below   option [" + cmd.links + "]");
                     while (choise == "") {
@@ -101,6 +82,8 @@ export class ViewMgr extends Sprite {
                     return this.update(cmd.links[parseInt(choise) - 1]);
                 }
 
+                //视图交互类
+                case 100 ://"显示文章"
                 //视图操作命令
                 case 106: //"提示消息框"
                 case 107: //"注释"
@@ -132,9 +115,13 @@ export class ViewMgr extends Sprite {
                 case 110: //"打开指定网页";
                 case 111: //"禁用开启菜单功能";
                 case 112: //"悬浮组件开关";
+                {
+                    console.log("       ", cmd.para);
+                    break;
+                }
             }
         }
-        // console.log("           link", s.link);
+        console.log("           link", s.link);
     }
 
     /**

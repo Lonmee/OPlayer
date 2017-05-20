@@ -26,7 +26,6 @@ export default class CmdLine {
     states: IState[] = [new AutoState(), new FFState()];
 
     chapter: Chapter;
-    cmdList: CmdList = new CmdList();
     curSid: number = 0;
     pause: boolean = true;
 
@@ -59,12 +58,14 @@ export default class CmdLine {
      * @param sid
      * @returns {Scene}
      */
+    cmdList: CmdList = new CmdList();
     nextScene(sid: number): Scene {
         if (this.curSid < 0) {
             this.curSid = 0;
         }
-        console.log("No.", isNaN(sid) ? this.curSid : sid);
-        let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : sid)
+        let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : sid);
+        //打印场景结果
+        // this.cmdList.printChater(s, this.chapter.sceneArr);
         this.curSid = s.link;
         if (this.curSid < 0) {
             this.pause = true;
@@ -74,16 +75,13 @@ export default class CmdLine {
         }
         let keyCmd: Cmd = s.cmdArr[s.cmdArr.length - 1];
         switch (keyCmd.code) {
-            case 100 : {//显示文章
-                this.pause = true;
-                break;
-            }
             case 101://剧情分歧
             case 1010:
             case 1011:
             case 204://按钮分歧
             case 200://条件分歧
             case 217: {//高级条件分歧
+                // this.pause = true;
                 break;
             }
             case 210: {//等待

@@ -1,6 +1,5 @@
 import Scene from "./Scene";
 import {Cmd, DChapter} from "../../data/sotry/Story";
-import CmdList from "./CmdList";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
@@ -17,7 +16,6 @@ export default class Chapter extends DChapter {
         while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0) {
             this.formScene();
         }
-        // this.cmdList.printChater(idx >= this.sceneArr.length ? new Scene(-1) : this.sceneArr[idx], this.sceneArr);
         return idx >= this.sceneArr.length ? new Scene(-1) : this.sceneArr[idx];
     }
 
@@ -29,16 +27,12 @@ export default class Chapter extends DChapter {
     private formScene(): Scene {
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-        console.log("parse scene:", s.link - 1);
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                // case 100 ://显示文章
                 case 206 ://跳转剧情
-                case 251 ://呼叫子剧情
-                    /*case 210 :*/
-                {//等待
+                case 251 : {//呼叫子剧情
                     return s;
                 }
                 /*********************repeat*********************/
@@ -82,21 +76,15 @@ export default class Chapter extends DChapter {
         }
     }
 
-    cmdList: CmdList = new CmdList();
-
     private formBranchScene(branch: [number[], Scene[]]) {
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-        console.log("parse scene:", s.link - 1);
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                // case 100 ://显示文章
                 case 206 ://跳转剧情
-                case 251 ://呼叫子剧情
-                    /*case 210 :*/
-                {//等待
+                case 251 : {//呼叫子剧情
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     break;
                 }
