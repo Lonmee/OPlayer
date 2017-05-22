@@ -31,10 +31,8 @@ export default class Chapter extends DChapter {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                case 100 ://显示文章
                 case 206 ://跳转剧情
-                case 251 ://呼叫子剧情
-                case 210 : {//等待
+                case 251 : {//呼叫子剧情
                     return s;
                 }
                 /*********************repeat*********************/
@@ -81,14 +79,13 @@ export default class Chapter extends DChapter {
     private formBranchScene(branch: [number[], Scene[]]) {
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+        console.log("parse scene:", s.link - 1);
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                case 100 ://显示文章
                 case 206 ://跳转剧情
-                case 251 ://呼叫子剧情
-                case 210 : {//等待
+                case 251 : {//呼叫子剧情
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     break;
                 }
