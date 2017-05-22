@@ -1,5 +1,6 @@
 import Scene from "./Scene";
 import {Cmd, DChapter} from "../../data/sotry/Story";
+import CmdList from "./CmdList";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
@@ -15,6 +16,9 @@ export default class Chapter extends DChapter {
     getScene(idx: number): Scene {
         while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0) {
             this.formScene();
+        }
+        for (let s of this.sceneArr) {
+            this.cmdList.printChater(s, this.sceneArr);
         }
         return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];
     }
@@ -76,6 +80,8 @@ export default class Chapter extends DChapter {
         }
     }
 
+    cmdList = new CmdList();
+
     private formBranchScene(branch: [number[], Scene[]]) {
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
@@ -124,9 +130,7 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217: {//高级条件分歧
                     this.formBranchScene(cmd.code == 200 || cmd.code == 217 ? [cmd.links = [s.link], [s]] : [cmd.links = [], []]);
-                    if (cmd.code != 204) {
-                        s.link = NaN;
-                    }
+                    s.link = NaN;
                     break;
                 }
                 //options
@@ -135,7 +139,11 @@ export default class Chapter extends DChapter {
                 case 212: {//按钮分歧内容
                 }
                 case 211: {//条件分歧else内容
-                    s.cmdArr.pop();
+                    if (s.cmdArr.length == 1) {
+                        this.sceneArr.pop();
+                    } else {
+                        s.cmdArr.pop();
+                    }
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     s.cmdArr.push(cmd);
                     if (cmd.code == 211) {
@@ -153,7 +161,7 @@ export default class Chapter extends DChapter {
                 }
                 case 201: {//条件分歧
                     while (branch[1].length) {
-                        branch[1].pop().link = s.link;
+                        branch[1].pop().link = isNaN(s.link) ? -1 : s.link;
                     }
                     return;
                 }

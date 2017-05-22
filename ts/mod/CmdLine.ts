@@ -53,10 +53,12 @@ export default class CmdLine {
             this.curCid = snap[0];
             this.curSid = snap[1];
             this.chapter = snap[2];
+            this.cmdArr = [];
         } else {
             this.curCid = 0;
             this.curSid = 0;
             this.chapter = new Chapter(c);
+            this.cmdArr = [];
         }
         this.pause = false;
     }
@@ -84,7 +86,7 @@ export default class CmdLine {
             this.cmdArr = s.cmdArr;
             this.curSid = s.link;
             this.curCid = 0;
-            this.cmdList.printChater(s, this.chapter.sceneArr);
+            // this.cmdList.printChater(s, this.chapter.sceneArr);
         } else if (this.curSid == -1) {
             //恢复父剧情
             if (this.appending.length > 0) {
@@ -103,18 +105,20 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
             switch (cmd.code) {
-                //"显示文章"
-                case 100 : {
-                    this.viewMgr.exe(cmd);
+                case 101: //剧情分歧
+                case 1010: //剧情分歧EX
+                case 1011: //剧情分歧EX2
+                case 204:  //按钮分歧
+                case 214 ://呼叫游戏界面
+                case 100 : { //"显示文章"
                     this.pause = true;
+                    this.viewMgr.exe(cmd);
                     return;
                 }
                 //等待
                 case 210: {
                     this.pause = true;
-                    Laya.timer.once(parseInt(cmd.para[0]) / 60 * 1000, null, () => {
-                        this.pause = false
-                    });
+                    Laya.timer.once(parseInt(cmd.para[0]) / 60 * 1000, this, this.resume);
                     return;
                 }
                 //repeat end
@@ -138,10 +142,6 @@ export default class CmdLine {
                     return;
                 }
 
-                // case 101: //剧情分歧
-                // case 1010: //剧情分歧EX
-                // case 1011: //剧情分歧EX2
-                // case 204: //按钮分歧
                 case 200://条件分歧
                 case 217: {//高级条件分歧
                     let choise: string = window.prompt(cmd.para.toString() + "\n input your choise below   option [" + cmd.links + "]");
