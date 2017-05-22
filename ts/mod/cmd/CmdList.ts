@@ -86,8 +86,7 @@ export default class CmdList extends Dictionary {
             console.log("      code:", cmd.code, this.get(cmd.code), cmd.code == 100 ? cmd.para[2] : "",
                 cmd.code == 101 ? cmd.links : "", cmd.code == 209 ? cmd.para[cmd.para.length - 1] : "");
         }
-        console.log("                    next scene: ", s.link);
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        console.log("~~~~~~~~~~~~~next scene: ", s.link, "~~~~~~~");
     }
 }
 

@@ -5,7 +5,7 @@ import {Cmd, DChapter} from "../../data/sotry/Story";
  */
 
 export default class Chapter extends DChapter {
-    repeat: [number[], Scene[][]] = [[], []];
+    repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
 
     constructor(dc: DChapter) {
@@ -16,7 +16,7 @@ export default class Chapter extends DChapter {
         while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0) {
             this.formScene();
         }
-        return idx >= this.sceneArr.length ? new Scene(-1) : this.sceneArr[idx];
+        return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];
     }
 
     /**
@@ -45,18 +45,18 @@ export default class Chapter extends DChapter {
                 }
 
                 case 209 : {//interrupt
-                    this.repeat[1][parseInt(cmd.para[0]) - 1].push(s);
+                    this.repeat[1][parseInt(cmd.para[0]) - 1].push(cmd);
                     return s;
                 }
 
                 case 203 : {//end
                     this.repeat[1].reverse();
                     while (this.repeat[1][this.repeat[0].length - 1].length > 0) {
-                        this.repeat[1][this.repeat[0].length - 1].pop().link = s.link;
+                        this.repeat[1][this.repeat[0].length - 1].pop().links = [s.link];
                     }
                     this.repeat[1].pop();
                     this.repeat[1].reverse();
-                    s.link = this.repeat[0].pop();
+                    cmd.links = [this.repeat[0].pop()];
                     return s;
                 }
                 /*********************repeat end*****************/
@@ -79,7 +79,7 @@ export default class Chapter extends DChapter {
     private formBranchScene(branch: [number[], Scene[]]) {
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-        console.log("parse scene:", s.link - 1);
+        // console.log("parse scene:", s.link - 1);
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
@@ -100,7 +100,7 @@ export default class Chapter extends DChapter {
                 }
 
                 case 209 : {//interrupt
-                    this.repeat[1][parseInt(cmd.para[0]) - 1].push(s);
+                    this.repeat[1][parseInt(cmd.para[0]) - 1].push(cmd);
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     break;
                 }
@@ -108,11 +108,11 @@ export default class Chapter extends DChapter {
                 case 203 : {//end
                     this.repeat[1].reverse();
                     while (this.repeat[1][this.repeat[0].length - 1].length > 0) {
-                        this.repeat[1][this.repeat[0].length - 1].pop().link = s.link;
+                        this.repeat[1][this.repeat[0].length - 1].pop().links = [s.link];
                     }
                     this.repeat[1].pop();
                     this.repeat[1].reverse();
-                    s.link = this.repeat[0].pop();
+                    cmd.links = [this.repeat[0].pop()];
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     break;
                 }
@@ -124,7 +124,9 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217: {//高级条件分歧
                     this.formBranchScene(cmd.code == 200 || cmd.code == 217 ? [cmd.links = [s.link], [s]] : [cmd.links = [], []]);
-                    s.link = NaN;
+                    if (cmd.code != 204) {
+                        s.link = NaN;
+                    }
                     break;
                 }
                 //options
@@ -133,14 +135,9 @@ export default class Chapter extends DChapter {
                 case 212: {//按钮分歧内容
                 }
                 case 211: {//条件分歧else内容
-                    //option:
-                    if (s.cmdArr.length == 1) {
-                        s = new Scene(s.link);
-                    } else {
-                        s.cmdArr.pop();
-                        this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                    }
-                    //option: this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    s.cmdArr.pop();
+                    this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
+                    s.cmdArr.push(cmd);
                     if (cmd.code == 211) {
                         branch[1].push(this.sceneArr[branch[0][0]]);
                     }

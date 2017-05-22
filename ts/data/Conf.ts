@@ -49,6 +49,7 @@ export default class Conf {
     //Event
     static LOADING_PROGRESS: string = "loading_progress";
     static PLAY_CHAPTER: string = "play_chapter";
+    static ITEM_CHOOSEN: string = "item_choosen";
 
     //static
     static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};

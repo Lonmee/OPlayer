@@ -17,8 +17,8 @@ export default class DH {
     eventPoxy: EventDispatcher = new EventDispatcher();
     resMap: Dictionary = new Dictionary();
     binLoader: IBinloader;
-    viewMgr: ViewMgr;
     story: Story;
+    cmdLine: CmdLine;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();
