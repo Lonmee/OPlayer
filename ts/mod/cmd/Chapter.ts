@@ -161,7 +161,7 @@ export default class Chapter extends DChapter {
                 }
                 case 201: {//条件分歧
                     while (branch[1].length) {
-                        branch[1].pop().link = isNaN(s.link) ? -1 : s.link;
+                        branch[1].pop().link = isNaN(s.link) ? 0 : s.link;
                     }
                     return;
                 }
