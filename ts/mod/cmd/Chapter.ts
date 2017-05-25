@@ -71,6 +71,7 @@ export default class Chapter extends DChapter {
                 case 204://按钮分歧
                 case 200://条件分歧
                 case 217: {//高级条件分歧
+                    //todo:该cmd可剔除
                     this.formBranchScene(cmd.code == 200 || cmd.code == 217 ? [cmd.links = [s.link], [s]] : [cmd.links = [], []]);
                     s.link = NaN;
                     return s;
@@ -97,6 +98,7 @@ export default class Chapter extends DChapter {
                 }
                 /*********************repeat*********************/
                 case 202 : {//start
+                    //todo:该cmd可剔除
                     this.repeat[0].push(s.link);
                     if (this.repeat[1][this.repeat[0].length - 1] == null) {
                         this.repeat[1].push([]);
@@ -112,6 +114,7 @@ export default class Chapter extends DChapter {
                 }
 
                 case 203 : {//end
+                    //todo:该cmd可剔除
                     this.repeat[1].reverse();
                     while (this.repeat[1][this.repeat[0].length - 1].length > 0) {
                         this.repeat[1][this.repeat[0].length - 1].pop().links = [s.link];
@@ -129,6 +132,7 @@ export default class Chapter extends DChapter {
                 case 204://按钮分歧
                 case 200://条件分歧
                 case 217: {//高级条件分歧
+                    //todo:该cmd可剔除
                     this.formBranchScene(cmd.code == 200 || cmd.code == 217 ? [cmd.links = [s.link], [s]] : [cmd.links = [], []]);
                     s.link = NaN;
                     break;
@@ -139,13 +143,14 @@ export default class Chapter extends DChapter {
                 case 212: {//按钮分歧内容
                 }
                 case 211: {//条件分歧else内容
-                    if (s.cmdArr.length == 1) {
-                        this.sceneArr.pop();
-                    } else {
-                        s.cmdArr.pop();
-                    }
+                    //todo:该cmd可剔除
+                    // if (s.cmdArr.length == 1) {
+                    //     this.sceneArr.pop();
+                    // } else {
+                    //     s.cmdArr.pop();
+                    // }
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                    s.cmdArr.push(cmd);
+                    // s.cmdArr.push(cmd);
                     if (cmd.code == 211) {
                         branch[1].push(this.sceneArr[branch[0][0]]);
                     }
@@ -160,6 +165,12 @@ export default class Chapter extends DChapter {
                 case 205: {//按钮分歧
                 }
                 case 201: {//条件分歧
+                    //todo:该cmd可剔除
+                    // if (s.cmdArr.length == 1) {
+                    //     this.sceneArr.pop();
+                    // } else {
+                    //     s.cmdArr.pop();
+                    // }
                     while (branch[1].length) {
                         branch[1].pop().link = isNaN(s.link) ? 0 : s.link;
                     }
