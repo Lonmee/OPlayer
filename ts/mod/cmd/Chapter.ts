@@ -8,6 +8,7 @@ import CmdList from "./CmdList";
 export default class Chapter extends DChapter {
     repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
+    cmdList = new CmdList();
 
     constructor(dc: DChapter) {
         super(dc);
@@ -19,18 +20,28 @@ export default class Chapter extends DChapter {
     }
 
     getScene(idx: number): Scene {
-        while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0)
-            this.formScene();
+        //[option 1]
+        /*while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0)
+         this.formScene();
+         return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];*/
 
-        return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];
+        //[option 2]
+        /*return idx > this.sceneArr.length ? new Scene() : this.sceneArr[idx] || this.formScene();*/
+
+        //[option 3]
+        while (this.cmdArr.length && idx > this.sceneArr.length) {
+            this.formScene();
+        }
+        return this.cmdArr.length ? this.sceneArr[idx] || this.formScene() : new Scene;
     }
 
     /**
-     * 欢迎挑战
+     * 欢迎 ╮ (￣ 3￣) ╭
      * @param branch
      * @returns {Scene}
      */
     private formScene(): Scene {
+        console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         while (this.cmdArr.length) {
@@ -80,9 +91,8 @@ export default class Chapter extends DChapter {
         }
     }
 
-    cmdList = new CmdList();
-
     private formBranchScene(links, branchScene) {
+        console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         if (links.length)//条件结构特例
