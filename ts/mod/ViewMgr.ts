@@ -60,7 +60,7 @@ export class ViewMgr extends Sprite implements IMgr {
         switch (cmd.code) {
             //视图交互类
             case 100 : {//"显示文章"
-                console.log(cmd.para[2]);
+                console.log(cmd.code, this.cmdList.get(cmd.code), cmd.para[2]);
                 break;
             }
             case 101: //剧情分歧
@@ -68,11 +68,11 @@ export class ViewMgr extends Sprite implements IMgr {
             case 1011: //剧情分歧EX2
             case 204: { //按钮分歧
                 console.log(cmd.code, this.cmdList.get(cmd.code));
-                let choise: string = window.prompt(cmd.para.toString() + "\n input your choise below   option [" + cmd.links + "]");
-                while (choise == "") {
-                    choise = window.prompt("input your choise below   option [" + cmd.links + "]");
+                let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
+                while (choice == "") {
+                    choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
                 }
-                this.dh.eventPoxy.event(Conf.ITEM_CHOOSEN, cmd.links[parseInt(choise) - 1]);
+                this.dh.eventPoxy.event(Conf.ITEM_CHOOSEN, cmd.links[parseInt(choice) - 1]);
                 return;
             }
             //视图操作命令

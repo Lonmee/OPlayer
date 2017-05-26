@@ -9,8 +9,8 @@ import {AutoState, FFState, IState} from "./state/State";
 import AssMgr from "./AssMgr";
 import {ViewMgr} from "./ViewMgr";
 import CmdList from "./cmd/CmdList";
-import Event = laya.events.Event;
 import Scene from "./cmd/Scene";
+import Event = laya.events.Event;
 /**
  * 逻辑控制器
  * 负责命令分发至各管理器
@@ -48,18 +48,22 @@ export default class CmdLine {
      */
     playHandler(c: DChapter) {
         //呼叫子剧情时缓存当前剧情及播放进度
-        if (this.appending.length > 0) {
-            let snap: [number, number, Chapter] = this.appending.pop();
-            this.curCid = snap[0];
-            this.curSid = snap[1];
-            this.chapter = snap[2];
-            this.cmdArr = [];
-        } else {
-            this.curCid = 0;
-            this.curSid = 0;
-            this.chapter = new Chapter(c);
-            this.cmdArr = [];
-        }
+        this.curCid = 0;
+        this.curSid = 0;
+        this.chapter = new Chapter(c);
+        this.cmdArr = [];
+        this.pause = false;
+    }
+
+    /**
+     * 恢复父剧情
+     */
+    restoreChapter() {
+        let snap: [number, number, Chapter] = this.appending.pop();
+        this.curCid = snap[0];
+        this.curSid = snap[1];
+        this.chapter = snap[2];
+        this.cmdArr = [];
         this.pause = false;
     }
 
@@ -86,19 +90,14 @@ export default class CmdLine {
             this.cmdArr = s.cmdArr;
             this.curSid = s.link;
             this.curCid = 0;
-            // this.cmdList.printChater(s, this.chapter.sceneArr);
         } else if (this.curSid == -1) {
-            //恢复父剧情
             if (this.appending.length > 0) {
-                let snap: [number, number, Chapter] = this.appending.pop();
-                this.curCid = snap[0];
-                this.curSid = snap[1];
-                this.chapter = snap[2];
+                this.restoreChapter();
             } else {
                 this.pause = true;
-                //todo:chater complete
-                this.curSid = this.curSid = 0;
-                console.log("chater complete");
+                //todo:chapter complete
+                this.curCid = this.curSid = 0;
+                console.log("chapter complete");
             }
         }
 
@@ -131,24 +130,28 @@ export default class CmdLine {
                 //跳转剧情
                 case 206 : {
                     this.pause = true;
+                    console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return;
                 }
                 //呼叫子剧情
                 case 251: {
                     this.pause = true;
-                    this.appending.push([this.curSid, this.curSid, this.chapter]);
+                    this.appending.push([this.curCid, this.curSid, this.chapter]);
+                    console.log("insertChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return;
                 }
 
                 case 200://条件分歧
                 case 217: {//高级条件分歧
-                    let choise: string = window.prompt(cmd.para.toString() + "\n input your choise below   option [" + cmd.links + "]");
-                    while (choise == "") {
-                        choise = window.prompt("input your choise below   option [" + cmd.links + "]");
+                    let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
+                    while (choice == "") {
+                        choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
                     }
-                    this.curSid = cmd.links[parseInt(choise) - 1];
+                    //兼容条件结构特例
+                    if (parseInt(choice) == 1 || parseInt(choice) == 2 && cmd.links.length == 2)
+                        this.curSid = cmd.links[parseInt(choice) - 1];
                     return;
                 }
 

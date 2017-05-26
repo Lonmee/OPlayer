@@ -1,13 +1,12 @@
 /**
  * Created by Lonmee on 4/19/2017.
  */
-import {ViewMgr} from "./mod/ViewMgr";
 import {BinLoader} from "./mod/loader/BinLoader";
 import Conf from "./data/Conf";
 import DH from "./data/DH";
+import CmdLine from "./mod/CmdLine";
 import Browser = laya.utils.Browser;
 import WebGL = laya.webgl.WebGL;
-import CmdLine from "./mod/CmdLine";
 export class OPlayer {
     dh: DH = DH.instance;
 
@@ -25,8 +24,8 @@ export class OPlayer {
         Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
         this.dh.cmdLine = new CmdLine()
-        // this.dh.binLoader = new BinLoader();
-        this.dh.binLoader = new BinLoader(true);
+        this.dh.binLoader = new BinLoader();
+        // this.dh.binLoader = new BinLoader(true);
     }
 
 }
