@@ -4,7 +4,7 @@ import {ViewMgr} from "../mod/ViewMgr";
 import CmdLine from "../mod/CmdLine";
 import EventDispatcher = laya.events.EventDispatcher;
 import Story from "./sotry/Story";
-import UIFac from "../mod/Ass/UIFac";
+import UIFac from "../mod/view/ui/UIFac";
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder

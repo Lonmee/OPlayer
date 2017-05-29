@@ -1,5 +1,5 @@
 import Sprite = laya.display.Sprite;
-import DH from "../../../data/DH";
+import DH from "../../../../data/DH";
 import Graphics = laya.display.Graphics;
 import Event = laya.events.Event;
 /**

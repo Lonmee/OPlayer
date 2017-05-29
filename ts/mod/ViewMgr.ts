@@ -9,9 +9,9 @@ import CmdList from "./cmd/CmdList";
 import {Cmd} from "../data/sotry/Story";
 import {IMgr} from "./Mgr";
 import FloatLayer from "./view/FloatLayer";
-import {MenuEnum, default as UIFac} from "./Ass/UIFac";
+import {MenuEnum, default as UIFac} from "./view/ui/UIFac";
 import Event = laya.events.Event;
-import {Menu} from "./Ass/ui/Menu";
+import {Menu} from "./view/ui/comp/Menu";
 /**
  * Created by Lonmee on 4/23/2017.
  */

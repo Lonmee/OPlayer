@@ -1,8 +1,8 @@
 /**
  * Created by ShanFeng on 5/29/2017.
  */
-import {Menu, Setting, Title, Replay, Game, Save, Store} from "./ui/Menu";
-import DH from "../../data/DH";
+import {Menu, Setting, Title, Replay, Game, Save, Store} from "./comp/Menu";
+import DH from "../../../data/DH";
 export enum MenuEnum{game, title, replay, setting, save, store}
 export default class UIFac {
     dh: DH = DH.instance;
