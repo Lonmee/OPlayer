@@ -1,8 +1,8 @@
 /**
  * Created by ShanFeng on 5/8/2017.
  */
-export enum Menu{game, title, replay, setting, save, store}
+import Sprite = laya.display.Sprite;
 
-export default class UILayer {
+export default class UILayer extends Sprite {
 
 }

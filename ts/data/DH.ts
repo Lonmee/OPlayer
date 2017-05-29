@@ -4,6 +4,7 @@ import {ViewMgr} from "../mod/ViewMgr";
 import CmdLine from "../mod/CmdLine";
 import EventDispatcher = laya.events.EventDispatcher;
 import Story from "./sotry/Story";
+import UIFac from "../mod/Ass/UIFac";
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
@@ -25,7 +26,7 @@ export default class DH {
     }
 
     getResLink(key: string): string {
-        let md5 = this.resMap.get(key).md5;
+        let md5 = this.resMap.get(key.replace(/\\/g, '/')).md5;
         return Conf.domain.resCdn + md5.substring(0, 2) + "/" + md5;
     }
 }

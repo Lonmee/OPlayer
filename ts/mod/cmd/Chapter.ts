@@ -8,31 +8,30 @@ import CmdList from "./CmdList";
 export default class Chapter extends DChapter {
     repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
-    cmdList = new CmdList();
+    cmdList: CmdList = new CmdList();
 
     constructor(dc: DChapter) {
         super(dc);
     }
 
     printSceneArr() {
+        //for dynamic usage
+        /*if (this.cmdList == null)
+         require(["js/mod/cmd/CmdList.js"], (CmdList) => {
+         this.cmdList = new CmdList.default();
+         for (let s of this.sceneArr)
+         this.cmdList.printChapter(s, this.sceneArr);
+         });*/
+
         for (let s of this.sceneArr)
             this.cmdList.printChapter(s, this.sceneArr);
     }
 
     getScene(idx: number): Scene {
-        //[option 1]
-        /*while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0)
-         this.formScene();
-         return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];*/
-
-        //[option 2]
-        /*return idx > this.sceneArr.length ? new Scene() : this.sceneArr[idx] || this.formScene();*/
-
-        //[option 3]
-        while (this.cmdArr.length && idx > this.sceneArr.length) {
+        while (this.repeat[0].length > 0 || this.cmdArr.length && idx >= this.sceneArr.length) {
             this.formScene();
         }
-        return this.cmdArr.length ? this.sceneArr[idx] || this.formScene() : new Scene;
+        return this.sceneArr[idx] || new Scene;
     }
 
     /**

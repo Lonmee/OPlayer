@@ -8,15 +8,18 @@ import GameLayer from "./view/GameLayer";
 import CmdList from "./cmd/CmdList";
 import {Cmd} from "../data/sotry/Story";
 import {IMgr} from "./Mgr";
+import FloatLayer from "./view/FloatLayer";
+import {MenuEnum, default as UIFac} from "./Ass/UIFac";
 import Event = laya.events.Event;
+import {Menu} from "./Ass/ui/Menu";
 /**
  * Created by Lonmee on 4/23/2017.
  */
-enum layers {ui, float, game}
+enum layersEnum {game, float, ui}
 export class ViewMgr extends Sprite implements IMgr {
+    uiFac: UIFac = new UIFac();
     cmdList: CmdList = new CmdList();
-    gameLayer: GameLayer = new GameLayer();
-    uiLayer: UILayer = new UILayer();
+    layerArr: Sprite[] = [new GameLayer(), new FloatLayer(), new UILayer()];
     dh: DH = DH.instance;
 
     constructor() {
@@ -24,8 +27,6 @@ export class ViewMgr extends Sprite implements IMgr {
 
         this.initStage();
         this.initListener();
-
-        Laya.stage.addChild(this);
     }
 
     initStage() {
@@ -36,6 +37,11 @@ export class ViewMgr extends Sprite implements IMgr {
         if (Conf.frameworks.showStatus) {
             Stat.show();
         }
+
+        Laya.stage.addChild(this);
+
+        for (let layer of this.layerArr)
+            this.addChild(layer);
     }
 
     initListener() {
@@ -53,9 +59,6 @@ export class ViewMgr extends Sprite implements IMgr {
         // console.log(`loading ${f} ${Math.floor(p * 100)}`);
     }
 
-    /**
-     * 渲染句柄，视图更新唯一频刷器
-     */
     exe(cmd: Cmd) {
         switch (cmd.code) {
             //视图交互类
@@ -97,14 +100,31 @@ export class ViewMgr extends Sprite implements IMgr {
             case 407: //"变色"
             //显示控制指令
             case 150: //"刷新UI画面"
+                console.log(cmd.code, this.cmdList.get(cmd.code));
+                break
             case 151: //"返回游戏界面"
+                console.log(cmd.code, this.cmdList.get(cmd.code));
+                this.showMenu(this.uiFac.getMenu(MenuEnum.game));
+                break;
             case 208: //"返回标题画面"
+                console.log(cmd.code, this.cmdList.get(cmd.code));
+                this.showMenu(this.uiFac.getMenu(MenuEnum.title));
+                break;
             case 214: //"呼叫游戏界面"
+                console.log(cmd.code, this.cmdList.get(cmd.code));
+                this.showMenu(this.uiFac.getMenu(MenuEnum.game));
+                break;
             case 218: //"强制存档读档"
+                console.log(cmd.code, this.cmdList.get(cmd.code));
+                this.showMenu(this.uiFac.getMenu(MenuEnum.save));
+                break;
             case 110: //"打开指定网页";
             case 111: //"禁用开启菜单功能";
             case 112: {//"悬浮组件开关";
+                // this.showFloat(layersEnum.float, this.uiFac.getMenu(MenuEnum.title))
+                // break;
                 console.log(cmd.code, this.cmdList.get(cmd.code));
+                break;
             }
         }
     }
@@ -116,6 +136,23 @@ export class ViewMgr extends Sprite implements IMgr {
     clickHandler(e: Event) {
         this.dh.eventPoxy.event(e.type, e);
     }
+
+    showMenu(menu: Menu) {
+        this.closeMenu();
+        this.layerArr[layersEnum.ui].addChild(menu);
+    }
+
+    closeMenu(menuNo: number = NaN) {
+        let uiLayer: Sprite = this.layerArr[layersEnum.ui];
+        if (isNaN(menuNo)) {
+            while (uiLayer.numChildren) {
+                uiLayer.removeChildAt(0);
+            }
+        } else {
+            uiLayer.removeChild(this.uiFac.getMenu(menuNo));
+        }
+    }
+
 }
 
 /*
