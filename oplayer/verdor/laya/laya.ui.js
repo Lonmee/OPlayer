@@ -2143,6 +2143,7 @@
 			var py=p.y+this._colorButton.height;
 			py=py+this._colorPanel.height <=Laya.stage.height ? py :p.y-this._colorPanel.height;
 			this._colorPanel.pos(px,py);
+			this._colorPanel.zOrder=1001;
 			Laya._currentStage.addChild(this._colorPanel);
 			Laya.stage.on(/*laya.events.Event.MOUSE_DOWN*/"mousedown",this,this.removeColorBox);
 		}
@@ -2696,6 +2697,7 @@
 					var py=p.y+this._button.height;
 					py=py+this._listHeight <=Laya.stage.height ? py :p.y-this._listHeight;
 					this._list.pos(p.x,py);
+					this._list.zOrder=1001;
 					Laya._currentStage.addChild(this._list);
 					Laya.stage.once(/*laya.events.Event.MOUSE_DOWN*/"mousedown",this,this.removeList);
 					this._list.selectedIndex=this._selectedIndex;
@@ -3046,6 +3048,7 @@
 					Tween.to(this,{value:this.max},this.elasticBackTime,Ease.sineOut,Handler.create(this,this.elasticOver));
 				}
 				}else {
+				if (!this._offsets)return;
 				if (this._offsets.length < 1){
 					this._offsets[0]=this.isVertical ? Laya.stage.mouseY-this._lastPoint.y :Laya.stage.mouseX-this._lastPoint.x;
 				};
