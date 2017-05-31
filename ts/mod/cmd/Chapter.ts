@@ -9,6 +9,7 @@ export default class Chapter extends DChapter {
     repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
     cmdList: CmdList = new CmdList();
+    showProcess: boolean = false;
 
     constructor(dc: DChapter) {
         super(dc);
@@ -40,7 +41,8 @@ export default class Chapter extends DChapter {
      * @returns {Scene}
      */
     private formScene(): Scene {
-        console.log("parse scene:", this.sceneArr.length);
+        if (this.showProcess)
+            console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         while (this.cmdArr.length) {
@@ -91,7 +93,8 @@ export default class Chapter extends DChapter {
     }
 
     private formBranchScene(links, branchScene) {
-        console.log("parse scene:", this.sceneArr.length);
+        if (this.showProcess)
+            console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         if (links.length)//条件结构特例
@@ -144,12 +147,12 @@ export default class Chapter extends DChapter {
                 case 108: //分支选项内容
                 case 212: //按钮分歧内容
                 case 211: //条件分歧else内容
-                    //Maybe bug
+                    //Maybe unstable
                     if (s.cmdArr.length == 1)
                         this.sceneArr.pop();
                     else
                         s.cmdArr.pop();
-                    //Maybe bug end
+                    //Maybe unstable end
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     links.push(s.link - 1);
                     branchScene.push(s);
@@ -159,12 +162,12 @@ export default class Chapter extends DChapter {
                 case 102: //剧情分歧
                 case 205: //按钮分歧
                 case 201: //条件分歧
-                    //Maybe bug
+                    //Maybe unstable
                     if (s.cmdArr.length == 1)
                         this.sceneArr.pop();
                     else
                         s.cmdArr.pop();
-                    //Maybe bug end
+                    //Maybe unstable end
                     return branchScene;
             }
         }

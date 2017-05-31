@@ -19,7 +19,19 @@ export default class Chapter extends DChapter {
         }
     }
 
-    getScene(idx: number): Scene {
+    getScene(idx: number): Scene {//[option 1]
+        /*while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0)
+         this.formScene();
+         return idx >= this.sceneArr.length ? new Scene() : this.sceneArr[idx];*/
+
+        //[option 2]
+        /*return idx > this.sceneArr.length ? new Scene() : this.sceneArr[idx] || this.formScene();*/
+
+        //[option 3]
+        /*while (this.cmdArr.length && idx >= this.sceneArr.length) {
+            this.formScene();
+        }
+        return this.sceneArr[idx] || new Scene;*/
         while (this.repeat[0].length > 0 || idx >= this.sceneArr.length && this.cmdArr.length > 0) {
             this.formScene();
         }

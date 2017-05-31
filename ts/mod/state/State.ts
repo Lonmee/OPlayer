@@ -1,7 +1,7 @@
 /**
  * Created by ShanFeng on 5/9/2017.
  */
-export enum StateNo {Normal, Auto, FF}
+export enum StateEnum {Normal, Auto, FF}
 
 export interface IState {
 

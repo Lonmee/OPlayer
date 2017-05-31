@@ -1,13 +1,13 @@
 import Conf from "../data/Conf";
 import DH from "../data/DH";
-import ValueMgr from "./ValueMgr";
-import VideoMgr from "./VideoMgr";
-import AudioMgr from "./AudioMgr";
+import ValueMgr from "./view/Mgr/ValueMgr";
+import VideoMgr from "./view/Mgr/VideoMgr";
+import AudioMgr from "./view/Mgr/AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {Cmd, DChapter} from "../data/sotry/Story";
-import {AutoState, FFState, IState} from "./state/State";
-import AssMgr from "./AssMgr";
-import {ViewMgr} from "./ViewMgr";
+import {AutoState, FFState, IState, NormalState, StateEnum} from "./state/State";
+import AssMgr from "./view/Mgr/AssMgr";
+import {ViewMgr} from "./view/Mgr/ViewMgr";
 import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
 import Event = laya.events.Event;
@@ -25,14 +25,14 @@ export default class CmdLine {
     soundMgr: AudioMgr = new AudioMgr();
     videoMgr: VideoMgr = new VideoMgr();
 
-    states: IState[] = [new AutoState(), new FFState()];
-
+    states: IState[] = [new NormalState(), new AutoState(), new FFState()];
+    state: IState;
     pause: boolean = true;
     chapter: Chapter;
     curSid: number = 0;
     curCid: number = 0;
 
-    dh: DH = DH.instance;
+    private dh: DH = DH.instance;
     private cmdArr: Cmd[] = [];
 
     constructor() {
@@ -67,8 +67,10 @@ export default class CmdLine {
         this.pause = false;
     }
 
-    changeState(state: number) {
-        //this.nextScene = StateNo.Auto;
+    changeState(cmd: Cmd) {
+        this.state = cmd.code == 103 ?
+            this.states[parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal] :
+            this.states[parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal];
     }
 
     resume(e: Event | number) {
@@ -103,6 +105,7 @@ export default class CmdLine {
 
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
+            console.log(cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
@@ -123,12 +126,16 @@ export default class CmdLine {
                     this.viewMgr.exe(cmd);
                     return;
                 }
-                //等待
-                case 210: {
+                //状态指令
+                case 210: {//等待
                     this.pause = true;
-                    Laya.timer.once(parseInt(cmd.para[0]) / 60 * 1000, this, this.resume);
-                    console.log("waiting for", parseInt(cmd.para[0]) / 60 * 1000 + " ms");
+                    Laya.timer.once(Math.round(parseInt(cmd.para[0]) / 60 * 1000), this, this.resume);
+                    console.log("waiting for", Math.round(parseInt(cmd.para[0]) / 60 * 1000) + " ms");
                     return;
+                }
+                case 103://"自动播放剧情"
+                case 104: {//"快进剧情"
+                    this.changeState(cmd);
                 }
                 //repeat end
                 case 203:
@@ -166,7 +173,11 @@ export default class CmdLine {
                 }
 
                 default: {
+                    this.assMgr.exe(cmd);
                     this.viewMgr.exe(cmd);
+                    this.valueMgr.exe(cmd);
+                    this.soundMgr.exe(cmd);
+                    this.videoMgr.exe(cmd);
                 }
             }
         }

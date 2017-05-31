@@ -6941,7 +6941,7 @@ var Laya=window.Laya=(function(window,document){
 			return this._pos_;
 			},function(value){
 			this._pos_=value;
-			this._d_.byteOffset=value;
+			// this._d_.byteOffset=value;
 		});
 
 		/**

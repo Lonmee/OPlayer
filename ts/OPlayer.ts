@@ -26,8 +26,8 @@ export class OPlayer {
         Conf.frameworks.showStatus = false;
 
         this.dh.cmdLine = new CmdLine()
-        // this.dh.binLoader = new BinLoader();
-        this.dh.binLoader = new BinLoader(true);
+        this.dh.binLoader = new BinLoader();
+        // this.dh.binLoader = new BinLoader(true);
     }
 
 }

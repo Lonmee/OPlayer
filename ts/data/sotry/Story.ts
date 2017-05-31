@@ -282,4 +282,4 @@ export default class Story {
             DH.instance.binLoader.loadChapter(id);
         }
     }
-}
+};
