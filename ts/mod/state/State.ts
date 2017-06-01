@@ -4,19 +4,35 @@
 export enum StateEnum {Normal, Auto, FF}
 
 export interface IState {
-
+    pause();
+    wait();
 }
 
 export class NormalState implements IState {
 
+    pause() {
+    }
+
+    wait() {
+    }
 }
 
 export class AutoState implements IState {
 
+    pause() {
+    }
+
+    wait() {
+    }
 }
 
 export class FFState implements IState {
 
+    pause() {
+    }
+
+    wait() {
+    }
 }
 
 /*

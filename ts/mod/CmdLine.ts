@@ -11,6 +11,7 @@ import {ViewMgr} from "./view/Mgr/ViewMgr";
 import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
 import Event = laya.events.Event;
+import {IMgr} from "./view/Mgr/Mgr";
 /**
  * 逻辑控制器
  * 负责命令分发至各管理器
@@ -19,11 +20,19 @@ import Event = laya.events.Event;
  */
 export default class CmdLine {
     appending: [number, number, Chapter][] = [];
-    assMgr: AssMgr = new AssMgr();
-    viewMgr: ViewMgr = new ViewMgr();
-    valueMgr: ValueMgr = new ValueMgr();
-    soundMgr: AudioMgr = new AudioMgr();
-    videoMgr: VideoMgr = new VideoMgr();
+    assMgr: AssMgr;
+    viewMgr: ViewMgr;
+    valueMgr: ValueMgr;
+    soundMgr: AudioMgr;
+    videoMgr: VideoMgr;
+
+    mgrArr: IMgr[] = [
+        this.assMgr = new AssMgr(),
+        this.viewMgr = new ViewMgr(),
+        this.valueMgr = new ValueMgr(),
+        this.soundMgr = new AudioMgr(),
+        this.videoMgr = new VideoMgr()
+    ]
 
     states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     state: IState;
@@ -173,11 +182,8 @@ export default class CmdLine {
                 }
 
                 default: {
-                    this.assMgr.exe(cmd);
-                    this.viewMgr.exe(cmd);
-                    this.valueMgr.exe(cmd);
-                    this.soundMgr.exe(cmd);
-                    this.videoMgr.exe(cmd);
+                    for (let mgr of this.mgrArr)
+                        mgr.exe(cmd);
                 }
             }
         }
