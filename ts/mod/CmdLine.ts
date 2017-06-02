@@ -12,6 +12,8 @@ import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
 import Event = laya.events.Event;
 import {IMgr} from "./view/Mgr/Mgr";
+import Browser = laya.utils.Browser;
+import Label = laya.ui.Label;
 
 export enum MgrEnum {ass, view, value, audio, video}
 /**
@@ -50,6 +52,7 @@ export default class CmdLine {
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
+        this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
         this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         Laya.timer.frameLoop(1, this, this.update);
@@ -119,6 +122,9 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
             console.log(cmd.code, this.cmdList.get(cmd.code));
+            if (Browser.onMobile) {
+                (Laya.stage.getChildByName("cmd") as Label).text = cmd.code + this.cmdList.get(cmd.code);
+            }
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"

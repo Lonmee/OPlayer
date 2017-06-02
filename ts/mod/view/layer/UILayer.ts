@@ -7,6 +7,8 @@ import {Cmd} from "../../../data/sotry/Story";
 import DH from "../../../data/DH";
 import Conf from "../../../data/Conf";
 import {Layer} from "./Layer";
+import Browser = laya.utils.Browser;
+import Label = laya.ui.Label;
 
 export default class UILayer extends Layer {
     uiFac: UIFac = new UIFac();
@@ -17,6 +19,9 @@ export default class UILayer extends Layer {
             //UI交互类
             case 100 : {//"显示文章"
                 console.log(cmd.para[2]);
+                if (Browser.onMobile) {
+                    (this.stage.getChildByName("label") as Label).text = cmd.para[2];
+                }
                 break;
             }
             case 101: //剧情分歧
