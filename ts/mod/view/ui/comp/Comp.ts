@@ -59,6 +59,7 @@ export class BGImg extends Sprite {
 export class Button extends Sprite {
     i1: Graphics;
     i2: Graphics;
+    idx: number;
 
     constructor(idx: number, private cHandler = null) {
         super();
@@ -85,7 +86,7 @@ export class Button extends Sprite {
 
     private click(e: Event) {
         if (this.cHandler)
-            this.cHandler.call(this);
+            this.cHandler.call(null, e);
         else
             console.log(this.name, "clicked");
     }

@@ -1,8 +1,9 @@
 import {Cmd} from "../../../data/sotry/Story";
+import {IMgr} from "./Mgr";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
-export default class AudioMgr {
+export default class AudioMgr implements IMgr{
     exe(cmd: Cmd) {
         switch (cmd.code) {
             case 501://"播放背景音乐"

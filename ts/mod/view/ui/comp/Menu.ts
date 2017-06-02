@@ -1,6 +1,6 @@
 import Sprite = laya.display.Sprite;
 import Graphics = laya.display.Graphics;
-import {BGImg, Button, UIImg} from "./CompFac";
+import {BGImg, Button, UIImg} from "./Comp";
 import DH from "../../../../data/DH";
 import Event = laya.events.Event;
 /**
@@ -15,19 +15,6 @@ export class Menu extends Sprite {
     }
 
     protected initView() {
-        //bg
-        if (this.data.bgImg)
-            this.addChild(new UIImg(this.data.bgImg.path));
-        //btns
-        for (let btn of this.data.buttons) {
-            let db: any = DH.instance.story.sys.Buttons[btn.idx];
-            if (db.image1.path == "" && db.image1.path == "")
-                continue;
-            let btnV: Button = new Button(btn.idx);
-            btnV.x = btn.x;
-            btnV.y = btn.y;
-            this.addChild(btnV);
-        }
     }
 
     protected initAudio() {
@@ -43,7 +30,19 @@ export class Game extends Menu {
     }
 
     initView() {
-        super.initView();
+        //bg
+        if (this.data.bgImg)
+            this.addChild(new UIImg(this.data.bgImg.path));
+        //btns
+        for (let btn of this.data.buttons) {
+            let db: any = DH.instance.story.sys.Buttons[btn.idx];
+            if (db.image1.path == "" && db.image1.path == "")
+                continue;
+            let btnV: Button = new Button(btn.idx);
+            btnV.x = btn.x;
+            btnV.y = btn.y;
+            this.addChild(btnV);
+        }
     }
 }
 
@@ -68,12 +67,23 @@ export class Title extends Menu {
 
     }
 
-    initView() {
+    protected initView() {
+        //logo & titleBG
         if (this.data.showLog)
             this.addChild(new UIImg(this.data.logoImage.path));
         if (this.data.drawTitle)
             this.addChild(new BGImg(this.data.titleImage.path));
-        super.initView();
+
+        //btns
+        for (let btn of this.data.buttons) {
+            let db: any = DH.instance.story.sys.Buttons[btn.idx];
+            if (db.image1.path == "" && db.image1.path == "")
+                continue;
+            let btnV: Button = new Button(btn.idx);
+            btnV.x = btn.x;
+            btnV.y = btn.y;
+            this.addChild(btnV);
+        }
     }
 
     protected initAudio() {

@@ -47,8 +47,24 @@ export class ViewMgr extends Sprite implements IMgr {
     }
 
     initListener() {
+        this.stage.on(Event.KEY_DOWN, this, this.kdHandler);
         this.dh.eventPoxy.on(Conf.LOADING_PROGRESS, this, this.progress);
-        Laya.stage.on(Event.CLICK, this, this.clickHandler);
+        // Laya.stage.on(Event.RIGHT_CLICK, this, this.rcHandler);//无效 why?
+    }
+
+    // rcHandler(e: Event) {
+    //     this.dh.eventPoxy.event(e.type, e);
+    // }
+
+    kdHandler(e: Event) {
+        switch (e.nativeEvent.code) {
+            case "KeyS":
+                Conf.frameworks.showStatus ? Stat.hide() : Stat.show();
+                Conf.frameworks.showStatus = !Conf.frameworks.showStatus;
+                break;
+            case "KeyN":
+                this.dh.eventPoxy.event(e.type, e);
+        }
     }
 
     /**
@@ -77,13 +93,5 @@ export class ViewMgr extends Sprite implements IMgr {
         for (let i = this.layerArr.length; i > 0;) {
             this.layerArr[--i].exe(cmd);
         }
-    }
-
-    /**
-     * 交互事件处理器
-     * @param e
-     */
-    clickHandler(e: Event) {
-        this.dh.eventPoxy.event(e.type, e);
     }
 }

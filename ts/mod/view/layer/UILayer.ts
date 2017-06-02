@@ -8,7 +8,7 @@ import DH from "../../../data/DH";
 import Conf from "../../../data/Conf";
 import {Layer} from "./Layer";
 
-export default class UILayer extends Layer{
+export default class UILayer extends Layer {
     uiFac: UIFac = new UIFac();
     dh: DH = DH.instance;
 
@@ -23,11 +23,12 @@ export default class UILayer extends Layer{
             case 1010: //剧情分歧EX
             case 1011: //剧情分歧EX2
             case 204: { //按钮分歧
-                let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
-                while (choice == "") {
-                    choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
-                }
-                this.dh.eventPoxy.event(Conf.ITEM_CHOOSEN, cmd.links[parseInt(choice) - 1]);
+                // let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
+                // while (choice == "") {
+                //     choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
+                // }
+                // this.dh.eventPoxy.event(Conf.ITEM_CHOOSEN, cmd.links[parseInt(choice) - 1]);
+                this.showSelector(cmd);
                 return;
             }
 
@@ -63,5 +64,9 @@ export default class UILayer extends Layer{
         } else {
             this.removeChild(this.uiFac.getMenu(idx));
         }
+    }
+
+    private showSelector(cmd: Cmd) {
+        this.addChild(this.uiFac.getSelector(cmd));
     }
 }

@@ -50,7 +50,7 @@ export default class CmdLine {
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
-        this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
+        this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         Laya.timer.frameLoop(1, this, this.update);
     }
