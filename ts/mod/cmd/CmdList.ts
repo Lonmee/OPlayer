@@ -3,10 +3,6 @@ import Scene from "./Scene";
 /**
  * Created by ShanFeng on 5/3/2017.
  */
-export interface ILinkage {
-    link?: number
-}
-
 export default class CmdList extends Dictionary {
     constructor() {
         super();

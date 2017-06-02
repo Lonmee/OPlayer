@@ -12,6 +12,8 @@ import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
 import Event = laya.events.Event;
 import {IMgr} from "./view/Mgr/Mgr";
+
+export enum MgrEnum {ass, view, value, audio, video}
 /**
  * 逻辑控制器
  * 负责命令分发至各管理器
@@ -45,6 +47,8 @@ export default class CmdLine {
     private cmdArr: Cmd[] = [];
 
     constructor() {
+        this.dh.mgrArr = this.mgrArr;
+
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
         this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);

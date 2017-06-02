@@ -5,8 +5,13 @@ import Event = laya.events.Event;
 /**
  * Created by ShanFeng on 5/31/2017.
  */
-const UI_PATH_SHIFTER = "graphics/ui/";
+const GRAPHICS_BG_PATH_SHIFTER = "graphics/background/";
 function getBGLink(key: string) {
+    return DH.instance.getResLink(GRAPHICS_BG_PATH_SHIFTER + key);
+}
+
+const UI_PATH_SHIFTER = "graphics/ui/";
+function getUILink(key: string) {
     return DH.instance.getResLink(UI_PATH_SHIFTER + key);
 }
 
@@ -20,6 +25,12 @@ function getGameImgLink(key: string) {
     return DH.instance.getResLink(GRAPHICS_PATH_SHIFTER + key);
 }
 
+const AUDIO_BG_PATH_SHIFTER = "audio/bgm/";
+function getBGAudioLink(key: string) {
+    return DH.instance.getResLink(AUDIO_BG_PATH_SHIFTER + key);
+}
+
+//todo:移植到GameLayer范畴内
 export class GameImg extends Sprite {
     constructor(path: string) {
         super();
@@ -29,6 +40,13 @@ export class GameImg extends Sprite {
 
 function getBtnData(idx: number) {
     return DH.instance.story.sys.Buttons[idx];
+}
+
+export class UIImg extends Sprite {
+    constructor(path: string) {
+        super();
+        this.loadImage(getUILink(path));
+    }
 }
 
 export class BGImg extends Sprite {
@@ -51,9 +69,13 @@ export class Button extends Sprite {
         this.name = name;
         this.autoSize = true;
         this.graphics = this.i1 = new Graphics();
-        this.i1.loadImage(getBtnLink(image1.path));
+        if (image1.path.length) {
+            this.i1.loadImage(getBtnLink(image1.path));
+        }
         this.i2 = new Graphics();
-        this.i2.loadImage(getBtnLink(image2.path));
+        if (image2.path.length) {
+            this.i2.loadImage(getBtnLink(image2.path));
+        }
         this.x = x;
         this.y = y;
         this.on(Event.CLICK, this, this.click);

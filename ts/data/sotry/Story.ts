@@ -2,7 +2,6 @@ import Conf from "../Conf";
 import DH from "../DH";
 
 import Color = laya.utils.Color
-import {ILinkage} from "../../mod/cmd/CmdList";
 /**
  * Created by ShanFeng on 4/10/2017.
  */
@@ -17,10 +16,6 @@ interface Header {
     title?: string
     gVer?: number
     crc32?: number
-}
-
-interface Sys {
-
 }
 
 export interface Path {
@@ -50,7 +45,7 @@ export interface Music {
 export interface Title {
     showLog: boolean
     logoImage: Path
-    titleImagle: Path
+    titleImage: Path
     drawTitle: boolean
     bgm: Music
     buttons: IdxBtn[]

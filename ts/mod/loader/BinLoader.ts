@@ -237,7 +237,7 @@ export class BinLoader implements IBinloader {
             return {
                 showLog: byte.getInt32() != 0,
                 logoImage: parsePath(),
-                titleImagle: parsePath(),
+                titleImage: parsePath(),
                 drawTitle: byte.getInt32() != 0,
                 bgm: parseMusic(),
                 buttons: parseIdxBtnArr()
