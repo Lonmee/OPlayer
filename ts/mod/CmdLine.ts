@@ -90,10 +90,10 @@ export default class CmdLine {
     }
 
     resume(e: Event | number) {
-        if (typeof e == "number") {
-            this.curSid = e;
-        }
         this.pause = false;
+        if (typeof e == "number") {
+            this.update(e);
+        }
     }
 
     cmdList: CmdList = new CmdList();
@@ -102,9 +102,10 @@ export default class CmdLine {
         if (this.pause) {
             return;
         }
-        if (this.curCid == this.cmdArr.length && this.curSid != -1) {
+        // if (this.curCid == this.cmdArr.length && this.curSid != -1)
+        // if (this.curSid != -1 && sid != this.curSid)
+        if (sid > 0 || this.curCid == this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
-
             this.cmdArr = s.cmdArr;
             this.curSid = s.link;
             this.curCid = 0;

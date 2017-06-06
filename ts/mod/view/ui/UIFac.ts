@@ -3,7 +3,7 @@
  */
 import {Menu, Setting, Title, Replay, Game, Save, Store} from "./comp/Menu";
 import DH from "../../../data/DH";
-import {Selector, BtnSelector} from "./comp/Selector";
+import {Selector, BtnSelector, SelectorEx} from "./comp/Selector";
 import {Cmd} from "../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
 export enum MenuEnum{game, title, replay, setting, save, store}
@@ -44,7 +44,9 @@ export default class UIFac {
     getSelector(cmd: Cmd): Selector {
         switch (cmd.code) {
             case 101:
+                return new Selector(cmd);
             case 1010:
+                return new SelectorEx(cmd);
             case 1011:
                 return new Selector(cmd);
             case 204:

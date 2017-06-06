@@ -53,6 +53,33 @@ export class Selector extends Sprite implements ISelectable {
     }
 }
 
+export class SelectorEx extends Selector {
+    constructor(cmd: Cmd) {
+        super(cmd);
+    }
+
+    protected initView(): any {
+        for (let i = 0; i < this.links.length; i++) {
+            let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
+            if (db.image1.path != "" || db.image1.path != "") {
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
+                btnV.idx = i;
+                btnV.y = i * btnV.height + 10;
+                let txt: Text = new Text();
+                txt.fontSize = 22;
+                txt.color = "#FFFFFF";
+                txt.text = this.para[9 + i * 2];
+                txt.x = btnV.width - txt.width >> 1;
+                txt.y = btnV.height - txt.height >> 1;
+                btnV.addChild(txt);
+                this.addChild(btnV);
+            }
+            this.x = Laya.stage.width - this.width >> 1;
+            this.y = Laya.stage.height - this.height >> 1;
+        }
+    }
+}
+
 export class BtnSelector extends Selector {
     constructor(cmd: Cmd) {
         super(cmd);
