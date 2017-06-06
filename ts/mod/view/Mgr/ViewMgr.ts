@@ -47,6 +47,7 @@ export class ViewMgr extends Sprite implements IMgr {
         for (let layer of this.layerArr)
             this.addChild(layer);
 
+        //region for temp testing
         if (Browser.onMobile) {
             let t: Label = new Label();
             t.name = "cmd";
@@ -67,23 +68,16 @@ export class ViewMgr extends Sprite implements IMgr {
             this.stage.addChild(t);
 
             window.onerror = function (m, f, l, c, e) {
-                (this.stage.getChildByName('error') as Label).text = e.message + e.stack;
+                (<Label>this.stage.getChildByName('error')).text = e.message + e.stack;
             }
         }
+        //endregion
 
     }
 
     initListener() {
         this.stage.on(Event.KEY_DOWN, this, this.kdHandler);
         this.dh.eventPoxy.on(Conf.LOADING_PROGRESS, this, this.progress);
-        if (Browser.onMobile) {
-            Laya.stage.on(Event.CLICK, this, this.clickHandler);
-        }
-    }
-
-    clickHandler(e: Event) {
-        this.dh.eventPoxy.event(e.type, e);
-        throw new Error('xxxx');
     }
 
     kdHandler(e: Event) {

@@ -31,6 +31,7 @@ import DStory, {
 } from "../../data/sotry/Story";
 import Byte = laya.utils.Byte;
 import Color = laya.utils.Color;
+import Preloader from "./Preloader";
 /**
  * Created by ShanFeng on 4/24/2017.
  * assetsmap、storymap加载器
@@ -206,6 +207,9 @@ export class BinLoader implements IBinloader {
             }
 
             byte.clear();
+
+            DH.instance.preloader = new Preloader();
+
             if (this.single) {
                 story.gotoChapter(story.sys.startStoryId);
                 delete DH.instance.binLoader;

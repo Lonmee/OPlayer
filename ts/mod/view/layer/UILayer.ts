@@ -18,10 +18,11 @@ export default class UILayer extends Layer {
         switch (cmd.code) {
             //UI交互类
             case 100 : {//"显示文章"
-                console.log(cmd.para[2]);
-                if (Browser.onMobile) {
-                    (this.stage.getChildByName("label") as Label).text = cmd.para[2];
-                }
+                // console.log(cmd.para[2]);
+                // if (Browser.onMobile) {
+                //     (this.stage.getChildByName("label") as Label).text = cmd.para[2];
+                // }
+                this.showMSG(cmd);
                 break;
             }
             case 101: //剧情分歧
@@ -56,6 +57,17 @@ export default class UILayer extends Layer {
         }
     }
 
+    showMSG(cmd: Cmd) {
+        if (cmd.para[7] == "1")
+            this.addChild(this.uiFac.getMSG(cmd));
+        else
+            this.uiFac.getMSG(cmd);
+    }
+
+    private showSelector(cmd: Cmd) {
+        this.addChild(this.uiFac.getSelector(cmd));
+    }
+
     showMenu(idx: number) {
         this.closeMenu();
         this.addChild(this.uiFac.getMenu(idx));
@@ -69,9 +81,5 @@ export default class UILayer extends Layer {
         } else {
             this.removeChild(this.uiFac.getMenu(idx));
         }
-    }
-
-    private showSelector(cmd: Cmd) {
-        this.addChild(this.uiFac.getSelector(cmd));
     }
 }

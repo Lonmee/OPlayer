@@ -5,16 +5,18 @@ import {Menu, Setting, Title, Replay, Game, Save, Store} from "./comp/Menu";
 import DH from "../../../data/DH";
 import {Selector, BtnSelector} from "./comp/Selector";
 import {Cmd} from "../../../data/sotry/Story";
+import {MSG} from "./comp/MSG";
 export enum MenuEnum{game, title, replay, setting, save, store}
 export default class UIFac {
-    dh: DH = DH.instance;
-    menuArr: Menu[] = [];
+    private msg: MSG;
+    private dh: DH = DH.instance;
+    private menuArr: Menu[] = [];
 
     getMenu(type: number) {
-        return this.menuArr[type] || this.construct(type);
+        return this.menuArr[type] || this.constructMenu(type);
     }
 
-    construct(type: number): Menu {
+    private constructMenu(type: number): Menu {
         let m: Menu;
         switch (type) {
             case 0 :
@@ -42,13 +44,15 @@ export default class UIFac {
     getSelector(cmd: Cmd): Selector {
         switch (cmd.code) {
             case 101:
-                break;
             case 1010:
-                break;
             case 1011:
                 return new Selector(cmd);
             case 204:
                 return new BtnSelector(cmd);
         }
+    }
+
+    getMSG(cmd: Cmd): MSG {
+        return this.msg ? this.msg.update(cmd) : this.msg = new MSG(cmd);
     }
 }

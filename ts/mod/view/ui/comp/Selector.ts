@@ -4,6 +4,8 @@ import {Button} from "./Comp";
 import Conf from "../../../../data/Conf";
 import {Cmd} from "../../../../data/sotry/Story";
 import Event = laya.events.Event;
+import Label = laya.ui.Label;
+import Text = laya.display.Text;
 /**
  * Created by ShanFeng on 6/2/2017.
  */
@@ -20,16 +22,28 @@ export class Selector extends Sprite implements ISelectable {
         super();
         this.links = cmd.links;
         this.para = cmd.para;
+        this.autoSize = true;
         this.initView();
     }
 
     protected initView() {
-        let idx: number = 0;
-        let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
-        if (db.image1.path != "" || db.image1.path != "") {
-            let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
-            btnV.idx = idx++;
-            this.addChild(btnV);
+        for (let i = 0; i < this.para.length; i++) {
+            let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
+            if (db.image1.path != "" || db.image1.path != "") {
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
+                btnV.idx = i;
+                btnV.y = i * btnV.height + 10;
+                let txt: Text = new Text();
+                txt.fontSize = 22;
+                txt.color = "#FFFFFF";
+                txt.text = this.para[i];
+                txt.x = btnV.width - txt.width >> 1;
+                txt.y = btnV.height - txt.height >> 1;
+                btnV.addChild(txt);
+                this.addChild(btnV);
+            }
+            this.x = Laya.stage.width - this.width >> 1;
+            this.y = Laya.stage.height - this.height >> 1;
         }
     }
 
@@ -57,5 +71,7 @@ export class BtnSelector extends Selector {
             btnV.y = parseInt(para[2]);
             this.addChild(btnV);
         }
+        // this.x = Laya.stage.width - this.width >> 1;
+        // this.y = Laya.stage.height - this.height >> 1;
     }
 }

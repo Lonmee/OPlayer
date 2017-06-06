@@ -11,12 +11,12 @@ function getBGLink(key: string) {
 }
 
 const UI_PATH_SHIFTER = "graphics/ui/";
-function getUILink(key: string) {
+export function getUILink(key: string) {
     return DH.instance.getResLink(UI_PATH_SHIFTER + key);
 }
 
 const BUTTON_PATH_SHIFTER = "graphics/button/";
-function getBtnLink(key: string) {
+export function getBtnLink(key: string) {
     return DH.instance.getResLink(BUTTON_PATH_SHIFTER + key);
 }
 
@@ -38,7 +38,7 @@ export class GameImg extends Sprite {
     }
 }
 
-function getBtnData(idx: number) {
+export function getBtnData(idx: number) {
     return DH.instance.story.sys.Buttons[idx];
 }
 

@@ -10,6 +10,7 @@ import AssMgr from "../mod/view/Mgr/AssMgr";
 import ValueMgr from "../mod/view/Mgr/ValueMgr";
 import AudioMgr from "../mod/view/Mgr/AudioMgr";
 import VideoMgr from "../mod/view/Mgr/VideoMgr";
+import Preloader from "../mod/loader/Preloader";
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
@@ -26,6 +27,7 @@ export default class DH {
     story: Story;
     cmdLine: CmdLine;
     mgrArr: IMgr[];
+    preloader: Preloader;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();
