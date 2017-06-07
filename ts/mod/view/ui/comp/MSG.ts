@@ -1,10 +1,10 @@
 import {Cmd, TalkWin} from "../../../../data/sotry/Story";
-import Sprite = laya.display.Sprite;
 import DH from "../../../../data/DH";
-import {Button, UIImg} from "./Comp";
+import {UIImg} from "./Comp";
+import Layouter from "./Layouter";
+import Sprite = laya.display.Sprite;
 import Text = laya.display.Text;
 import Color = laya.utils.Color;
-import Conf from "../../../../data/Conf";
 import Event = laya.events.Event;
 /**
  * Created by ShanFeng on 6/5/2017.
@@ -53,10 +53,13 @@ export class MSG extends Sprite {
         this.txt.text = this.cmd.para[2];
         switch (this.cmd.para[5]) {
             case "0":
+                Layouter.top(this);
                 break;
             case "1":
+                Layouter.center(this);
                 break;
             case "2":
+                Layouter.bottom(this);
                 this.y = Laya.stage.height - this.height;
         }
         this.txt.x = this.width - this.txt.width >> 1;
@@ -67,7 +70,6 @@ export class MSG extends Sprite {
 
     protected clickHandler(e: Event) {
         DH.instance.eventPoxy.event(e.type, e);
-        // this.destroy(true);
         if (this.parent)
             this.parent.removeChild(this);
     }

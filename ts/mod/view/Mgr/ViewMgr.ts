@@ -12,6 +12,8 @@ import Event = laya.events.Event;
 import {Layer} from "../layer/Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
+import Stage = laya.display.Stage;
+import Layouter from "../ui/comp/Layouter";
 /**
  * Created by Lonmee on 4/23/2017.
  */
@@ -42,6 +44,9 @@ export class ViewMgr extends Sprite implements IMgr {
             Stat.show();
         }
 
+        Laya.stage.scaleMode = Stage.SCALE_SHOWALL;
+        Laya.stage.alignH = Stage.ALIGN_CENTER;
+        Laya.stage.alignV = Stage.ALIGN_MIDDLE;
         Laya.stage.addChild(this);
 
         for (let layer of this.layerArr)
@@ -51,25 +56,19 @@ export class ViewMgr extends Sprite implements IMgr {
         if (Browser.onMobile) {
             let t: Label = new Label();
             t.name = "cmd";
-            t.y = 300;
             t.fontSize = 24;
+            Layouter.align(t, 4);
             this.stage.addChild(t);
 
-            t = new Label();
-            t.name = "label";
-            t.y = 500;
-            t.fontSize = 24;
-            this.stage.addChild(t);
-
-            t = new Label();
-            t.name = "error";
-            t.y = 500;
-            t.fontSize = 24;
-            this.stage.addChild(t);
-
-            window.onerror = function (m, f, l, c, e) {
-                (<Label>this.stage.getChildByName('error')).text = e.message + e.stack;
-            }
+            // t = new Label();
+            // t.name = "error";
+            // t.fontSize = 24;
+            // Layouter.top(t);
+            // this.stage.addChild(t);
+            //
+            // window.onerror = function (m, f, l, c, e) {
+            //     (<Label>this.stage.getChildByName('error')).text = e.message + e.stack;
+            // }
         }
         //endregion
 

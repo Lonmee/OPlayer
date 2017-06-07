@@ -18,10 +18,6 @@ export default class UILayer extends Layer {
         switch (cmd.code) {
             //UI交互类
             case 100 : {//"显示文章"
-                // console.log(cmd.para[2]);
-                // if (Browser.onMobile) {
-                //     (this.stage.getChildByName("label") as Label).text = cmd.para[2];
-                // }
                 this.showMSG(cmd);
                 break;
             }

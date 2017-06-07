@@ -65,7 +65,7 @@ export default class Conf {
     static starName: StarName = {single: "data/game.bin", multiple: "game00.bin"};
 
     //dynamic
-    static frameworks: Frameworks = {bgColor: "#AAAAAA", showStatus: true};
+    static frameworks: Frameworks = {bgColor: "#AAAAAA", showStatus: false};
     static info: Info = {};
 
     constructor() {

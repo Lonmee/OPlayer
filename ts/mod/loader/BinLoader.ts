@@ -208,7 +208,10 @@ export class BinLoader implements IBinloader {
 
             byte.clear();
 
+            //region For game data init
             DH.instance.preloader = new Preloader();
+            Laya.stage.size(Conf.frameworks.width, Conf.frameworks.height);
+            //endregion
 
             if (this.single) {
                 story.gotoChapter(story.sys.startStoryId);
@@ -529,7 +532,6 @@ export class BinLoader implements IBinloader {
         }
 
         function parseFLayer(): FLayer {
-            byte.pos += 4;
             return {
                 cmdArr: parseCmdArr(),
                 x: byte.getInt32(),

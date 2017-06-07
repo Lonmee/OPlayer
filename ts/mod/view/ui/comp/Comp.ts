@@ -61,7 +61,7 @@ export class Button extends Sprite {
     i2: Graphics;
     idx: number;
 
-    constructor(idx: number, private cHandler = null) {
+    constructor(idx: number, private cHandler = null, private repos = null) {
         super();
         this.init(getBtnData(idx));
     }
@@ -71,7 +71,7 @@ export class Button extends Sprite {
         this.autoSize = true;
         this.graphics = this.i1 = new Graphics();
         if (image1.path.length) {
-            this.i1.loadImage(getBtnLink(image1.path));
+            this.i1.loadImage(getBtnLink(image1.path), 0, 0, 0, 0, this.repos);
         }
         this.i2 = new Graphics();
         if (image2.path.length) {

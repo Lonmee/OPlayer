@@ -6,6 +6,7 @@ import {Cmd} from "../../../../data/sotry/Story";
 import Event = laya.events.Event;
 import Label = laya.ui.Label;
 import Text = laya.display.Text;
+import Layouter from "./Layouter";
 /**
  * Created by ShanFeng on 6/2/2017.
  */
@@ -30,7 +31,7 @@ export class Selector extends Sprite implements ISelectable {
         for (let i = 0; i < this.para.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
                 btnV.y = i * btnV.height + 10;
                 let txt: Text = new Text();
@@ -42,8 +43,6 @@ export class Selector extends Sprite implements ISelectable {
                 btnV.addChild(txt);
                 this.addChild(btnV);
             }
-            this.x = Laya.stage.width - this.width >> 1;
-            this.y = Laya.stage.height - this.height >> 1;
         }
     }
 
@@ -62,20 +61,17 @@ export class SelectorEx extends Selector {
         for (let i = 0; i < this.links.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + 10;
+                btnV.y = i * btnV.height;
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
                 txt.text = this.para[9 + i * 2];
-                txt.x = btnV.width - txt.width >> 1;
-                txt.y = btnV.height - txt.height >> 1;
+                txt.pos(btnV.width - txt.width >> 1, btnV.height - txt.height >> 1);
                 btnV.addChild(txt);
                 this.addChild(btnV);
             }
-            this.x = Laya.stage.width - this.width >> 1;
-            this.y = Laya.stage.height - this.height >> 1;
         }
     }
 }
@@ -92,13 +88,11 @@ export class BtnSelector extends Selector {
             let db: any = DH.instance.story.sys.Buttons[para[0]];
             if (db.image1.path == "" && db.image1.path == "")
                 continue;
-            let btnV: Button = new Button(parseInt(para[0]), (e: Event) => this.clickHandler(e));
+            let btnV: Button = new Button(parseInt(para[0]), (e: Event) => this.clickHandler(e));//按钮分歧使用绝对坐标
             btnV.idx = idx++;
             btnV.x = parseInt(para[1]);
             btnV.y = parseInt(para[2]);
             this.addChild(btnV);
         }
-        // this.x = Laya.stage.width - this.width >> 1;
-        // this.y = Laya.stage.height - this.height >> 1;
     }
 }
