@@ -76,9 +76,34 @@ export class SelectorEx extends Selector {
     }
 }
 
+export class SelectorEx2 extends Selector {
+    constructor(cmd: Cmd) {
+        super(cmd);
+    }
+
+    protected initView(): any {
+        for (let i = 0; i < this.links.length; i++) {
+            let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
+            if (db.image1.path != "" || db.image1.path != "") {
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
+                btnV.idx = i;
+                btnV.y = i * btnV.height;
+                let txt: Text = new Text();
+                txt.fontSize = 22;
+                txt.color = "#FFFFFF";
+                txt.text = this.para[15 + i * 3];
+                txt.pos(btnV.width - txt.width >> 1, btnV.height - txt.height >> 1);
+                btnV.addChild(txt);
+                this.addChild(btnV);
+            }
+        }
+    }
+}
+
 export class BtnSelector extends Selector {
     constructor(cmd: Cmd) {
         super(cmd);
+        this.mouseThrough = false;
     }
 
     protected initView() {

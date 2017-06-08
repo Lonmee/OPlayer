@@ -1,7 +1,10 @@
 import Graphics = laya.display.Graphics;
 import DH from "../../../../data/DH";
+import {Path} from "../../../../data/sotry/Story";
 import Sprite = laya.display.Sprite;
 import Event = laya.events.Event;
+import Point = laya.maths.Point;
+import Handler = laya.utils.Handler;
 /**
  * Created by ShanFeng on 5/31/2017.
  */
@@ -43,9 +46,9 @@ export function getBtnData(idx: number) {
 }
 
 export class UIImg extends Sprite {
-    constructor(path: string) {
+    constructor(path: string, repos = null) {
         super();
-        this.loadImage(getUILink(path));
+        this.loadImage(getUILink(path), 0, 0, 0, 0, repos);
     }
 }
 
@@ -57,45 +60,146 @@ export class BGImg extends Sprite {
 }
 
 export class Button extends Sprite {
+    private _toggled: boolean;
+
     i1: Graphics;
     i2: Graphics;
     idx: number;
 
-    constructor(idx: number, private cHandler = null, private repos = null) {
+    constructor(idx: number, private cHandler = null, private repos = null, private toggle: boolean = false) {
         super();
         this.init(getBtnData(idx));
     }
 
     init({name, image1, image2, x, y}) {
         this.name = name;
-        this.autoSize = true;
-        this.graphics = this.i1 = new Graphics();
-        if (image1.path.length) {
-            this.i1.loadImage(getBtnLink(image1.path), 0, 0, 0, 0, this.repos);
+        //如果图一为空则互换图一图二
+        if (image1.path.length == 0) {
+            image1 = image2;
+            image2.path = '';
         }
-        this.i2 = new Graphics();
+        if (image1.path.length) {
+            this.graphics = this.i1 = new Graphics();
+            this.i1.loadImage(getBtnLink(image1.path), 0, 0, 0, 0, this.completeHandler);
+        }
         if (image2.path.length) {
+            this.i2 = new Graphics();
             this.i2.loadImage(getBtnLink(image2.path));
         }
         this.x = x;
         this.y = y;
         this.on(Event.CLICK, this, this.click);
-        this.on(Event.MOUSE_OVER, this, this.switchImg);
-        this.on(Event.MOUSE_OUT, this, this.restoreImg);
+        if (!this.toggle) {
+            this.on(Event.MOUSE_OVER, this, this.switchImg);
+            this.on(Event.MOUSE_OUT, this, this.restoreImg);
+        }
+    }
+
+    completeHandler(e) {
+        this.size(e.width, e.height);
+        if (this.repos)
+            this.repos();
+    }
+
+    get toggled(): boolean {
+        return this._toggled;
+    }
+
+    set toggled(value: boolean) {
+        this._toggled = value;
+        this.alpha = value ? .2 : 1;
     }
 
     private click(e: Event) {
+        if (this.toggle) {
+            this.toggled = !this._toggled;
+        }
         if (this.cHandler)
             this.cHandler.call(null, e);
-        else
-            console.log(this.name, "clicked");
+        // else
+        //     console.log(this.name, "clicked");
     }
 
     private switchImg(e: Event) {
-        this.graphics = this.i2;
+        if (this.i2)
+            this.graphics = this.i2;
+        else {
+            this.alpha = .2;
+        }
     }
 
     private restoreImg(e: Event) {
-        this.graphics = this.i1;
+        if (this.i2)
+            this.graphics = this.i1;
+        else {
+            this.alpha = 1;
+        }
+    }
+}
+
+export class Slider extends Sprite {
+    private bar: UIImg;
+    private barMask: Sprite;
+
+    constructor(bg: Path, fg: Path) {
+        super();
+        this.constructView(bg, fg);
+    }
+
+    private constructView(bg: Path, fg: Path) {
+        this.addChild(new UIImg(bg.path));
+        this.barMask = new Sprite();
+        this.bar = new UIImg(fg.path, Handler.create(this, this.initMask, null, true));
+        this.bar.on(Event.MOUSE_DOWN, this, this.mdHandler);
+        this.bar.on(Event.MOUSE_UP, this, this.muHandler);
+        this.stage.on(Event.MOUSE_UP, this, this.muHandler);
+        this.stage.on(Event.MOUSE_OUT, this, this.muHandler);
+    }
+
+    private initMask(tex) {
+        this.barMask.graphics.drawRect(0, 0, tex.width, tex.height, 0xFFFFFF);
+        this.barMask.x = -50;
+        this.barMask.width = tex.width;
+        this.bar.mask = this.barMask;
+        this.addChild(this.bar);
+    }
+
+    private mdHandler(e: Event) {
+        // this.on(Event.MOUSE_MOVE, this, this.changeHandler);
+        this.stage.on(Event.MOUSE_MOVE, this, this.changeHandler);
+        this.changeHandler(e);
+    }
+
+    private muHandler(e: Event) {
+        // this.off(Event.MOUSE_MOVE, this, this.changeHandler);
+        this.stage.off(Event.MOUSE_MOVE, this, this.changeHandler);
+    }
+
+    private changeHandler(e: Event): void {
+        let v: number;
+        let mX: number = this.globalToLocal(new Point(e.stageX, e.stageY)).x;
+        //取值的最大范围
+        let max: number = this.bar.x + this.bar.width;
+        //取值的最小范围
+        let min: number = this.bar.x;
+        if (mX > min && mX < max) {
+            this.barMask.x = mX - this.barMask.width;
+            v = (this.barMask.x + this.barMask.width) / (this.bar.width);
+        } else if (mX <= min) {
+            this.barMask.x = -this.barMask.width;
+            v = 0;
+        } else if (mX >= max) {
+            this.barMask.x = this.bar.x;
+            v = 1;
+        }
+        this.event(Event.CHANGE, v);
+    }
+
+    /**
+     * 设置位置，0~1
+     * @param v
+     */
+    public setValue(v: number) {
+        this.barMask.x = this.bar.width * v - this.barMask.width;
     }
 }

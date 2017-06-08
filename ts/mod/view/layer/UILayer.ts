@@ -5,7 +5,6 @@ import Sprite = laya.display.Sprite;
 import UIFac, {MenuEnum} from "../ui/UIFac";
 import {Cmd} from "../../../data/sotry/Story";
 import DH from "../../../data/DH";
-import Conf from "../../../data/Conf";
 import {Layer} from "./Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
@@ -25,11 +24,6 @@ export default class UILayer extends Layer {
             case 1010: //剧情分歧EX
             case 1011: //剧情分歧EX2
             case 204: { //按钮分歧
-                // let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
-                // while (choice == "") {
-                //     choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [" + cmd.links + "]");
-                // }
-                // this.dh.eventPoxy.event(Conf.ITEM_CHOOSEN, cmd.links[parseInt(choice) - 1]);
                 this.showSelector(cmd);
                 return;
             }
@@ -37,18 +31,19 @@ export default class UILayer extends Layer {
             //UI控制指令
             case 150: //"刷新UI画面"
             case 151: //"返回游戏界面"
-                this.showMenu(MenuEnum.game);
+                this.closeMenu();
                 break;
             case 208: //"返回标题画面"
                 this.showMenu(MenuEnum.title);
                 break;
             case 214: //"呼叫游戏界面"
-                this.showMenu(MenuEnum.game);
+                this.showMenu(parseInt(cmd.para[0]));
                 break;
             case 218: //"强制存档读档"
                 this.showMenu(MenuEnum.save);
                 break;
             case 110: //"打开指定网页";
+                break;
             case 111: //"禁用开启菜单功能";
         }
     }
@@ -65,7 +60,7 @@ export default class UILayer extends Layer {
     }
 
     showMenu(idx: number) {
-        this.closeMenu();
+        // this.closeMenu();
         this.addChild(this.uiFac.getMenu(idx));
     }
 

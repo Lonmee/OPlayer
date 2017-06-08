@@ -1,12 +1,15 @@
 /**
  * Created by ShanFeng on 5/29/2017.
  */
-import {Menu, Setting, Title, Replay, Game, Save, Store} from "./comp/Menu";
+import {BGM, CG, Game, Menu, Replay, Restore, Save, Setting, Title} from "./comp/Menu";
 import DH from "../../../data/DH";
-import {Selector, BtnSelector, SelectorEx} from "./comp/Selector";
+import {BtnSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
 import {Cmd} from "../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
-export enum MenuEnum{game, title, replay, setting, save, store}
+import {StateEnum} from "../../state/State";
+import Conf from "../../../data/Conf";
+import Event = laya.events.Event;
+export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
 export default class UIFac {
     private msg: MSG;
     private dh: DH = DH.instance;
@@ -20,23 +23,38 @@ export default class UIFac {
         let m: Menu;
         switch (type) {
             case 0 :
-                m = new Game(this.dh.story.sys.gMenu);
-                break;
-            case 1 :
                 m = new Title(this.dh.story.sys.title);
                 break;
+            case 1 :
+            case 10001://游戏菜单
+                m = new Game(this.dh.story.sys.gMenu);
+                break;
             case 2:
+            case 10002://剧情回放
                 m = new Replay(this.dh.story.sys.Replay);
                 break;
             case 3:
-                m = new Setting(this.dh.story.sys.Setting);
+            case 10003://CG
+                m = new CG(this.dh.story.sys.CG);
                 break;
             case 4:
-                m = new Save(this.dh.story.sys.SaveData);
+            case 10004://BGM
+                m = new BGM(this.dh.story.sys.BGM);
                 break;
             case 5:
-                m = new Store(this.dh.story.sys.Setting);
+            case 10005://存档
+                m = new Save(this.dh.story.sys.SaveData);
+            case 6:
+            case 10006://读档
+                m = new Restore(this.dh.story.sys.SaveData);
                 break;
+            case 7:
+            case 10007://环境设置
+                m = new Setting(this.dh.story.sys.Setting);
+                break;
+            //case 10008://离开游戏 ignore
+            case 10009://自动剧情
+                DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
         }
         return this.menuArr[type] = m;
     }
@@ -48,7 +66,7 @@ export default class UIFac {
             case 1010:
                 return new SelectorEx(cmd);
             case 1011:
-                return new Selector(cmd);
+                return new SelectorEx2(cmd);
             case 204:
                 return new BtnSelector(cmd);
         }

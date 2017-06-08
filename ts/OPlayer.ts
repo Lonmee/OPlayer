@@ -21,9 +21,9 @@ export class OPlayer {
         Conf.info.qlty = qlty;
         Conf.info.miniPath = path;
 
-        Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
+        Laya.init(Laya.Browser.width, Laya.Browser.height/*, WebGL*/);
 
-        this.dh.cmdLine = new CmdLine()
+        this.dh.cmdLine = new CmdLine();
         this.dh.binLoader = new BinLoader();
         // this.dh.binLoader = new BinLoader(true);
     }

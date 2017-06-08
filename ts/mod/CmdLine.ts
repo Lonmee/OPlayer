@@ -83,10 +83,14 @@ export default class CmdLine {
         this.pause = false;
     }
 
-    changeState(cmd: Cmd) {
-        this.state = cmd.code == 103 ?
-            this.states[parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal] :
-            this.states[parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal];
+    changeState(cmd: Cmd | number) {
+        if (typeof cmd == "number") {
+            this.states[cmd];
+        } else {
+            this.state = cmd.code == 103 ?
+                this.states[parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal] :
+                this.states[parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal];
+        }
     }
 
     resume(e: Event | number) {
@@ -129,7 +133,6 @@ export default class CmdLine {
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
-                case 151: //"返回游戏界面"
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
                 case 218: //"强制存档读档"
@@ -143,6 +146,11 @@ export default class CmdLine {
                 case 204:  //按钮分歧
                 case 100 : { //"显示文章"
                     this.pause = true;
+                    this.viewMgr.exe(cmd);
+                    return;
+                }
+                case 151: {//"返回游戏界面"
+                    this.pause = false;
                     this.viewMgr.exe(cmd);
                     return;
                 }
