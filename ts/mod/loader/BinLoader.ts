@@ -13,8 +13,8 @@ import DStory, {
     Cmd,
     CusUI,
     CusUIItem, DChapter,
-    FLayer,
-    FLayerItem,
+    DFLayer,
+    DFLayerItem,
     GameMenu,
     IdxBtn,
     ImgBtn,
@@ -191,7 +191,6 @@ export class BinLoader implements IBinloader {
             }
             //for commands
             //兼容单包、分包策略
-            story.fLayerArr = [];
             if (this.single) {
                 byte.pos += 4;
                 story.name = parseUTF();
@@ -522,8 +521,8 @@ export class BinLoader implements IBinloader {
             }
         }
 
-        function parseFLayerArr(): FLayer[] {
-            let arr: FLayer[] = [];
+        function parseFLayerArr(): DFLayer[] {
+            let arr: DFLayer[] = [];
             let len = byte.getInt32();
             for (let i = 0; i < len; i++) {
                 arr.push(parseFLayer());
@@ -531,7 +530,7 @@ export class BinLoader implements IBinloader {
             return arr;
         }
 
-        function parseFLayer(): FLayer {
+        function parseFLayer(): DFLayer {
             return {
                 cmdArr: parseCmdArr(),
                 x: byte.getInt32(),
@@ -541,8 +540,8 @@ export class BinLoader implements IBinloader {
             }
         }
 
-        function parseFLayerItemArr(): FLayerItem[] {
-            let arr: FLayerItem[] = [];
+        function parseFLayerItemArr(): DFLayerItem[] {
+            let arr: DFLayerItem[] = [];
             let len = byte.getInt32();
             for (let i = 0; i < len; i++) {
                 arr.push(parseFLayerItem());
@@ -550,7 +549,7 @@ export class BinLoader implements IBinloader {
             return arr;
         }
 
-        function parseFLayerItem(): FLayerItem {
+        function parseFLayerItem(): DFLayerItem {
             return {
                 type: byte.getInt32(),
                 x: byte.getInt32(),

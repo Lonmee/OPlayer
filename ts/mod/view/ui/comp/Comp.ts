@@ -69,6 +69,8 @@ export class Button extends Sprite {
     constructor(idx: number, private cHandler = null, private repos = null, private toggle: boolean = false) {
         super();
         this.init(getBtnData(idx));
+        //todo:体验纠结
+        this.mouseThrough = true;
     }
 
     init({name, image1, image2, x, y}) {
@@ -116,8 +118,8 @@ export class Button extends Sprite {
         }
         if (this.cHandler)
             this.cHandler.call(null, e);
-        // else
-        //     console.log(this.name, "clicked");
+        else
+            console.log(this.name, "clicked");
     }
 
     private switchImg(e: Event) {

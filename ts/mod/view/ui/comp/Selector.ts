@@ -33,7 +33,7 @@ export class Selector extends Sprite implements ISelectable {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + 10;
+                btnV.y = i * btnV.height;
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -103,7 +103,6 @@ export class SelectorEx2 extends Selector {
 export class BtnSelector extends Selector {
     constructor(cmd: Cmd) {
         super(cmd);
-        this.mouseThrough = false;
     }
 
     protected initView() {

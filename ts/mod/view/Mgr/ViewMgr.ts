@@ -53,7 +53,7 @@ export class ViewMgr extends Sprite implements IMgr {
             this.addChild(layer);
 
         //region for temp testing
-        if (Browser.onMobile) {
+        // if (Browser.onMobile) {
             let t: Label = new Label();
             t.name = "cmd";
             t.fontSize = 24;
@@ -69,7 +69,7 @@ export class ViewMgr extends Sprite implements IMgr {
             // window.onerror = function (m, f, l, c, e) {
             //     (<Label>this.stage.getChildByName('error')).text = e.message + e.stack;
             // }
-        }
+        // }
         //endregion
 
     }

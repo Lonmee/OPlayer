@@ -3,9 +3,12 @@ import Graphics = laya.display.Graphics;
 import {BGImg, Button, Slider, UIImg} from "./Comp";
 import DH from "../../../../data/DH";
 import {IdxBtn, Path} from "../../../../data/sotry/Story";
-import Event = laya.events.Event;
-import {MenuEnum} from "../UIFac";
 import {MgrEnum} from "../../../CmdLine";
+import Event = laya.events.Event;
+import Handler = laya.utils.Handler;
+import {MenuEnum} from "../UIFac";
+import Conf from "../../../../data/Conf";
+import {StateEnum} from "../../../state/State";
 /**
  * Created by ShanFeng on 5/29/2017.
  */
@@ -15,6 +18,10 @@ export class Menu extends Sprite {
         this.initView();
         this.initAudio();
         this.initListener();
+    }
+
+    protected close() {
+        this.event(Event.CLOSE);
     }
 
     protected initView() {
@@ -84,12 +91,36 @@ export class Title extends Menu {
 }
 
 export class Game extends Menu {
+    btnArr: Button[];
+
     constructor(data: any) {
         super(data);
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg.path, this.data.buttons);
+        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, this.data.buttons);
+    }
+
+    initListener() {
+        for (let i = 0; i < this.btnArr.length; i++) {
+            this.btnArr[i].idx = i;
+            this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
+                switch ((<Button>e.target).idx) {
+                    case 0:
+                        MenuEnum.save
+                    case 1:
+                        MenuEnum.restore
+                    case 2:
+                        MenuEnum.replay
+                    case 3:
+                        DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
+                    case 4:
+                        MenuEnum.setting
+                    case 5:
+                        this.close();
+                }
+            })
+        }
     }
 }
 
@@ -212,9 +243,7 @@ export class Setting extends Menu {
             this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
                 switch ((<Button>e.target).idx) {
                     case 0:
-                        if (this.parent) {
-                            this.parent.removeChild(this);
-                        }
+                        this.close();
                         // DH.instance.mgrArr[MgrEnum.view].exe({code: 151, para: [], idt: 0});//so crazy
                         break;
                     case 1:
@@ -280,4 +309,8 @@ export class Setting extends Menu {
     setVolume(n: number, v: number) {
         this.sliders[n][0].setValue(v);
     }
+}
+
+export class CUI extends Menu {
+
 }

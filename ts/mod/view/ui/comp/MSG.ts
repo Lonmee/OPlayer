@@ -70,8 +70,8 @@ export class MSG extends Sprite {
 
     protected clickHandler(e: Event) {
         //todo:对话关闭条件需修改
-        if (!this.contains(e.target))
-            return;
+        // if (!this.contains(e.target))
+        //     return;
         DH.instance.eventPoxy.event(e.type, e);
         if (this.parent)
             this.parent.removeChild(this);

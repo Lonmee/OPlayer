@@ -9,6 +9,7 @@ export default class FloatLayer extends Layer{
     exe(cmd: Cmd) {
         switch (cmd.code) {
             case 112: {//"悬浮组件开关";
+                this.addChild(this.uiFac.getFLayer());
                 break;
             }
         }

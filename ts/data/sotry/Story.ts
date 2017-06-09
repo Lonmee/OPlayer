@@ -219,15 +219,15 @@ export interface CusUIItem {
     color: Color
 }
 
-export interface FLayer {
+export interface DFLayer {
     cmdArr: Cmd[]
     x: number
     y: number
     name: string
-    itemArr: FLayerItem[]
+    itemArr: DFLayerItem[]
 }
 
-export interface FLayerItem {
+export interface DFLayerItem {
     type: number
     x: number
     y: number
@@ -263,7 +263,7 @@ export default class Story {
     id: number;
     header: Header = {};
     sys: any = {};
-    fLayerArr: FLayer[] = [];
+    fLayerArr: DFLayer[];
     dChapterArr: DChapter[];
 
     gotoChapter(id: number) {

@@ -8,10 +8,17 @@ import DH from "../../../data/DH";
 import {Layer} from "./Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
+import Conf from "../../../data/Conf";
+import {StateEnum} from "../../state/State";
+import Event = laya.events.Event;
+import {Menu} from "../ui/comp/Menu";
 
 export default class UILayer extends Layer {
-    uiFac: UIFac = new UIFac();
-    dh: DH = DH.instance;
+    board: Sprite;
+
+    constructor() {
+        super();
+    }
 
     exe(cmd: Cmd) {
         switch (cmd.code) {
@@ -37,7 +44,10 @@ export default class UILayer extends Layer {
                 this.showMenu(MenuEnum.title);
                 break;
             case 214: //"呼叫游戏界面"
-                this.showMenu(parseInt(cmd.para[0]));
+                if (parseInt(cmd.para[0]) != 109)
+                    this.showMenu(parseInt(cmd.para[0]));
+                else
+                    this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
                 break;
             case 218: //"强制存档读档"
                 this.showMenu(MenuEnum.save);
@@ -60,8 +70,9 @@ export default class UILayer extends Layer {
     }
 
     showMenu(idx: number) {
-        // this.closeMenu();
-        this.addChild(this.uiFac.getMenu(idx));
+        let m: Menu = this.uiFac.getMenu(idx);
+        m.once(Event.CLOSE, this, this.closeMenu, [idx]);
+        this.addChild(m);
     }
 
     closeMenu(idx: number = NaN) {

@@ -37,3 +37,11 @@ Browser.window.conf = Conf;
 Browser.window.dh = DH.instance;
 
 //console.log('%c this is color! ', 'background: #222; color: #bada55‘);
+
+//todo:import//region improved @laya.core.js:2745
+/*if (isHit = sp.getGraphicBounds().contains(mouseX, mouseY)) {
+ rgba = sp.graphics._one[0].getPixels(mouseX, mouseY, 1, 1);
+ pure = rgba[0] & rgba[1] & rgba[2];
+ isHit = !(rgba[3] < 5 && (pure == 0 || pure == 255));
+ }*/
+//endregion

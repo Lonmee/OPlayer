@@ -1,13 +1,12 @@
 /**
  * Created by ShanFeng on 5/29/2017.
  */
-import {BGM, CG, Game, Menu, Replay, Restore, Save, Setting, Title} from "./comp/Menu";
+import {BGM, CG, CUI, Game, Menu, Replay, Restore, Save, Setting, Title} from "./comp/Menu";
 import DH from "../../../data/DH";
 import {BtnSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
 import {Cmd} from "../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
-import {StateEnum} from "../../state/State";
-import Conf from "../../../data/Conf";
+import FLayer from "./comp/FLayer";
 import Event = laya.events.Event;
 export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
 export default class UIFac {
@@ -52,9 +51,14 @@ export default class UIFac {
             case 10007://环境设置
                 m = new Setting(this.dh.story.sys.Setting);
                 break;
-            //case 10008://离开游戏 ignore
-            case 10009://自动剧情
-                DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
+            // case 10008://离开游戏 ignore
+            // case 10009://自动剧情 移入UILayer
+            //     DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
+            //     break;
+            case  10010://新版商城
+                break;
+            default:
+                m = new CUI(this.dh.story.sys.Cuis[type]);
         }
         return this.menuArr[type] = m;
     }
@@ -74,5 +78,9 @@ export default class UIFac {
 
     getMSG(cmd: Cmd): MSG {
         return this.msg ? this.msg.update(cmd) : this.msg = new MSG(cmd);
+    }
+
+    getFLayer() {
+        return new FLayer(this.dh.story.fLayerArr);
     }
 }

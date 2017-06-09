@@ -127,9 +127,9 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
             console.log(cmd.code, this.cmdList.get(cmd.code));
-            if (Browser.onMobile) {
+            // if (Browser.onMobile) {
                 (Laya.stage.getChildByName("cmd") as Label).text = cmd.code + this.cmdList.get(cmd.code);
-            }
+            // }
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
@@ -138,7 +138,6 @@ export default class CmdLine {
                 case 218: //"强制存档读档"
                 case 110: //"打开指定网页";
                 case 111: //"禁用开启菜单功能";
-                case 112: //"悬浮组件开关";
 
                 case 101: //剧情分歧
                 case 1010: //剧情分歧EX
