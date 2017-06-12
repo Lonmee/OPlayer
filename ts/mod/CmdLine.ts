@@ -190,43 +190,23 @@ export default class CmdLine {
                 }
 
                 case 200://条件分歧
-                    // 0：数值索引 (二周目变量为: EX|数值索引,鼠标按下：MO|,鲜花：FL|,平台：PT|，支付：PA )
-                    // 1：关系Index(==,>=,<=,>,<,!=)() 或支付下的支付ID
-                    // 2:比较对象为常量(0)、其他数值(1)或二周目变量(2)
-                    // 3：操作数
-                    // 4：有无else(1,0)
-                    // 5:显示信息【若为鼠标按下】 1：矩形类型
-                                                // 2：矩形大小(x,y,w,h)或图片编号
-                                                // 3：0是经过1是按下
-                                                // 4：有无else(1,0)】
-                    //          【若为平台】0:PT|
-                                        // 1:0
-                                        // 2:0
-                                        // 3:平台[1pc,2web,3Android,4IOS,5H5],
-                                        // 4:有无else(1,0)
-                                        // 5:显示信息
-						// 	 	【若为支付】0:PA| 加上 二周目变量
-                                        // 1:是否为恢复购买
-                                        // 2:商品名称（ID）
-                                        // 3:无
-                                        // 4:有无else留位
-                                        // 5:说明
-						// 		【若为任务】长度+1  0:0
-                                        // 1:6(关系index不在指定范围)
-                                        // 2:0
-                                        // 3:0
-                                        // 4:有无else(1,0)
-                                        // 5:显示信息
-                                        // 6:TA|任务编号
-                    break;
+                    let v1: number = this.valueMgr.digByTag(cmd.para[0]);
+                    let v2: number = cmd.para[2] == "0" ? parseInt(cmd.para[3]) :
+                        cmd.para[2] == "1" ? this.valueMgr.vDic.get(cmd.para[3]) :
+                            this.valueMgr.exVDic.get([cmd.para[3]]);
+                    let choice = this.valueMgr.compare(v1, v2, cmd.para[1]) ? 1 : 2;
+                    console.log(v1);
+                    //兼容条件结构特例
+                    if (choice == 1 || choice == 2 && cmd.links.length == 2)
+                        this.curSid = cmd.links[choice - 1];
+                    return;
+
                 case 217: {//高级条件分歧
-                    // 0：0（或者）、1（并且）
-                    // 1：0(无else)、1（有else）
-                    // 2:说明信息
-                    // 3:共几个条件项
-                    // 4： 是以&符号隔开的条件分歧每项(增加了最大小值比较)
-                    // 5： 是以&符号隔开的条件分歧每项
-                    // 5:...最个多有5
+                    // cmd.para[0] && : ||;
+                    // let v1;
+                    // let v2;
+                    // let choice:number;
+
                     let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
                     while (choice == "") {
                         choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
