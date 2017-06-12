@@ -1,19 +1,19 @@
 import Sprite = laya.display.Sprite;
 import Stat = laya.utils.Stat;
 import WebGL = laya.webgl.WebGL;
-import Conf from "../../../data/Conf";
-import DH from "../../../data/DH";
-import UILayer from "../layer/UILayer";
-import GameLayer from "../layer/GameLayer";
-import {Cmd} from "../../../data/sotry/Story";
+import Conf from "../../data/Conf";
+import DH from "../../data/DH";
+import UILayer from "../view/layer/UILayer";
+import GameLayer from "../view/layer/GameLayer";
+import {Cmd} from "../../data/sotry/Story";
 import {IMgr} from "./Mgr";
-import FloatLayer from "../layer/FloatLayer";
+import FloatLayer from "../view/layer/FloatLayer";
 import Event = laya.events.Event;
-import {Layer} from "../layer/Layer";
+import {Layer} from "../view/layer/Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
 import Stage = laya.display.Stage;
-import Layouter from "../ui/comp/Layouter";
+import Layouter from "../view/ui/comp/Layouter";
 /**
  * Created by Lonmee on 4/23/2017.
  */
@@ -53,23 +53,11 @@ export class ViewMgr extends Sprite implements IMgr {
             this.addChild(layer);
 
         //region for temp testing
-        // if (Browser.onMobile) {
-            let t: Label = new Label();
-            t.name = "cmd";
-            t.fontSize = 24;
-            Layouter.align(t, 4);
-            this.stage.addChild(t);
-
-            // t = new Label();
-            // t.name = "error";
-            // t.fontSize = 24;
-            // Layouter.top(t);
-            // this.stage.addChild(t);
-            //
-            // window.onerror = function (m, f, l, c, e) {
-            //     (<Label>this.stage.getChildByName('error')).text = e.message + e.stack;
-            // }
-        // }
+        let t: Label = new Label();
+        t.name = "cmd";
+        t.fontSize = 24;
+        Layouter.align(t, 4);
+        this.stage.addChild(t);
         //endregion
 
     }
@@ -86,7 +74,7 @@ export class ViewMgr extends Sprite implements IMgr {
                 Conf.frameworks.showStatus = !Conf.frameworks.showStatus;
                 break;
             case "KeyN":
-                this.dh.eventPoxy.event(e.type, e);
+                this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
         }
     }
 
@@ -105,14 +93,9 @@ export class ViewMgr extends Sprite implements IMgr {
      * @param cmd
      */
     exe(cmd: Cmd) {
-        /*//UI交互类 & UI控制指令
-         this.ul.exe(cmd);
-
-         //悬浮组件
-         this.fl.exe(cmd);
-
-         //视图操作命令
-         this.gl.exe(cmd);*/
+        // UI交互类 & UI控制指令:this.ul.exe(cmd);
+        // 悬浮组件:this.fl.exe(cmd);
+        // 视图操作命令:this.gl.exe(cmd);
         for (let i = this.layerArr.length; i > 0;) {
             this.layerArr[--i].exe(cmd);
         }

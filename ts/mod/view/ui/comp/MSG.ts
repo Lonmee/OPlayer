@@ -6,6 +6,7 @@ import Sprite = laya.display.Sprite;
 import Text = laya.display.Text;
 import Color = laya.utils.Color;
 import Event = laya.events.Event;
+import Conf from "../../../../data/Conf";
 /**
  * Created by ShanFeng on 6/5/2017.
  */
@@ -72,7 +73,7 @@ export class MSG extends Sprite {
         //todo:对话关闭条件需修改
         // if (!this.contains(e.target))
         //     return;
-        DH.instance.eventPoxy.event(e.type, e);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
         if (this.parent)
             this.parent.removeChild(this);
     }

@@ -53,8 +53,6 @@ export default class UIFac {
                 break;
             // case 10008://离开游戏 ignore
             // case 10009://自动剧情 移入UILayer
-            //     DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
-            //     break;
             case  10010://新版商城
                 break;
             default:

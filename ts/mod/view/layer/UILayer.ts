@@ -12,10 +12,9 @@ import Conf from "../../../data/Conf";
 import {StateEnum} from "../../state/State";
 import Event = laya.events.Event;
 import {Menu} from "../ui/comp/Menu";
+import {MSG} from "../ui/comp/MSG";
 
 export default class UILayer extends Layer {
-    board: Sprite;
-
     constructor() {
         super();
     }
@@ -58,7 +57,7 @@ export default class UILayer extends Layer {
         }
     }
 
-    showMSG(cmd: Cmd) {
+    private showMSG(cmd: Cmd) {
         if (cmd.para[7] == "1")
             this.addChild(this.uiFac.getMSG(cmd));
         else
@@ -69,19 +68,22 @@ export default class UILayer extends Layer {
         this.addChild(this.uiFac.getSelector(cmd));
     }
 
-    showMenu(idx: number) {
+    private showMenu(idx: number) {
         let m: Menu = this.uiFac.getMenu(idx);
         m.once(Event.CLOSE, this, this.closeMenu, [idx]);
         this.addChild(m);
     }
 
-    closeMenu(idx: number = NaN) {
+    private closeMenu(idx: number = NaN) {
         if (isNaN(idx)) {
             while (this.numChildren) {
                 this.removeChildAt(0);
             }
         } else {
             this.removeChild(this.uiFac.getMenu(idx));
+            if (this.numChildren == 0 || this.numChildren == 1 && this.getChildAt(0) instanceof MSG) {
+                this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+            }
         }
     }
 }

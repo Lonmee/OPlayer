@@ -1,4 +1,4 @@
-import {Cmd} from "../../../data/sotry/Story";
+import {Cmd} from "../../data/sotry/Story";
 import {IMgr} from "./Mgr";
 import SoundManager = laya.media.SoundManager;
 /**

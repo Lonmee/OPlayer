@@ -49,6 +49,7 @@ export default class Conf {
     //Event
     static LOADING_PROGRESS: string = "loading_progress";
     static PLAY_CHAPTER: string = "play_chapter";
+    static CMD_LINE_RESUME: string = "cmd_line_resume";
     static ITEM_CHOOSEN: string = "item_choosen";
     static CHANGE_STATE: string = "change_state";
 

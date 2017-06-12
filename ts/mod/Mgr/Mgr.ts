@@ -1,4 +1,4 @@
-import {Cmd} from "../../../data/sotry/Story";
+import {Cmd} from "../../data/sotry/Story";
 /**
  * Created by ShanFeng on 5/22/2017.
  */

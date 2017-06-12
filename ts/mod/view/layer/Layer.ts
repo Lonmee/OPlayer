@@ -1,4 +1,4 @@
-import {IMgr} from "../Mgr/Mgr";
+import {IMgr} from "../../Mgr/Mgr";
 import {Cmd} from "../../../data/sotry/Story";
 import Sprite = laya.display.Sprite;
 import DH from "../../../data/DH";

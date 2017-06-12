@@ -13,6 +13,8 @@ import {StateEnum} from "../../../state/State";
  * Created by ShanFeng on 5/29/2017.
  */
 export class Menu extends Sprite {
+    protected btnArr: Button[];
+
     constructor(protected data: any) {
         super();
         this.initView();
@@ -143,7 +145,7 @@ export class CG extends Menu {
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
 
         //noPic
         this.data.noPic;
@@ -153,6 +155,21 @@ export class CG extends Menu {
 
         //CGList
         this.data.CGList;
+    }
+
+    initListener() {
+        for (let i = 0; i < this.btnArr.length; i++) {
+            this.btnArr[i].idx = i;
+            this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
+                switch ((<Button>e.target).idx) {
+                    case 0:
+                        this.close();
+                        break;
+                    default:
+
+                }
+            });
+        }
     }
 }
 
@@ -181,7 +198,23 @@ export class Save extends Menu {
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+    }
+
+    initListener() {
+        for (let i = 0; i < this.btnArr.length; i++) {
+            this.btnArr[i].idx = i;
+            this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
+                switch ((<Button>e.target).idx) {
+                    case 0:
+                    case 1:
+                        this.close();
+                        break;
+                    default:
+
+                }
+            });
+        }
     }
 }
 
@@ -191,7 +224,23 @@ export class Restore extends Menu {
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+    }
+
+    initListener() {
+        for (let i = 0; i < this.btnArr.length; i++) {
+            this.btnArr[i].idx = i;
+            this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
+                switch ((<Button>e.target).idx) {
+                    case 0:
+                    case 1:
+                        this.close();
+                        break;
+                    default:
+
+                }
+            });
+        }
     }
 }
 

@@ -1,14 +1,14 @@
 import Conf from "../data/Conf";
 import DH from "../data/DH";
-import ValueMgr from "./view/Mgr/ValueMgr";
-import VideoMgr from "./view/Mgr/VideoMgr";
-import AudioMgr from "./view/Mgr/AudioMgr";
+import ValueMgr from "./Mgr/ValueMgr";
+import VideoMgr from "./Mgr/VideoMgr";
+import AudioMgr from "./Mgr/AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {DChapter} from "../data/sotry/Story";
 import Scene from "./cmd/Scene";
 import {AutoState, FFState, IState} from "./state/State";
 import CmdList from "./cmd/CmdList";
-import AssMgr from "./view/Mgr/AssMgr";
+import AssMgr from "./Mgr/AssMgr";
 /**
  * 负责命令分发至各管理器
  * Created by ShanFeng on 5/2/2017.
