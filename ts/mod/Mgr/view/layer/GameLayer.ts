@@ -1,6 +1,6 @@
 import Sprite = laya.display.Sprite;
 import Dictionary = laya.utils.Dictionary;
-import {Cmd} from "../../../data/sotry/Story";
+import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
 /**
  * Created by ShanFeng on 5/16/2017.

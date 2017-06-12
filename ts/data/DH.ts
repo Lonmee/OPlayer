@@ -1,16 +1,10 @@
 import Dictionary = laya.utils.Dictionary;
 import Conf from "./Conf";
-import {ViewMgr} from "../mod/Mgr/ViewMgr";
 import CmdLine from "../mod/CmdLine";
-import EventDispatcher = laya.events.EventDispatcher;
 import Story from "./sotry/Story";
-import UIFac from "../mod/view/ui/UIFac";
 import {IMgr} from "../mod/Mgr/Mgr";
-import AssMgr from "../mod/Mgr/AssMgr";
-import ValueMgr from "../mod/Mgr/ValueMgr";
-import AudioMgr from "../mod/Mgr/AudioMgr";
-import VideoMgr from "../mod/Mgr/VideoMgr";
 import Preloader from "../mod/loader/Preloader";
+import EventDispatcher = laya.events.EventDispatcher;
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder

@@ -2,7 +2,7 @@ import LoaderManager = laya.net.LoaderManager;
 import Handler = laya.utils.Handler;
 import Loader = laya.net.Loader;
 import DH from "../../data/DH";
-import {getBtnData, getBtnLink, getUILink} from "../view/ui/comp/Comp";
+import {getBtnData, getBtnLink, getUILink} from "../Mgr/view/ui/comp/Comp";
 import Conf from "../../data/Conf";
 /**
  * Created by ShanFeng on 6/5/2017.

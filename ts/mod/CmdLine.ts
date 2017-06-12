@@ -218,6 +218,7 @@ export default class CmdLine {
                                         // 4:有无else(1,0)
                                         // 5:显示信息
                                         // 6:TA|任务编号
+                    break;
                 case 217: {//高级条件分歧
                     // 0：0（或者）、1（并且）
                     // 1：0(无else)、1（有else）

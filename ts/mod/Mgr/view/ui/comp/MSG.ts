@@ -1,12 +1,12 @@
-import {Cmd, TalkWin} from "../../../../data/sotry/Story";
-import DH from "../../../../data/DH";
+import {Cmd, TalkWin} from "../../../../../data/sotry/Story";
+import DH from "../../../../../data/DH";
 import {UIImg} from "./Comp";
 import Layouter from "./Layouter";
 import Sprite = laya.display.Sprite;
 import Text = laya.display.Text;
 import Color = laya.utils.Color;
 import Event = laya.events.Event;
-import Conf from "../../../../data/Conf";
+import Conf from "../../../../../data/Conf";
 /**
  * Created by ShanFeng on 6/5/2017.
  */

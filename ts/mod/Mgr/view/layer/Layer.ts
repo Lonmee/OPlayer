@@ -1,7 +1,7 @@
-import {IMgr} from "../../Mgr/Mgr";
-import {Cmd} from "../../../data/sotry/Story";
+import {IMgr} from "../../Mgr";
+import {Cmd} from "../../../../data/sotry/Story";
 import Sprite = laya.display.Sprite;
-import DH from "../../../data/DH";
+import DH from "../../../../data/DH";
 import UIFac from "../ui/UIFac";
 /**
  * Created by ShanFeng on 5/31/2017.

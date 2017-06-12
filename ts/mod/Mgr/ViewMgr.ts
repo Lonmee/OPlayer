@@ -3,17 +3,17 @@ import Stat = laya.utils.Stat;
 import WebGL = laya.webgl.WebGL;
 import Conf from "../../data/Conf";
 import DH from "../../data/DH";
-import UILayer from "../view/layer/UILayer";
-import GameLayer from "../view/layer/GameLayer";
+import UILayer from "./view/layer/UILayer";
+import GameLayer from "./view/layer/GameLayer";
 import {Cmd} from "../../data/sotry/Story";
 import {IMgr} from "./Mgr";
-import FloatLayer from "../view/layer/FloatLayer";
+import FloatLayer from "./view/layer/FloatLayer";
 import Event = laya.events.Event;
-import {Layer} from "../view/layer/Layer";
+import {Layer} from "./view/layer/Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
 import Stage = laya.display.Stage;
-import Layouter from "../view/ui/comp/Layouter";
+import Layouter from "./view/ui/comp/Layouter";
 /**
  * Created by Lonmee on 4/23/2017.
  */

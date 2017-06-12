@@ -3,13 +3,13 @@
  */
 import Sprite = laya.display.Sprite;
 import UIFac, {MenuEnum} from "../ui/UIFac";
-import {Cmd} from "../../../data/sotry/Story";
-import DH from "../../../data/DH";
+import {Cmd} from "../../../../data/sotry/Story";
+import DH from "../../../../data/DH";
 import {Layer} from "./Layer";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
-import Conf from "../../../data/Conf";
-import {StateEnum} from "../../state/State";
+import Conf from "../../../../data/Conf";
+import {StateEnum} from "../../../state/State";
 import Event = laya.events.Event;
 import {Menu} from "../ui/comp/Menu";
 import {MSG} from "../ui/comp/MSG";
