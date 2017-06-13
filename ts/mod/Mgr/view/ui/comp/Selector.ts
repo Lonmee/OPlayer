@@ -7,6 +7,7 @@ import Event = laya.events.Event;
 import Label = laya.ui.Label;
 import Text = laya.display.Text;
 import Layouter from "./Layouter";
+import Rectangle = laya.maths.Rectangle;
 /**
  * Created by ShanFeng on 6/2/2017.
  */
@@ -48,6 +49,7 @@ export class Selector extends Sprite implements ISelectable {
 
     protected clickHandler(e: Event) {
         DH.instance.eventPoxy.event(Conf.ITEM_CHOOSEN, this.links[e.target['idx']]);
+        this.parent.removeChild(this);
         this.destroy(true);
     }
 }
@@ -118,5 +120,39 @@ export class BtnSelector extends Selector {
             btnV.y = parseInt(para[2]);
             this.addChild(btnV);
         }
+    }
+}
+
+export class HotareaSelector extends Selector {
+    constructor(cmd: Cmd) {
+        super(cmd);
+    }
+
+    initView() {
+        this.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, "#FF0000");
+        this.alpha = .3;
+        if (this.para[3] == "0")
+            this.once(Event.MOUSE_MOVE, this, this.mHandler);
+        else
+            this.once(Event.CLICK, this, this.mHandler);
+    }
+
+    protected mHandler(e: Event) {
+        let rec = this.para[2].split(",");
+        let hotRec;
+        if (rec.length > 1) {
+            hotRec = new Rectangle(parseInt(rec[0]), parseInt(rec[1]), parseInt(rec[2]), parseInt(rec[3]));
+        } else {
+            let img = DH.instance.cmdLine.viewMgr.gl.imgDir.get(rec);
+            if (img)//todo:条件分歧之MO条件无图情况
+                hotRec = new Rectangle(img.x, img.y, img.width, img.height);
+            else
+                hotRec = new Rectangle(0, 0, Laya.stage.width, Laya.stage.height);
+        }
+        let choice = hotRec && hotRec.contains(e.stageX, e.stageY) ? 1 : 2;
+        DH.instance.eventPoxy.event(Conf.ITEM_CHOOSEN, choice == 1 || choice == 2 && this.links.length == 2 ?
+            this.links[choice - 1] : NaN);
+        this.parent.removeChild(this);
+        this.destroy(true);
     }
 }

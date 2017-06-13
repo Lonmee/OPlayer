@@ -33,6 +33,10 @@ export default class UILayer extends Layer {
                 this.showSelector(cmd);
                 return;
             }
+            case 200: {//条件分歧之鼠标条件
+                this.hotArea(cmd);
+                return;
+            }
 
             //UI控制指令
             case 150: //"刷新UI画面"
@@ -55,6 +59,10 @@ export default class UILayer extends Layer {
                 break;
             case 111: //"禁用开启菜单功能";
         }
+    }
+
+    private hotArea(cmd: Cmd) {
+        this.addChild(this.uiFac.getSelector(cmd));
     }
 
     private showMSG(cmd: Cmd) {
@@ -86,4 +94,4 @@ export default class UILayer extends Layer {
             }
         }
     }
-}
+};

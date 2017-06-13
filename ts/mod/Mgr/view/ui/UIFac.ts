@@ -3,7 +3,7 @@
  */
 import {BGM, CG, CUI, Game, Menu, Replay, Restore, Save, Setting, Title} from "./comp/Menu";
 import DH from "../../../../data/DH";
-import {BtnSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
+import {BtnSelector, HotareaSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
 import {Cmd} from "../../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
 import FLayer from "./comp/FLayer";
@@ -71,6 +71,8 @@ export default class UIFac {
                 return new SelectorEx2(cmd);
             case 204:
                 return new BtnSelector(cmd);
+            case 200:
+                return new HotareaSelector(cmd);
         }
     }
 

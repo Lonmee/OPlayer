@@ -80,7 +80,7 @@ export default class CmdLine {
         this.curCid = snap[0];
         this.curSid = snap[1];
         this.chapter = snap[2];
-        this.cmdArr = [];
+        this.cmdArr = snap[2].cmdArr;
         this.pause = false;
     }
 
@@ -190,19 +190,23 @@ export default class CmdLine {
                 }
 
                 case 200://条件分歧
-                    let v1: number = this.valueMgr.digByTag(cmd.para[0]);
+                    let v1 = this.valueMgr.digByTag(cmd.para[0]);
+                    if (v1 = "MO") {
+                        this.pause = true;
+                        this.viewMgr.exe(cmd);
+                        return;
+                    }
                     let v2: number = cmd.para[2] == "0" ? parseInt(cmd.para[3]) :
                         cmd.para[2] == "1" ? this.valueMgr.vDic.get(cmd.para[3]) :
                             this.valueMgr.exVDic.get([cmd.para[3]]);
                     let choice = this.valueMgr.compare(v1, v2, cmd.para[1]) ? 1 : 2;
-                    console.log(v1);
                     //兼容条件结构特例
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
                     return;
 
                 case 217: {//高级条件分歧
-                    // cmd.para[0] && : ||;
+                    // cmd.para[0] || : &&;
                     // let v1;
                     // let v2;
                     // let choice:number;
