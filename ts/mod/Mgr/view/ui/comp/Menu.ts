@@ -58,9 +58,26 @@ export class Title extends Menu {
         super(data);
     }
 
+    protected initView() {
+        //logo & titleBG
+        if (this.data.showLog)
+            this.addChild(new UIImg(this.data.logoImage.path));
+        if (this.data.drawTitle)
+            this.addChild(new BGImg(this.data.titleImage.path));
+
+        //btns
+        this.initBGImgAndBtns(null, this.data.buttons)[0].on(Event.CLICK, this, this.clickHandler);
+    }
+
     protected initListener() {
         this.on(Event.ADDED, this, this.addHandler);
         this.on(Event.REMOVED, this, this.removeHandler);
+        this.on(Event.CLICK, this, this.clickHandler);
+    }
+
+    private clickHandler(e: Event) {
+        DH.instance.story.gotoChapter(DH.instance.story.sys.startStoryId);
+        this.close();
     }
 
     private addHandler(e: Event) {
@@ -72,17 +89,6 @@ export class Title extends Menu {
 
     private removeHandler(e: Event) {
 
-    }
-
-    protected initView() {
-        //logo & titleBG
-        if (this.data.showLog)
-            this.addChild(new UIImg(this.data.logoImage.path));
-        if (this.data.drawTitle)
-            this.addChild(new BGImg(this.data.titleImage.path));
-
-        //btns
-        super.initBGImgAndBtns(null, this.data.buttons);
     }
 
     protected initAudio() {
@@ -100,7 +106,7 @@ export class Game extends Menu {
     }
 
     initView() {
-        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, this.data.buttons);
+        this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, this.data.buttons);
     }
 
     initListener() {
@@ -132,7 +138,7 @@ export class Replay extends Menu {
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg, [this.data.closeButton]);
+        this.initBGImgAndBtns(this.data.bgImg, [this.data.closeButton]);
 
         //vpRect
         this.data.vpRect;
@@ -145,7 +151,7 @@ export class CG extends Menu {
     }
 
     initView() {
-        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
 
         //noPic
         this.data.noPic;
@@ -179,7 +185,7 @@ export class BGM extends Menu {
     }
 
     initView() {
-        super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton, this.data.selectButton]);
+        this.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton, this.data.selectButton]);
 
         //noPic
         this.data.noPic;
@@ -198,7 +204,7 @@ export class Save extends Menu {
     }
 
     initView() {
-        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
     }
 
     initListener() {
@@ -224,7 +230,7 @@ export class Restore extends Menu {
     }
 
     initView() {
-        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
+        this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, [this.data.closeButton, this.data.backButton]);
     }
 
     initListener() {
@@ -255,7 +261,7 @@ export class Setting extends Menu {
 
     initView() {
         this.idxArr = [];
-        this.btnArr = super.initBGImgAndBtns(this.data.bgImg.path, this.data.ShowTitle ? [this.data.closeButton, this.data.TitleButton] : [this.data.closeButton]);
+        this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, this.data.ShowTitle ? [this.data.closeButton, this.data.TitleButton] : [this.data.closeButton]);
         (<Sprite>this.getChildAt(0)).mouseEnabled = true;
         this.idxArr.push(0);
         if (this.data.ShowTitle)

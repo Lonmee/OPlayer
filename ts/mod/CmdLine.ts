@@ -23,7 +23,9 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
-    appending: [number, number, Chapter][] = [];
+    restoreSid: number;
+    appending: [number, number, number][] = [];
+    snap: [number, number, number];
     assMgr: AssMgr;
     viewMgr: ViewMgr;
     valueMgr: ValueMgr;
@@ -64,9 +66,10 @@ export default class CmdLine {
      * @param c
      */
     playHandler(c: DChapter) {
-        //呼叫子剧情时缓存当前剧情及播放进度
-        this.curCid = 0;
-        this.curSid = 0;
+        if (this.snap)
+            this.curSid = this.snap[1];
+        else
+            this.curSid = 0;
         this.chapter = new Chapter(c);
         this.cmdArr = [];
         this.pause = false;
@@ -76,12 +79,9 @@ export default class CmdLine {
      * 恢复父剧情
      */
     restoreChapter() {
-        let snap: [number, number, Chapter] = this.appending.pop();
-        this.curCid = snap[0];
-        this.curSid = snap[1];
-        this.chapter = snap[2];
-        this.cmdArr = snap[2].cmdArr;
-        this.pause = false;
+        this.snap = this.appending.pop();
+        console.log("restore to chapter:", this.snap);
+        this.dh.story.gotoChapter(this.snap[2]);
     }
 
     changeState(cmd: Cmd | number) {
@@ -109,11 +109,17 @@ export default class CmdLine {
         }
         // if (this.curCid == this.cmdArr.length && this.curSid != -1)
         // if (this.curSid != -1 && sid != this.curSid)
-        if (sid > 0 || this.curCid == this.cmdArr.length) {
+        if (sid > 0 || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             this.cmdArr = s.cmdArr;
+            this.restoreSid = this.curSid;
             this.curSid = s.link;
-            this.curCid = 0;
+            if (!this.snap) {
+                this.curCid = 0;
+            } else {
+                this.curCid = this.snap[0]
+                this.snap = null;
+            }
         }
         if (this.curSid == -1) {
             if (this.appending.length > 0) {
@@ -164,14 +170,17 @@ export default class CmdLine {
                 }
                 case 103://"自动播放剧情"
                 case 104: {//"快进剧情"
-                    this.changeState(cmd);
+                    return this.changeState(cmd);
                 }
                 //repeat end
                 case 203:
                 //repeat interrupt
                 case 209: {
-                    this.curSid = cmd.links[0];
-                    return
+                    //设置链接目标等待刷新
+                    // this.curSid = cmd.links[0];
+                    //return
+                    //强制刷新不等待时沿
+                    return this.update(cmd.links[0]);
                 }
                 //跳转剧情
                 case 206 : {
@@ -183,42 +192,58 @@ export default class CmdLine {
                 //呼叫子剧情
                 case 251: {
                     this.pause = true;
-                    this.appending.push([this.curCid, this.curSid, this.chapter]);
-                    console.log("insertChapter:", parseInt(cmd.para[0]));
+                    this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
+                    console.log("insert chapter:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return;
                 }
 
                 case 200://条件分歧
-                    let v1 = this.valueMgr.digByTag(cmd.para[0]);
-                    if (v1 = "MO") {
+                    if (cmd.para[0].split("|")[0] == "MO") {
                         this.pause = true;
                         this.viewMgr.exe(cmd);
                         return;
                     }
-                    let v2: number = cmd.para[2] == "0" ? parseInt(cmd.para[3]) :
-                        cmd.para[2] == "1" ? this.valueMgr.vDic.get(cmd.para[3]) :
-                            this.valueMgr.exVDic.get([cmd.para[3]]);
-                    let choice = this.valueMgr.compare(v1, v2, cmd.para[1]) ? 1 : 2;
+
+                    let choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
                     //兼容条件结构特例
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
-                    return;
+                    return this.update();
 
                 case 217: {//高级条件分歧
-                    // cmd.para[0] || : &&;
-                    // let v1;
-                    // let v2;
-                    // let choice:number;
+                    let len = parseInt(cmd.para[3]);
+                    let pass;
+                    for (let i = 4; i < 4 + len; i++) {
+                        let p = cmd.para[i].split("&");
 
-                    let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
-                    while (choice == "") {
-                        choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
+                        //新版工具已不支持高级条件分歧中的鼠标事件
+                        // if (p.split("|")[0] == "MO") {
+                        //     this.pause = true;
+                        //     this.viewMgr.exe(cmd);
+                        //     return;
+                        // }
+
+                        if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
+                            if (pass = this.valueMgr.judge(p))
+                                break;
+                        } else {
+                            if (!(pass = this.valueMgr.judge(p)))
+                                break;
+                        }
+                        pass = cmd.para[0] == "0" ? false : true;
                     }
+
+                    let choice = pass ? 1 : 2;
                     //兼容条件结构特例
-                    if (parseInt(choice) == 1 || parseInt(choice) == 2 && cmd.links.length == 2)
-                        this.curSid = cmd.links[parseInt(choice) - 1];
-                    return;
+                    if (choice == 1 || choice == 2 && cmd.links.length == 2)
+                        this.curSid = cmd.links[choice - 1];
+                    return this.update();
+
+                    // let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
+                    // while (choice == "") {
+                    //     choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
+                    // }
                 }
 
                 default: {

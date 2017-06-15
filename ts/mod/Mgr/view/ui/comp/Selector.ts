@@ -34,7 +34,7 @@ export class Selector extends Sprite implements ISelectable {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
-                btnV.y = i * btnV.height;
+                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -65,7 +65,7 @@ export class SelectorEx extends Selector {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
-                btnV.y = i * btnV.height;
+                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -89,7 +89,7 @@ export class SelectorEx2 extends Selector {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
                 btnV.idx = i;
-                btnV.y = i * btnV.height;
+                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -131,6 +131,10 @@ export class HotareaSelector extends Selector {
     initView() {
         this.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, "#FF0000");
         this.alpha = .3;
+        //region For preview the hotarea
+        let rec = this.para[2].split(",");
+        this.graphics.drawRect(parseInt(rec[0]), parseInt(rec[1]), parseInt(rec[2]), parseInt(rec[3]), "#FFFFFF");
+        //endregion
         if (this.para[3] == "0")
             this.once(Event.MOUSE_MOVE, this, this.mHandler);
         else

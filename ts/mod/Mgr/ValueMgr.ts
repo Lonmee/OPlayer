@@ -30,8 +30,8 @@ export default class ValueMgr implements IMgr {
             // 5:数值(0)或索引(1)
             case 213://"二周目变量"
                 //0：同207数值操作
-                let v1 = cmd.para[5] == "0" ? this.vDic.get(cmd.para[0]) : this.digByType("4", cmd.para[0]);
-                let v2 = this.digByType(cmd.para[2], cmd.para[3]);
+                let v1 = cmd.para[1] == "0" ? 0 : cmd.para[5] == "0" ? this.digByTag(cmd.para[0]) : this.digByType("4", cmd.para[0]);
+                let v2 = this.digByType(cmd.para[2], cmd.para[3], cmd.para[4]);
                 if (cmd.code == 207)
                     this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
                 else
@@ -49,30 +49,40 @@ export default class ValueMgr implements IMgr {
                 // 4：显示信息
                 // 5：数值(0)或索引(1)
                 // 【6：操作index(+,-,*,/,%)(0,1,2,3,4) （若为-1后面忽略  7同2   8同3】
-                v1 = cmd.para[0].split("!").length == 1 ? this.vDic.get(cmd.para[5] == "0" ? cmd.para[0] : this.digByType("4", cmd.para[0])) :
-                    this.exVDic.get(cmd.para[5] == "0" ? cmd.para[0] : this.digByType("4", cmd.para[0]));
+                v1 = cmd.para[1] == "0" ? 0 : cmd.para[5] == "0" ? this.digByTag(cmd.para[0]) :
+                    this.parsePara(cmd.para[0], 0) == "EX" ? this.digByType("11", cmd.para[0]) : this.digByType("4", cmd.para[0]);
                 v2 = this.digByType(cmd.para[2], cmd.para[3]);
+                //更多操作
+                if (cmd.para[6] != "-1") {
+                    v2 = this.calc(v2, this.digByType(cmd.para[7], cmd.para[8]), (parseInt(cmd.para[6]) + 1).toString());
+                }
+                if (this.parsePara(cmd.para[0], 0) == "EX")
+                    this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
+                else
+                    this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                 break;
         }
     }
 
-    parsePara(p: string, idx: number) {
+    private parsePara(p: string, idx: number) {
         return p.split("|")[idx];
     }
 
     /**
-     * @param p1 操作数为常量(0)、其他数值(1)、随机数(2)、二周目变量(3)、索引变量(4)、服务器时间变量(5)、任务(9)、本地时间变量(10)
+     * @param p1 操作数为常量(0)、其他数值(1)、随机数(2)、二周目变量(3)、索引变量(4)、服务器时间变量(5)、 鲜花数(6)、最大值(7)、最小值(8)、任务(9)、本地时间变量(10)、用数值索引取二周目数值（11）
      * @param p2
      * @returns {any}
      */
-    digByType(type: string, p2: string) {
+    digByType(type: string, p2: string, p4: string = "") {
         switch (parseInt(type)) {
             case 0:
                 return parseInt(p2);
             case 1:
                 return this.vDic.get(p2);
             case 2:
-                return Math.random();
+                let base = parseInt(this.parsePara(p2, 0));
+                let top = p4 != "" ? parseInt(this.parsePara(p2, 1)) : parseInt(this.parsePara(p2, 1)) + 1;
+                return Math.floor(Math.random() * (top - base)) + base;
             case 3:
                 return this.exVDic.get(p2);
             case 4:
@@ -81,10 +91,15 @@ export default class ValueMgr implements IMgr {
                 return;
             case 6:
                 return;
-            case 7:
-            case 8:
-            case 9:
-            case 10:
+            case 7://max
+                return Math.max();
+            case 8://min
+                return Math.min();
+            // case 9://task discarded
+            case 10://local time
+                return new Date();
+            case 11://扩展二周目索引数值
+                return this.exVDic.get(this.vDic.get(p2) - 1);
         }
     }
 
@@ -97,10 +112,25 @@ export default class ValueMgr implements IMgr {
                 return "MO";
             case "FL" :
             case "PT" :
-            case "PA" :
-                return this.exVDic.get(p);
+                // case "PA" ://discard
+                return this.exVDic.get(this.parsePara(p, 0));
             default:
                 return this.vDic.get(p);
+        }
+    }
+
+    private digByChar(p: string) {
+        switch (this.parsePara(p, 0)) {
+            case "n" :
+                return this.digByType("0", this.parsePara(p, 1));
+            case "v" :
+                return this.digByType("1", this.parsePara(p, 1));
+            case "x" :
+                return this.digByType("3", this.parsePara(p, 1));
+            case "s" :
+                return this.digByType("4", this.parsePara(p, 1));
+            default:
+                return parseInt(p);
         }
     }
 
@@ -110,29 +140,48 @@ export default class ValueMgr implements IMgr {
      * @param op 操作符id(=,+=,-=,*=,/=,%=)
      * @returns {number}
      */
-    calc(v1: number, v2: number, op: string) {
+    private calc(v1: number, v2: number, op: string) {
         switch (parseInt(op)) {
             case 0:
-                return v1 = v2;
+                return /*v1 = */v2;
             case 1:
-                return v1 += v2;
+                return v1 + v2;
             case 2:
-                return v1 -= v2;
+                return v1 - v2;
             case 3:
-                return v1 *= v2;
+                return v1 * v2;
             case 4:
-                return v1 /= v2;
+                return v1 / v2;
             case 5:
-                return v1 %= v2;
+                return v1 % v2;
         }
     }
 
-    compare(v1: number, v2: number, op: string) {
-        //EX/MO/FL/PT/PA
-        // 【若为鼠标按下】 1：矩形类型 2：矩形大小(x,y,w,h)或图片编号 3：0是经过1是按下 4：有无else(1,0)】
-        // 【若为平台】0:PT| 1:0 2:0 3:平台[1pc,2web,3Android,4IOS,5H5],4:有无else(1,0) 5:显示信息
-        // 		 	【若为支付】0:PA| 加上 二周目变量 1:是否为恢复购买 2:商品名称（ID） 3:无 4:有无else留位 5:说明
-        // 			【若为任务】长度+1  0:0 1:6(关系index不在指定范围) 2:0  3:0  4:有无else(1,0)  5:显示信息 6:TA|任务编号
+    judge(para) {
+        /**
+         * EX/MO/FL/PT/PA(discard)
+         * 【若为鼠标按下】 1：矩形类型 2：矩形大小(x,y,w,h)或图片编号 3：0是经过1是按下 4：有无else(1,0)】
+         * 【若为平台】0:PT| 1:0 2:0 3:平台[1pc,2web,3Android,4IOS,5H5],4:有无else(1,0) 5:显示信息
+         * 【若为支付】0:PA| 加上 二周目变量 1:是否为恢复购买 2:商品名称（ID） 3:无 4:有无else留位 5:说明
+         * 【若为任务】长度+1  0:0 1:6(关系index不在指定范围) 2:0  3:0  4:有无else(1,0)  5:显示信息 6:TA|任务编号
+         * @type {number}
+         */
+        let v2;
+        switch (this.parsePara(para[0], 0)) {
+            case "MO" :
+                return;
+            // case "PA" :discard
+            //     break;
+            case "FL" :
+            case "EX" :
+            case "PT" :
+            default :
+                v2 = para[2] == "2" ? this.digByType("3", para[3]) : this.digByType(para[2], para[3]);
+        }
+        return this.compare(this.digByTag(para[0]), v2, para[1]);
+    }
+
+    private compare(v1: number, v2: number, op: string) {
         switch (parseInt(op)) {
             case 0:
                 return v1 == v2;
