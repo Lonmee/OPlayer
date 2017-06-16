@@ -41,7 +41,8 @@ Browser.window.dh = DH.instance;
 //todo:import//region improved @laya.core.js:2745
 /*if (isHit = sp.getGraphicBounds().contains(mouseX, mouseY)) {
  rgba = sp.graphics._one[0].getPixels(mouseX, mouseY, 1, 1);
- pure = rgba[0] & rgba[1] & rgba[2];
- isHit = !(rgba[3] < 5 && (pure == 0 || pure == 255));
+ alpha = rgba.pop();
+ pure = rgba.every(function (v){return v == 255}) || rgba.every(function (v){return v == 0});
+ isHit = !(alpha < 5 && pure);
  }*/
 //endregion
