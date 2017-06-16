@@ -21,7 +21,7 @@ export class OPlayer {
         Conf.info.qlty = qlty;
         Conf.info.miniPath = path;
 
-        Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
+        Laya.init(Laya.Browser.width, Laya.Browser.height/*, WebGL*/);
 
         this.dh.cmdLine = new CmdLine();
         this.dh.binLoader = new BinLoader();
@@ -46,3 +46,6 @@ Browser.window.dh = DH.instance;
  isHit = !(alpha < 5 && pure);
  }*/
 //endregion
+
+//todo:waiting
+// webgl将影响"submit.shaderValue.color=shader.fillStyle._color._color;"@laya.core.js:4158
