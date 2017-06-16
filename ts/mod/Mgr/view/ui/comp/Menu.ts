@@ -264,7 +264,7 @@ export class Setting extends Menu {
         this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, this.data.ShowTitle ? [this.data.closeButton, this.data.TitleButton] : [this.data.closeButton]);
         (<Sprite>this.getChildAt(0)).mouseEnabled = true;
         this.idxArr.push(0);
-        if (this.data.ShowTitle)
+        if (this.data.ShowTitle && this.btnArr.length == 2)
             this.idxArr.push(1);
         //切开初始化用来加toggle
         let btnArr: IdxBtn[] = [];

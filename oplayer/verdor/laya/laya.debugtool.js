@@ -48,11 +48,23 @@
 
 		__class(DebugPanel,'laya.debug.DebugPanel');
 		var __proto=DebugPanel.prototype;
+		__proto.removeNoDisplayKeys=function(arr){
+			var i=0;
+			for (i=arr.length-1;i >=0;i--){
+				if (DebugPanel.noDisplayKeys[arr[i]]){
+					arr.splice(i,1);
+				}
+			}
+		}
+
 		__proto.updateShowKeys=function(){
 			DebugPanel.tObjKeys.length=0;
 			if (!this.tShowObj)
 				return;
 			DebugPanel.tObjKeys=ClassTool.getObjectDisplayAbleKeys(this.tShowObj,DebugPanel.tObjKeys);
+			if (this.tShowObj==Laya.stage){
+				this.removeNoDisplayKeys(DebugPanel.tObjKeys);
+			}
 			DebugPanel.tObjKeys.sort(MathUtil.sortSmallFirst);
 		}
 
@@ -327,7 +339,7 @@
 		DebugPanel.LabelSign="text";
 		DebugPanel.tObjKeys=[];
 		__static(DebugPanel,
-		['displayTypes',function(){return this.displayTypes={"boolean":true,"number":true,"string":true};},'displayKeys',function(){return this.displayKeys=[["x","number"],["y","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],];}
+		['displayTypes',function(){return this.displayTypes={"boolean":true,"number":true,"string":true};},'displayKeys',function(){return this.displayKeys=[["x","number"],["y","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],["width","number"],];},'noDisplayKeys',function(){return this.noDisplayKeys={"desginWidth":true,"desginHeight":true };}
 		]);
 		return DebugPanel;
 	})()
@@ -1113,8 +1125,12 @@
 			}
 			if (tTexture){
 				this.mSprite.graphics.clear();
+				this.mSprite.graphics.save();
+				this.mSprite.graphics.alpha(0.9);
+				this.mSprite.graphics.drawRect(0,0,1024,1024,"#efefefe");
+				this.mSprite.graphics.restore();
 				this.mSprite.graphics.drawTexture(tTexture,0,0,1024,1024);
-				this.mSprite.graphics.fillText((this.mIndex+1).toString()+"/"+tCount.toString(),50,50,"40px Arial","#ff0000","left");
+				this.mSprite.graphics.fillText((this.mIndex+1).toString()+"/"+tCount.toString(),25,100,"40px Arial","#ff0000","left");
 			}
 		}
 
@@ -6302,19 +6318,27 @@
 		}
 
 		TimeTool.runAllCallLater=function(){
+			if(TimeTool._deep>0)debugger;
+			TimeTool._deep++;
 			var timer;
 			timer=Laya.timer;
 			var laters=timer["_laters"];
 			for (var i=0,n=laters.length-1;i <=n;i++){
 				var handler=laters[i];
-				handler.method!==null && handler.run(false);
-				timer["_recoverHandler"](handler);
+				if(handler){
+					handler.method!==null && handler.run(false);
+					timer["_recoverHandler"](handler);
+					}else{
+					debugger;
+				}
 				i===n && (n=laters.length-1);
 			}
 			laters.length=0;
+			TimeTool._deep--;
 		}
 
 		TimeTool.timeDic={};
+		TimeTool._deep=0;
 		return TimeTool;
 	})()
 
@@ -6530,9 +6554,9 @@
 	*@author ww
 	*/
 	//class laya.debug.tools.UVTools
-	var UVTools$1=(function(){
+	var UVTools1=(function(){
 		function UVTools(){}
-		__class(UVTools,'laya.debug.tools.UVTools',null,'UVTools$1');
+		__class(UVTools,'laya.debug.tools.UVTools',null,'UVTools1');
 		UVTools.getUVByRec=function(x,y,width,height){
 			return [x,y,x+width,y,x+width,y+height,x,y+height];
 		}
