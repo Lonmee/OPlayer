@@ -3,10 +3,10 @@ import DH from "../../../../../data/DH";
 import {Button} from "./Comp";
 import Conf from "../../../../../data/Conf";
 import {Cmd} from "../../../../../data/sotry/Story";
+import Layouter from "./Layouter";
 import Event = laya.events.Event;
 import Label = laya.ui.Label;
 import Text = laya.display.Text;
-import Layouter from "./Layouter";
 import Rectangle = laya.maths.Rectangle;
 /**
  * Created by ShanFeng on 6/2/2017.
@@ -26,15 +26,16 @@ export class Selector extends Sprite implements ISelectable {
         this.para = cmd.para;
         this.autoSize = true;
         this.initView();
+        this.layout();
     }
 
     protected initView() {
         for (let i = 0; i < this.para.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), (t) => Layouter.center(this, t));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
+                btnV.y = i * btnV.height;
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -45,6 +46,10 @@ export class Selector extends Sprite implements ISelectable {
                 this.addChild(btnV);
             }
         }
+    }
+
+    protected layout() {
+        Layouter.center(this);
     }
 
     protected clickHandler(e: Event) {
@@ -63,9 +68,9 @@ export class SelectorEx extends Selector {
         for (let i = 0; i < this.links.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
+                btnV.y = i * btnV.height;
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -87,9 +92,9 @@ export class SelectorEx2 extends Selector {
         for (let i = 0; i < this.links.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
+                btnV.y = i * btnV.height;
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -114,12 +119,16 @@ export class BtnSelector extends Selector {
             let db: any = DH.instance.story.sys.Buttons[para[0]];
             if (db.image1.path == "" && db.image1.path == "")
                 continue;
-            let btnV: Button = new Button(parseInt(para[0]), (e: Event) => this.clickHandler(e));//按钮分歧使用绝对坐标
+            let btnV: Button = new Button(parseInt(para[0]), (e: Event) => this.clickHandler(e));
             btnV.idx = idx++;
             btnV.x = parseInt(para[1]);
             btnV.y = parseInt(para[2]);
             this.addChild(btnV);
         }
+    }
+
+    protected layout() {
+        //按钮分歧使用绝对坐标
     }
 }
 

@@ -211,17 +211,6 @@ export class BinLoader implements IBinloader {
             DH.instance.preloader = new Preloader();
             Laya.stage.size(Conf.frameworks.width, Conf.frameworks.height);
             //endregion
-
-            //移入Preloader进行必要资源同步预载
-            // if (this.single) {
-            //     story.gotoChapter(story.sys.startStoryId);
-            //     delete DH.instance.binLoader;
-            // } else {
-            //     //Todo:该处可提前至开始剧情赋值之后实现提前载入，但实际意义待考
-            //     require(["js/mod/loader/StepLoader"], (StepLoader) => {
-            //         DH.instance.binLoader = new StepLoader.default(story.sys.startStoryId);
-            //     });
-            // }
         }
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Parse function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
