@@ -15,7 +15,7 @@ export default class Chapter extends DChapter {
 
     printSceneArr() {
         for (let s of this.sceneArr) {
-            this.cmdList.printChater(s, this.sceneArr);
+            this.cmdList.printChapter(s, this.sceneArr);
         }
     }
 
