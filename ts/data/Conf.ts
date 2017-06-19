@@ -52,7 +52,8 @@ export default class Conf {
     static CMD_LINE_RESUME: string = "cmd_line_resume";
     static ITEM_CHOOSEN: string = "item_choosen";
     static CHANGE_STATE: string = "change_state";
-
+    static QUITE_GAME: string = "quite_game";
+    
     //static
     static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};
     static domain: Domain = {

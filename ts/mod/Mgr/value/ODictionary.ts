@@ -5,6 +5,8 @@ import Dictionary = laya.utils.Dictionary;
 export class DigitalDic extends Dictionary {
 
     get(key: any): any {
+        if (super.get(parseInt(key) + 1) == null)
+            this.set(key, 0);
         return super.get(parseInt(key) + 1);
     }
 

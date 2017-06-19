@@ -52,7 +52,9 @@ export default class UIFac {
                 m = new Setting(this.dh.story.sys.Setting);
                 break;
             // case 10008://离开游戏 ignore
+            //     break;
             // case 10009://自动剧情 移入UILayer
+            //     break;
             case  10010://新版商城
                 break;
             default:

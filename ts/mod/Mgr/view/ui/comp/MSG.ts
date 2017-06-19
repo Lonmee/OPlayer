@@ -7,10 +7,13 @@ import Text = laya.display.Text;
 import Color = laya.utils.Color;
 import Event = laya.events.Event;
 import Conf from "../../../../../data/Conf";
+import Handler = laya.utils.Handler;
+import Texture = laya.resource.Texture;
 /**
  * Created by ShanFeng on 6/5/2017.
  */
 export class MSG extends Sprite {
+    bgImg: UIImg;
     txt: Text = new Text();
 
     constructor(private cmd: Cmd) {
@@ -28,10 +31,13 @@ export class MSG extends Sprite {
     constructTalk(tw: TalkWin) {
         //bg
         if (tw.bgImg) {
-            let bgImg: UIImg = new UIImg(tw.bgImg.path);
-            bgImg.x = Laya.stage.width - bgImg.width >> 1;
-            this.addChild(bgImg);
+            this.bgImg = new UIImg(tw.bgImg.path, Handler.create(this, this.layout));
+        } else {
+            this.layout();
         }
+    }
+
+    private layout(t: Texture = null) {
         //btns
         // for (let btn of tw.buttons) {
         //     let db: any = DH.instance.story.sys.Buttons[btn.idx];
@@ -42,6 +48,10 @@ export class MSG extends Sprite {
         //     btnV.y = btn.y;
         //     this.addChild(btnV);
         // }
+
+        //bg
+        // this.bgImg.x = Laya.stage.width - (t ? t.sourceWidth : 0) >> 1;
+        this.addChild(this.bgImg);
 
         //text
         this.txt = new Text();
