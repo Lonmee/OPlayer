@@ -100,7 +100,7 @@ export class Button extends Sprite {
     completeHandler(e) {
         this.size(e.width, e.height);
         if (this.repos)
-            this.repos();
+            this.repos(e);
     }
 
     get toggled(): boolean {

@@ -32,12 +32,15 @@ export class MSG extends Sprite {
         //bg
         if (tw.bgImg) {
             this.bgImg = new UIImg(tw.bgImg.path, Handler.create(this, this.layout));
+            this.addChild(this.bgImg);
         } else {
             this.layout();
         }
     }
 
     private layout(t: Texture = null) {
+        // this.texture = t;
+        this.size(t.width, t.height);
         //btns
         // for (let btn of tw.buttons) {
         //     let db: any = DH.instance.story.sys.Buttons[btn.idx];
@@ -50,8 +53,7 @@ export class MSG extends Sprite {
         // }
 
         //bg
-        // this.bgImg.x = Laya.stage.width - (t ? t.sourceWidth : 0) >> 1;
-        this.addChild(this.bgImg);
+        // this.bgImg.x = Laya.stage.width - (t ? t.width : 0) >> 1;
 
         //text
         this.txt = new Text();
@@ -71,10 +73,9 @@ export class MSG extends Sprite {
                 break;
             case "2":
                 Layouter.bottom(this);
-                this.y = Laya.stage.height - this.height;
         }
         this.txt.x = this.width - this.txt.width >> 1;
-        this.txt.y = this.height - this.txt.height >> 1;
+        this.txt.y = (this.height - this.txt.height >> 1) + 10;
         this.addChild(this.txt);
         Laya.stage.once(Event.CLICK, this, this.clickHandler);
     }

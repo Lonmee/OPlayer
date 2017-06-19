@@ -32,7 +32,7 @@ export class Selector extends Sprite implements ISelectable {
         for (let i = 0; i < this.para.length; i++) {
             let db = DH.instance.story.sys.Buttons[DH.instance.story.sys.MessageBox.choiceButtonIndex];
             if (db.image1.path != "" || db.image1.path != "") {
-                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), () => Layouter.center(this));
+                let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e), (t) => Layouter.center(this, t));
                 btnV.idx = i;
                 btnV.y = i * btnV.height + (i == 0 ? 0 : 5);
                 let txt: Text = new Text();

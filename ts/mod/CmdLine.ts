@@ -210,16 +210,14 @@ export default class CmdLine {
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
+                    let moCmd;
                     let pass;
                     for (let i = 4; i < 4 + len; i++) {
                         let p = cmd.para[i].split("&");
 
-                        //新版工具已不支持高级条件分歧中的鼠标事件
-                        // if (p.split("|")[0] == "MO") {
-                        //     this.pause = true;
-                        //     this.viewMgr.exe(cmd);
-                        //     return;
-                        // }
+                        if (p[0].split("|")[0] == "MO") {
+                            moCmd = cmd;
+                        }
 
                         if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
                             if (pass = this.valueMgr.judge(p))
@@ -229,6 +227,11 @@ export default class CmdLine {
                                 break;
                         }
                         pass = cmd.para[0] == "0" ? false : true;
+                    }
+
+                    if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
+                        this.pause = true;
+                        this.viewMgr.exe(cmd);
                     }
 
                     let choice = pass ? 1 : 2;
