@@ -38,16 +38,17 @@ export default class Preloader extends LoaderManager {
         if (this.preArr.length) {
             super.load(this.preArr.shift(), Handler.create(this, this.next), Handler.create(this, this.progress), Loader.IMAGE, 2, true, "preload", false);
         } else {
-            //todo:开始预载伺服
-            // if (Conf.info.single) {
-            //     DH.instance.story.gotoChapter(DH.instance.story.sys.startStoryId);
-            //     delete DH.instance.binLoader;
-            // } else {
-            //     //Todo:该处可提前至开始剧情赋值之后实现提前载入，但实际意义待考
-            //     require(["js/mod/loader/StepLoader"], (StepLoader) => {
-            //         DH.instance.binLoader = new StepLoader.default(DH.instance.story.sys.startStoryId);
-            //     });
-            // }
+            if (Conf.info.single) {
+                DH.instance.story.gotoChapter(DH.instance.story.sys.startStoryId);
+                delete DH.instance.binLoader;
+            } else {
+                //Todo:该处可提前至开始剧情赋值之后实现提前载入，但实际意义待考
+                require(["js/mod/loader/StepLoader"], (StepLoader) => {
+                    DH.instance.binLoader = new StepLoader.default(DH.instance.story.sys.startStoryId);
+                });
+            }
+
+            // todo:开始预载伺服
         }
     }
 

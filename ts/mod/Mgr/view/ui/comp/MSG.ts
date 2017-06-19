@@ -2,11 +2,11 @@ import {Cmd, TalkWin} from "../../../../../data/sotry/Story";
 import DH from "../../../../../data/DH";
 import {UIImg} from "./Comp";
 import Layouter from "./Layouter";
+import Conf from "../../../../../data/Conf";
 import Sprite = laya.display.Sprite;
 import Text = laya.display.Text;
 import Color = laya.utils.Color;
 import Event = laya.events.Event;
-import Conf from "../../../../../data/Conf";
 import Handler = laya.utils.Handler;
 import Texture = laya.resource.Texture;
 /**
@@ -31,53 +31,33 @@ export class MSG extends Sprite {
     constructTalk(tw: TalkWin) {
         //bg
         if (tw.bgImg) {
-            this.bgImg = new UIImg(tw.bgImg.path, Handler.create(this, this.layout));
+            this.bgImg = new UIImg(tw.bgImg.path);
             this.addChild(this.bgImg);
-        } else {
-            this.layout();
-        }
-    }
 
-    private layout(t: Texture = null) {
-        // this.texture = t;
-        this.size(t.width, t.height);
-        //btns
-        // for (let btn of tw.buttons) {
-        //     let db: any = DH.instance.story.sys.Buttons[btn.idx];
-        //     if (db.image1.path == "" && db.image1.path == "")
-        //         continue;
-        //     let btnV: Button = new Button(btn.idx);
-        //     btnV.x = btn.x;
-        //     btnV.y = btn.y;
-        //     this.addChild(btnV);
-        // }
-
-        //bg
-        // this.bgImg.x = Laya.stage.width - (t ? t.width : 0) >> 1;
-
-        //text
-        this.txt = new Text();
-        this.txt.fontSize = 22;
-        this.txt.color = "#";
-        let vArr: string[] = this.cmd.para[1].split(',');
-        while (vArr.length > 0) {
-            this.txt.color += parseInt(vArr.shift()).toString(16);
+            //text
+            this.txt = new Text();
+            this.txt.fontSize = 22;
+            this.txt.color = "#";
+            let vArr: string[] = this.cmd.para[1].split(',');
+            while (vArr.length > 0) {
+                this.txt.color += parseInt(vArr.shift()).toString(16);
+            }
+            this.txt.text = this.cmd.para[2];
+            switch (this.cmd.para[5]) {
+                case "0":
+                    Layouter.top(this);
+                    break;
+                case "1":
+                    Layouter.center(this);
+                    break;
+                case "2":
+                    Layouter.bottom(this);
+            }
+            this.txt.x = this.width - this.txt.width >> 1;
+            this.txt.y = (this.height - this.txt.height >> 1) + 10;
+            this.addChild(this.txt);
+            Laya.stage.once(Event.CLICK, this, this.clickHandler);
         }
-        this.txt.text = this.cmd.para[2];
-        switch (this.cmd.para[5]) {
-            case "0":
-                Layouter.top(this);
-                break;
-            case "1":
-                Layouter.center(this);
-                break;
-            case "2":
-                Layouter.bottom(this);
-        }
-        this.txt.x = this.width - this.txt.width >> 1;
-        this.txt.y = (this.height - this.txt.height >> 1) + 10;
-        this.addChild(this.txt);
-        Laya.stage.once(Event.CLICK, this, this.clickHandler);
     }
 
     protected clickHandler(e: Event) {
