@@ -122,10 +122,10 @@ export default class CmdLine {
             }
         }
         if (this.curSid == -1) {
+            this.pause = true;
             if (this.appending.length > 0) {
                 this.restoreChapter();
             } else {
-                this.pause = true;
                 //todo:chapter complete
                 this.curCid = this.curSid = 0;
                 console.log("chapter complete");

@@ -47,10 +47,14 @@ export default class UILayer extends Layer {
                 this.showMenu(MenuEnum.title);
                 break;
             case 214: //"呼叫游戏界面"
-                if (parseInt(cmd.para[0]) == 10008)
+                if (parseInt(cmd.para[0]) == 10008) {
                     this.dh.eventPoxy.event(Conf.QUITE_GAME);
-                else if (parseInt(cmd.para[0]) == 10009)
+                    this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+                }
+                else if (parseInt(cmd.para[0]) == 10009) {
                     this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
+                    this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+                }
                 else
                     this.showMenu(parseInt(cmd.para[0]));
 
