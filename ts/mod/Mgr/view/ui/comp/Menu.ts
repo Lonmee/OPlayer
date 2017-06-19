@@ -39,8 +39,8 @@ export class Menu extends Sprite {
         //btns
         for (let btn of btnArr) {
             let db: any = DH.instance.story.sys.Buttons[btn.idx];
-            if (db.image1.path == "" && db.image1.path == "")
-                continue;
+            // if (db.image1.path == "" && db.image1.path == "")
+            //     continue;
             bArr.push(<Button>this.addChild(new Button(btn.idx).pos(btn.x, btn.y)));
         }
         return bArr;
@@ -264,7 +264,7 @@ export class Setting extends Menu {
         this.btnArr = this.initBGImgAndBtns(this.data.bgImg.path, this.data.ShowTitle ? [this.data.closeButton, this.data.TitleButton] : [this.data.closeButton]);
         (<Sprite>this.getChildAt(0)).mouseEnabled = true;
         this.idxArr.push(0);
-        if (this.data.ShowTitle && this.btnArr.length == 2)
+        if (this.data.ShowTitle)
             this.idxArr.push(1);
         //切开初始化用来加toggle
         let btnArr: IdxBtn[] = [];

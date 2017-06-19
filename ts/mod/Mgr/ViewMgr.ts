@@ -11,7 +11,6 @@ import FloatLayer from "./view/layer/FloatLayer";
 import Event = laya.events.Event;
 import {Layer} from "./view/layer/Layer";
 import Browser = laya.utils.Browser;
-import Label = laya.ui.Label;
 import Stage = laya.display.Stage;
 import Layouter from "./view/ui/comp/Layouter";
 /**
@@ -51,14 +50,6 @@ export class ViewMgr extends Sprite implements IMgr {
 
         for (let layer of this.layerArr)
             this.addChild(layer);
-
-        //region for temp testing
-        let t: Label = new Label();
-        t.name = "cmd";
-        t.fontSize = 24;
-        Layouter.align(t, 4);
-        this.stage.addChild(t);
-        //endregion
 
     }
 

@@ -135,9 +135,6 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
             console.log(cmd.code, this.cmdList.get(cmd.code));
-            // if (Browser.onMobile) {
-            (Laya.stage.getChildByName("cmd") as Label).text = cmd.code + this.cmdList.get(cmd.code);
-            // }
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
