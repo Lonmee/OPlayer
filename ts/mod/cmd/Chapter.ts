@@ -9,10 +9,12 @@ export default class Chapter extends DChapter {
     repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
     cmdList: CmdList = new CmdList();
-    showProcess: boolean = false;
 
     constructor(dc: DChapter) {
         super(dc);
+        while (this.cmdArr.length) {
+            this.formScene();
+        }
     }
 
     printSceneArr() {
@@ -29,10 +31,6 @@ export default class Chapter extends DChapter {
     }
 
     getScene(idx: number): Scene {
-        // while (this.repeat[0].length > 0 || this.cmdArr.length && idx >= this.sceneArr.length) {
-        while (this.cmdArr.length) {
-            this.formScene();
-        }
         return this.sceneArr[idx] || new Scene;
     }
 
@@ -42,17 +40,12 @@ export default class Chapter extends DChapter {
      * @returns {Scene}
      */
     private formScene(): Scene {
-        if (this.showProcess)
-            console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                // case 206 ://跳转剧情
-                // case 251 ://呼叫子剧情
-                //     return s;
                 /*********************repeat*********************/
                 case 202 : //start
                     this.repeat[0].push(s.link);
@@ -94,8 +87,6 @@ export default class Chapter extends DChapter {
     }
 
     private formBranchScene(links, branchScene) {
-        if (this.showProcess)
-            console.log("parse scene:", this.sceneArr.length);
         let s: Scene;
         this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
         if (links.length)//条件结构特例
@@ -104,10 +95,6 @@ export default class Chapter extends DChapter {
             let cmd: Cmd = this.cmdArr.shift();
             s.cmdArr.push(cmd);
             switch (cmd.code) {
-                // case 206 ://跳转剧情
-                // case 251 ://呼叫子剧情
-                //     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                //     break;
                 /*********************repeat*********************/
                 case 202 : //start
                     this.repeat[0].push(s.link);
@@ -149,10 +136,10 @@ export default class Chapter extends DChapter {
                 case 212: //按钮分歧内容
                 case 211: //条件分歧else内容
                     //Maybe unstable
-                    if (s.cmdArr.length == 1)
-                        this.sceneArr.pop();
-                    else
-                        s.cmdArr.pop();
+                    // if (s.cmdArr.length == 1)
+                    //     this.sceneArr.pop();
+                    // else
+                    //     s.cmdArr.pop();
                     //Maybe unstable end
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     branchScene.push(s);

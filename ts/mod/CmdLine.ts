@@ -107,8 +107,6 @@ export default class CmdLine {
         if (this.pause) {
             return;
         }
-        // if (this.curCid == this.cmdArr.length && this.curSid != -1)
-        // if (this.curSid != -1 && sid != this.curSid)
         if (sid > 0 || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             this.cmdArr = s.cmdArr;
@@ -232,6 +230,7 @@ export default class CmdLine {
                     if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
                         this.pause = true;
                         this.viewMgr.exe(cmd);
+                        return;
                     }
 
                     let choice = pass ? 1 : 2;
@@ -239,11 +238,6 @@ export default class CmdLine {
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
                     return this.update();
-
-                    // let choice: string = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
-                    // while (choice == "") {
-                    //     choice = window.prompt(cmd.para.toString() + "\n input your choice below   option [yes, no]");
-                    // }
                 }
 
                 default: {
