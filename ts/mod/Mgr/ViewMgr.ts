@@ -8,11 +8,10 @@ import GameLayer from "./view/layer/GameLayer";
 import {Cmd} from "../../data/sotry/Story";
 import {IMgr} from "./Mgr";
 import FloatLayer from "./view/layer/FloatLayer";
-import Event = laya.events.Event;
 import {Layer} from "./view/layer/Layer";
+import Event = laya.events.Event;
 import Browser = laya.utils.Browser;
 import Stage = laya.display.Stage;
-import Layouter from "./view/ui/comp/Layouter";
 /**
  * Created by Lonmee on 4/23/2017.
  */

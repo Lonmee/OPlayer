@@ -10,8 +10,8 @@ import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
 import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
-import Event = laya.events.Event;
 import {IMgr} from "./Mgr/Mgr";
+import Event = laya.events.Event;
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
 
@@ -194,13 +194,14 @@ export default class CmdLine {
                 }
 
                 case 200://条件分歧
+                    let choice;
                     if (cmd.para[0].split("|")[0] == "MO") {
-                        this.pause = true;
                         this.viewMgr.exe(cmd);
-                        return;
+                        choice = this.viewMgr.ul.checkHotarea(cmd) ? 1 : 2;
+                    } else {
+                        choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
                     }
 
-                    let choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
                     //兼容条件结构特例
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
@@ -228,9 +229,8 @@ export default class CmdLine {
                     }
 
                     if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
-                        this.pause = true;
                         this.viewMgr.exe(cmd);
-                        return;
+                        pass = this.viewMgr.ul.checkHotarea(cmd);
                     }
 
                     let choice = pass ? 1 : 2;

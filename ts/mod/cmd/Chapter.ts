@@ -12,9 +12,8 @@ export default class Chapter extends DChapter {
 
     constructor(dc: DChapter) {
         super(dc);
-        while (this.cmdArr.length) {
+        while (this.cmdArr.length)
             this.formScene();
-        }
     }
 
     printSceneArr() {
@@ -31,6 +30,9 @@ export default class Chapter extends DChapter {
     }
 
     getScene(idx: number): Scene {
+        // while (this.repeat[0].length > 0 || this.cmdArr.length && idx >= this.sceneArr.length) {
+        //     this.formScene();
+        // }
         return this.sceneArr[idx] || new Scene;
     }
 
@@ -75,7 +77,7 @@ export default class Chapter extends DChapter {
                 case 217://高级条件分歧
                     // let scenesToLinks = this.formBranchScene(cmd.links = [], []);
                     let scenesToLinks = this.formBranchScene(cmd.links = cmd.code == 200 || cmd.code == 217 ?
-                        [this.sceneArr.length] : [], []);
+                        [this.sceneArr.length] : [], [s]);
                     while (scenesToLinks.length)
                         scenesToLinks.pop().link = isNaN(s.link) ? 0 : this.sceneArr.length;
                     if (cmd.code != 200 && cmd.code != 217)//条件结构特例
@@ -126,7 +128,7 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217: //高级条件分歧
                     this.formBranchScene(cmd.links = cmd.code == 200 || cmd.code == 217 ?
-                        [this.sceneArr.length] : [], branchScene);
+                        [this.sceneArr.length] : [], branchScene.concat(s));
                     if (cmd.code != 200 && cmd.code != 217)//条件结构特例
                         s.link = NaN;
                     break;

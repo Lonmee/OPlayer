@@ -3,14 +3,16 @@
  */
 import {BGM, CG, CUI, Game, Menu, Replay, Restore, Save, Setting, Title} from "./comp/Menu";
 import DH from "../../../../data/DH";
-import {BtnSelector, HotareaSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
+import {BtnSelector, Selector, SelectorEx, SelectorEx2} from "./comp/Selector";
 import {Cmd} from "../../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
 import FLayer from "./comp/FLayer";
+import {HotareaSelector} from "./comp/Hotarea";
 import Event = laya.events.Event;
 export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
 export default class UIFac {
     private msg: MSG;
+    private hotarea: HotareaSelector;
     private dh: DH = DH.instance;
     private menuArr: Menu[] = [];
 
@@ -73,8 +75,6 @@ export default class UIFac {
                 return new SelectorEx2(cmd);
             case 204:
                 return new BtnSelector(cmd);
-            case 200:
-                return new HotareaSelector(cmd);
         }
     }
 
@@ -84,5 +84,9 @@ export default class UIFac {
 
     getFLayer() {
         return new FLayer(this.dh.story.fLayerArr);
+    }
+
+    getHotarea() {
+        return this.hotarea ? this.hotarea : this.hotarea = new HotareaSelector();
     }
 }

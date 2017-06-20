@@ -2,19 +2,20 @@
  * Created by ShanFeng on 5/8/2017.
  */
 import Sprite = laya.display.Sprite;
-import UIFac, {MenuEnum} from "../ui/UIFac";
+import {MenuEnum} from "../ui/UIFac";
 import {Cmd} from "../../../../data/sotry/Story";
-import DH from "../../../../data/DH";
 import {Layer} from "./Layer";
-import Browser = laya.utils.Browser;
-import Label = laya.ui.Label;
 import Conf from "../../../../data/Conf";
 import {StateEnum} from "../../../state/State";
-import Event = laya.events.Event;
 import {Menu} from "../ui/comp/Menu";
 import {MSG} from "../ui/comp/MSG";
+import Browser = laya.utils.Browser;
+import Label = laya.ui.Label;
+import Event = laya.events.Event;
 
 export default class UILayer extends Layer {
+    msg: MSG;
+
     constructor() {
         super();
     }
@@ -26,6 +27,9 @@ export default class UILayer extends Layer {
                 this.showMSG(cmd);
                 break;
             }
+            case 109: //"消失对话框"
+                this.showMSG();
+                break;
             case 101: //剧情分歧
             case 1010: //剧情分歧EX
             case 1011: //剧情分歧EX2
@@ -34,7 +38,7 @@ export default class UILayer extends Layer {
                 return;
             }
             case 200: {//条件分歧之鼠标条件
-                this.hotArea(cmd);
+                this.showHotarea(cmd);
                 return;
             }
 
@@ -68,15 +72,16 @@ export default class UILayer extends Layer {
         }
     }
 
-    private hotArea(cmd: Cmd) {
-        this.addChild(this.uiFac.getSelector(cmd));
-    }
-
-    private showMSG(cmd: Cmd) {
+    private showMSG(cmd: Cmd = null) {
+        if (!cmd) {
+            if (this.msg && this.msg.parent)
+                this.removeChild(this.msg);
+            return;
+        }
         if (cmd.para[7] == "1")
-            this.addChild(this.uiFac.getMSG(cmd));
+            this.addChild(this.msg = this.uiFac.getMSG(cmd));
         else
-            this.uiFac.getMSG(cmd);
+            this.msg = this.uiFac.getMSG(cmd);
     }
 
     private showSelector(cmd: Cmd) {
@@ -100,5 +105,14 @@ export default class UILayer extends Layer {
                 this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
             }
         }
+    }
+
+    private showHotarea(cmd: Cmd) {
+        if (this.uiFac.getHotarea().parent == null)
+            this.addChild(this.uiFac.getHotarea().reset(cmd));
+    }
+
+    checkHotarea(cmd: Cmd) {
+        return this.uiFac.getHotarea().check(cmd);
     }
 };
