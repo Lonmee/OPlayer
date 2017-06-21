@@ -1,7 +1,7 @@
 import {IMgr} from "./Mgr";
 import {Cmd} from "../../data/sotry/Story";
-import Dictionary = laya.utils.Dictionary;
 import {DigitalDic, StringDic} from "./value/ODictionary";
+import Dictionary = laya.utils.Dictionary;
 /**
  * Created by ShanFeng on 5/8/2017.
  * 尊重用户主逻辑，各数值从1开始
@@ -36,7 +36,7 @@ export default class ValueMgr implements IMgr {
                     this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
                 else
                     this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
-                break;
+                    break;
             case 215://"字符串"
                 //0: 字符串索引  1:字符串内容
                 this.sDic.set(cmd.para[0], cmd.para[1]);

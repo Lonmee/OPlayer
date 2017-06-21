@@ -23,6 +23,7 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
+    count: number = 0;
     restoreSid: number;
     appending: [number, number, number][] = [];
     snap: [number, number, number];
@@ -59,6 +60,12 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         Laya.timer.frameLoop(1, this, this.update);
+        // Laya.timer.loop(1000, this, this.showNo);
+    }
+
+    showNo() {
+        console.log(this.count);
+        this.count = 0;
     }
 
     /**
@@ -104,6 +111,7 @@ export default class CmdLine {
     cmdList: CmdList = new CmdList();
 
     update(sid = NaN) {
+        this.count++;
         if (this.pause) {
             return;
         }
@@ -132,7 +140,7 @@ export default class CmdLine {
 
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
-            console.log(cmd.code, this.cmdList.get(cmd.code));
+            // console.log(cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
@@ -160,7 +168,7 @@ export default class CmdLine {
                 case 210: {//等待
                     this.pause = true;
                     Laya.timer.once(Math.round(parseInt(cmd.para[0]) / 60 * 1000), this, this.resume);
-                    console.log("waiting for", Math.round(parseInt(cmd.para[0]) / 60 * 1000) + " ms");
+                    // console.log("waiting for", Math.round(parseInt(cmd.para[0]) / 60 * 1000) + " ms");
                     return;
                 }
                 case 103://"自动播放剧情"
