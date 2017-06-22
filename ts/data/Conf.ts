@@ -55,6 +55,7 @@ export default class Conf {
     static QUITE_GAME: string = "quite_game";
     
     //static
+    static debug: boolean = true;//Todo:发布时关掉
     static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};
     static domain: Domain = {
         cdn: "http://dlcdn1.cgyouxi.com/",

@@ -7,8 +7,6 @@ import DH from "./data/DH";
 import CmdLine from "./mod/CmdLine";
 import Browser = laya.utils.Browser;
 export class OPlayer {
-    dh: DH = DH.instance;
-
     constructor() {
 
     }
@@ -22,18 +20,19 @@ export class OPlayer {
 
         Laya.init(Laya.Browser.width, Laya.Browser.height/*, WebGL*/);
 
-        this.dh.cmdLine = new CmdLine();
-        this.dh.binLoader = new BinLoader();
-        // this.dh.binLoader = new BinLoader(true);
+        DH.instance.cmdLine = new CmdLine();
+        // DH.instance.binLoader = new BinLoader();
+        DH.instance.binLoader = new BinLoader(true);
     }
 
 }
 
 Browser.window.oplayer = new OPlayer();
 
-//Todo:发布时可关掉
-Browser.window.conf = Conf;
-Browser.window.dh = DH.instance;
+if (Conf.debug) {
+    Browser.window.conf = Conf;
+    Browser.window.dh = DH.instance;
+}
 
 //console.log('%c this is color! ', 'background: #222; color: #bada55‘);
 

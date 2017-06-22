@@ -10,6 +10,10 @@ import {GameImg} from "../ui/comp/Comp";
 export default class GameLayer extends Layer {
     imgDir: Dictionary = new Dictionary();
 
+    constructor() {
+        super();
+    }
+
     exe(cmd: Cmd) {
         switch (cmd.code) {
             case 106: //"提示消息框"
@@ -28,6 +32,7 @@ export default class GameLayer extends Layer {
                 let gi: GameImg;
                 this.imgDir.set(cmd.para[0], gi = new GameImg(cmd.para[1]));
                 gi.pos(parseInt(cmd.para[3]), parseInt(cmd.para[4]));
+                // gi.cacheAs = "normal";
                 this.addChild(gi);
                 break;
             /*
@@ -59,10 +64,10 @@ export default class GameLayer extends Layer {
                 // 8:是否镜像(1,0)
                 // 9:时间
                 // 10:显示信息
-                let x = cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.dh.cmdLine.valueMgr.vDic.get(cmd.para[3]);
-                let y = cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.dh.cmdLine.valueMgr.vDic.get(cmd.para[4]);
-                this.imgDir.get(cmd.para[0]).pos(x, y);
-                this.dh.cmdLine.update();
+                let i;
+                if (i = this.getImg(cmd.para[0]))
+                    i.pos(cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.dh.cmdLine.valueMgr.vDic.get(cmd.para[3]),
+                        cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.dh.cmdLine.valueMgr.vDic.get(cmd.para[4]));
                 break;
             case 403: //"显示心情"
             case 404: //"旋转图片"
@@ -70,7 +75,12 @@ export default class GameLayer extends Layer {
             case 407: //"变色"
         }
     }
+
+    getImg(key) {
+        return this.imgDir.get(key);
+    }
 };
+
 /*
  this.spr = new Sprite();
  this.spr.graphics.drawTexture(e);

@@ -32,7 +32,18 @@ export default class DH {
         let md5 = this.resMap.get(key.replace(/\\/g, '/').toLowerCase()).md5;
         return Conf.domain.resCdn + md5.substring(0, 2) + "/" + md5;
     }
-}
+
+    get help() {
+        return console.log(
+            "dh.cmdLine.showCode = [boolean] on //开关命令码log",
+            "\ndh.cmdLine.showProcess = [boolean] on //开关执行过程log",
+            "\ndh.cmdLine.chapter.printSceneArr() //打印当前scene详情",
+            "\nshortcut:\"s\"//开关state面板",
+            "\n@ OPlayer:26new BinLoader([boolean] local?) //开启本地数据模式，文件置于oplayer/local，默认不开启",
+            "\n@ DH:58 static debug: boolean = [boolean] on //调试模式开关 ps.发布时关掉"
+        );
+    }
+};
 
 /*
  * dispatchEvent(new CustomEvent(Conf.EVN_READY, {"detail": this.bufArr.length == 1}));

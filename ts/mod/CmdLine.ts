@@ -23,7 +23,11 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
-    count: number = 0;
+    showCode: boolean;
+    private _showProcess: boolean;
+    callCount: number = 0;
+    frame: number = 0;
+    pauseCound: number = 0;
     restoreSid: number;
     appending: [number, number, number][] = [];
     snap: [number, number, number];
@@ -60,12 +64,23 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         Laya.timer.frameLoop(1, this, this.update);
-        // Laya.timer.loop(1000, this, this.showNo);
+        // this.showProcess = true;
     }
 
-    showNo() {
-        console.log(this.count);
-        this.count = 0;
+    set showProcess(value: boolean) {
+        if (value)
+            Laya.timer.frameLoop(1, this, this.showFrame);
+        else {
+            Laya.timer.clear(this, this.showFrame);
+        }
+        this.callCount = this.frame = 0;
+        this.pauseCound = 1;
+        this._showProcess = value;
+    }
+
+    showFrame() {
+        console.log("frame:", this.frame++, "updated:", this.callCount, "times");
+        this.callCount = 0;
     }
 
     /**
@@ -80,15 +95,6 @@ export default class CmdLine {
         this.chapter = new Chapter(c);
         this.cmdArr = [];
         this.pause = false;
-    }
-
-    /**
-     * 恢复父剧情
-     */
-    restoreChapter() {
-        this.snap = this.appending.pop();
-        console.log("restore to chapter:", this.snap);
-        this.dh.story.gotoChapter(this.snap[2]);
     }
 
     changeState(cmd: Cmd | number) {
@@ -108,11 +114,32 @@ export default class CmdLine {
         }
     }
 
+    complete() {
+        if (this.appending.length > 0) {
+            this.restoreChapter();
+        } else {
+            //todo:chapter complete
+            this.curCid = this.curSid = 0;
+            console.log("chapter complete");
+        }
+    }
+
+    /**
+     * 恢复父剧情
+     */
+    restoreChapter() {
+        this.snap = this.appending.pop();
+        console.log("restore to chapter:", this.snap);
+        this.dh.story.gotoChapter(this.snap[2]);
+    }
+
     cmdList: CmdList = new CmdList();
 
     update(sid = NaN) {
-        this.count++;
+        this.callCount++;
         if (this.pause) {
+            if (this._showProcess)
+                console.log("           pause:", this.pauseCound++);
             return;
         }
         if (sid > 0 || this.curCid >= this.cmdArr.length) {
@@ -129,18 +156,13 @@ export default class CmdLine {
         }
         if (this.curSid == -1) {
             this.pause = true;
-            if (this.appending.length > 0) {
-                this.restoreChapter();
-            } else {
-                //todo:chapter complete
-                this.curCid = this.curSid = 0;
-                console.log("chapter complete");
-            }
+            return this.complete();
         }
 
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
-            // console.log(cmd.code, this.cmdList.get(cmd.code));
+            if (this._showProcess || this.showCode)
+                console.log(cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //需暂停等待
                 case 150: //"刷新UI画面"
@@ -166,15 +188,18 @@ export default class CmdLine {
                 }
                 //状态指令
                 case 210: {//等待
+                    this.pauseCound = 1;
+                    let dur = parseInt(cmd.para[0]);
+                    if (this._showProcess)
+                        console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
                     this.pause = true;
-                    Laya.timer.once(Math.round(parseInt(cmd.para[0]) / 60 * 1000), this, this.resume);
-                    // console.log("waiting for", Math.round(parseInt(cmd.para[0]) / 60 * 1000) + " ms");
-                    return;
+                    return Laya.timer.frameOnce(--dur, this, this.resume);
                 }
                 case 103://"自动播放剧情"
                 case 104: {//"快进剧情"
                     return this.changeState(cmd);
                 }
+
                 //repeat end
                 case 203:
                 //repeat interrupt
@@ -185,6 +210,7 @@ export default class CmdLine {
                     //强制刷新不等待时沿
                     return this.update(cmd.links[0]);
                 }
+
                 //跳转剧情
                 case 206 : {
                     this.pause = true;
@@ -254,5 +280,7 @@ export default class CmdLine {
                 }
             }
         }
+        //Scene最后一位时将退出while无法衔接，会造成一帧浪费；
+        return this.curCid == this.cmdArr.length ? this.update() : null;
     }
 };

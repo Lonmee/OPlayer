@@ -32,11 +32,12 @@ export default class ValueMgr implements IMgr {
                 //0：同207数值操作
                 let v1 = cmd.para[1] == "0" ? 0 : cmd.para[5] == "0" ? this.digByTag(cmd.para[0]) : this.digByType("4", cmd.para[0]);
                 let v2 = this.digByType(cmd.para[2], cmd.para[3], cmd.para[4]);
+
                 if (cmd.code == 207)
                     this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
                 else
                     this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
-                    break;
+                break;
             case 215://"字符串"
                 //0: 字符串索引  1:字符串内容
                 this.sDic.set(cmd.para[0], cmd.para[1]);
