@@ -227,7 +227,8 @@ export default class CmdLine {
                     return;
                 }
 
-                case 200://条件分歧
+                //条件分歧
+                case 200:
                     let choice;
                     if (cmd.para[0].split("|")[0] == "MO") {
                         this.viewMgr.exe(cmd);
@@ -274,7 +275,7 @@ export default class CmdLine {
                     return this.update();
                 }
 
-                default: {
+                default: {//非逻辑命令分发
                     for (let mgr of this.mgrArr)
                         mgr.exe(cmd);
                 }
