@@ -21,8 +21,8 @@ export class OPlayer {
         Laya.init(Laya.Browser.width, Laya.Browser.height/*, WebGL*/);
 
         DH.instance.cmdLine = new CmdLine();
-        // DH.instance.binLoader = new BinLoader();
-        DH.instance.binLoader = new BinLoader(true);
+        DH.instance.binLoader = new BinLoader();
+        // DH.instance.binLoader = new BinLoader(true);
     }
 
 }
@@ -34,7 +34,7 @@ if (Conf.debug) {
     Browser.window.dh = DH.instance;
 }
 
-//console.log('%c this is color! ', 'background: #222; color: #bada55‘);
+//console.log('%c this is color! ', 'background: #222; color: #bada55');
 
 //todo:import//region improved @laya.core.js:2745
 /*if (isHit = sp.getGraphicBounds().contains(mouseX, mouseY)) {

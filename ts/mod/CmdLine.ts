@@ -190,7 +190,7 @@ export default class CmdLine {
                 case 210: {//等待
                     this.pauseCound = 1;
                     let dur = parseInt(cmd.para[0]);
-                    if (this._showProcess)
+                    if (this._showProcess || this.showCode)
                         console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
                     this.pause = true;
                     return Laya.timer.frameOnce(--dur, this, this.resume);
