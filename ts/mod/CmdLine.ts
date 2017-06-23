@@ -45,24 +45,29 @@ export default class CmdLine {
         this.videoMgr = new VideoMgr()
     ]
 
-    states: IState[] = [new NormalState(), new AutoState(), new FFState()];
-    state: IState;
-    pause: boolean = true;
-    chapter: Chapter;
-    curSid: number = 0;
-    curCid: number = 0;
+    private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
+    private state: IState;
+    private pause: boolean = true;
+    private chapter: Chapter;
+    private curSid: number = 0;
+    private curCid: number = 0;
 
     private dh: DH = DH.instance;
     private cmdArr: Cmd[] = [];
 
     constructor() {
+        this.changeState(StateEnum.Normal);
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
-        this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
-        this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
+
+        //region test only
+        this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
+        this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
+        //endregion
+
         Laya.timer.frameLoop(1, this, this.update);
         // this.showProcess = true;
     }
@@ -99,12 +104,13 @@ export default class CmdLine {
 
     changeState(cmd: Cmd | number) {
         if (typeof cmd == "number") {
-            this.states[cmd];
+            this.state = this.states[cmd];
         } else {
-            this.state = cmd.code == 103 ?
+            this.state = cmd.code == 103 ? //自动播放剧情
                 this.states[parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal] :
                 this.states[parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal];
         }
+        return StateEnum[this.states.indexOf(this.state)];
     }
 
     resume(e: Event | number) {
@@ -178,6 +184,7 @@ export default class CmdLine {
                 case 204:  //按钮分歧
                 case 100 : { //"显示文章"
                     this.pause = true;
+                    this.state.pause();
                     this.viewMgr.exe(cmd);
                     return;
                 }
@@ -193,7 +200,7 @@ export default class CmdLine {
                     if (this._showProcess || this.showCode)
                         console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
                     this.pause = true;
-                    return Laya.timer.frameOnce(--dur, this, this.resume);
+                    return this.state.wait(--dur);//当前帧算入等待中故减掉1
                 }
                 case 103://"自动播放剧情"
                 case 104: {//"快进剧情"
@@ -281,7 +288,7 @@ export default class CmdLine {
                 }
             }
         }
-        //Scene最后一位时将退出while无法衔接，会造成一帧浪费；
+        //Scene最后一位时将退出while无法衔接，会造成一帧浪费，故领起下个Scene进入while
         return this.curCid == this.cmdArr.length ? this.update() : null;
     }
 };

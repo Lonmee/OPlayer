@@ -1,37 +1,47 @@
 /**
  * Created by ShanFeng on 5/9/2017.
  */
+import DH from "../../data/DH";
+import Conf from "../../data/Conf";
 export enum StateEnum {Normal, Auto, FF}
 
 export interface IState {
     pause();
-    wait();
+    /**
+     *
+     * @param dur frame(s)
+     */
+    wait(dur: number);
 }
 
-export class NormalState implements IState {
-
+class State implements IState {
     pause() {
     }
 
-    wait() {
+    wait(dur) {
+        Laya.timer.frameOnce(dur, null, () => {
+            DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+        });
     }
 }
 
-export class AutoState implements IState {
+export class NormalState extends State {
 
+}
+
+export class AutoState extends State {
     pause() {
-    }
-
-    wait() {
+        this.wait(120);
     }
 }
 
-export class FFState implements IState {
-
+export class FFState extends State {
     pause() {
+        this.wait();
     }
 
-    wait() {
+    wait(dur = 0) {
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 }
 
