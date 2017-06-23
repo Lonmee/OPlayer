@@ -130,9 +130,8 @@ export default class CmdLine {
 
     resume(e: Event | number = null) {
         this.pause = false;
-        if (typeof e == "number") {
+        if (typeof e == "number")
             this.update(e);
-        }
     }
 
     complete() {

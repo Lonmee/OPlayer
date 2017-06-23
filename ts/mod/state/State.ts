@@ -51,7 +51,7 @@ export class FFState extends State {
     }
 
     wait(dur = 0) {
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME, );
     }
 }
 

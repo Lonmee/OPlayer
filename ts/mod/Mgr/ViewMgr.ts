@@ -68,8 +68,10 @@ export class ViewMgr extends Sprite implements IMgr {
                 break;
             case "KeyN":
                 this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+                break;
             case "KeyZ":
                 this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.FF);
+                break;
         }
     }
 
@@ -77,6 +79,7 @@ export class ViewMgr extends Sprite implements IMgr {
         switch (e.nativeEvent.code) {
             case "KeyZ":
                 this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Normal);
+                break;
         }
     }
 
