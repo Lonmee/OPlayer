@@ -4,8 +4,10 @@
 import DH from "../../data/DH";
 import Conf from "../../data/Conf";
 export enum StateEnum {Normal, Auto, FF}
+export enum SpeedEnum {Slow, Normal, Fast}
 
 export interface IState {
+    id: StateEnum
     pause();
     /**
      *
@@ -15,6 +17,8 @@ export interface IState {
 }
 
 class State implements IState {
+    id: StateEnum;
+
     pause() {
     }
 
@@ -26,16 +30,22 @@ class State implements IState {
 }
 
 export class NormalState extends State {
-
+    id = StateEnum.Normal;
 }
 
 export class AutoState extends State {
+    id = StateEnum.Auto;
+    speed = SpeedEnum.Normal;
+    dur = [60, 90, 120];
+
     pause() {
-        this.wait(120);
+        this.wait(this.dur[this.speed]);
     }
 }
 
 export class FFState extends State {
+    id = StateEnum.FF;
+
     pause() {
         this.wait();
     }

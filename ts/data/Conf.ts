@@ -47,13 +47,14 @@ interface StarName {
 
 export default class Conf {
     //Event
+    static STAGE_BLUR: string = "stage_blur";
     static LOADING_PROGRESS: string = "loading_progress";
     static PLAY_CHAPTER: string = "play_chapter";
     static CMD_LINE_RESUME: string = "cmd_line_resume";
     static ITEM_CHOOSEN: string = "item_choosen";
     static CHANGE_STATE: string = "change_state";
     static QUITE_GAME: string = "quite_game";
-    
+
     //static
     static debug: boolean = true;//Todo:发布时关掉
     static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};
@@ -82,5 +83,10 @@ export default class Conf {
          var ua:string = window.navigator.userAgent.toLowerCase();
          if(ua.indexOf('micromessenger') !=-1){
          this.isWX = true;*/
+
+        //Laya.Browser.onMobile
+        //navigator.platform
+        //navigator.appVersion
+        //navigator.userAgent
     }
 }

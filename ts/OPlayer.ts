@@ -29,7 +29,7 @@ export class OPlayer {
 
 Browser.window.oplayer = new OPlayer();
 
-if (Conf.debug) {
+if (Conf.debug) {//注册到window
     Browser.window.conf = Conf;
     Browser.window.dh = DH.instance;
 }

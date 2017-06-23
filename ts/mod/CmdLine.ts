@@ -62,6 +62,8 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
+        this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.changeState);
+        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.resetState);
 
         //region test only
         this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
@@ -102,18 +104,31 @@ export default class CmdLine {
         this.pause = false;
     }
 
-    changeState(cmd: Cmd | number) {
-        if (typeof cmd == "number") {
-            this.state = this.states[cmd];
-        } else {
-            this.state = cmd.code == 103 ? //自动播放剧情
-                this.states[parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal] :
-                this.states[parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal];
-        }
-        return StateEnum[this.states.indexOf(this.state)];
+    /**
+     * 舞台失焦等意外
+     * 仅重置快进
+     */
+    resetState() {
+        if (this.state.id == StateEnum.FF)
+            this.changeState(StateEnum.Normal);
     }
 
-    resume(e: Event | number) {
+    changeState(cmd: Cmd | number) {
+        let ind;
+        if (typeof cmd == "number") {
+            this.state = this.states[ind = cmd];
+        } else {
+            this.state = cmd.code == 103 ? //自动播放剧情
+                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
+                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
+        }
+        if (ind == 2) {
+            this.resume();
+        }
+        return StateEnum[ind];
+    }
+
+    resume(e: Event | number = null) {
         this.pause = false;
         if (typeof e == "number") {
             this.update(e);
@@ -131,10 +146,17 @@ export default class CmdLine {
     }
 
     /**
-     * 恢复父剧情
+     * 恢复剧情
+     * 缺省参数时恢复父剧情，外部入参用例用于恢复存盘，将自动抹去已存父剧情
+     * @param snap [number, number, number]:[cmdId, sceneId, storyId]
      */
-    restoreChapter() {
-        this.snap = this.appending.pop();
+    restoreChapter(snap: [number, number, number] = null) {
+        if (snap) {
+            this.snap = snap;
+            this.appending = [];
+        } else
+            this.snap = this.appending.pop();
+        // this.snap = snap || this.appending.pop();
         console.log("restore to chapter:", this.snap);
         this.dh.story.gotoChapter(this.snap[2]);
     }

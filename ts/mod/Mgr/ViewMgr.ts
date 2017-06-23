@@ -12,6 +12,7 @@ import {IMgr} from "./Mgr";
 import Event = laya.events.Event;
 import Browser = laya.utils.Browser;
 import Stage = laya.display.Stage;
+import {StateEnum} from "../state/State";
 /**
  * Created by Lonmee on 4/23/2017.
  */
@@ -52,8 +53,10 @@ export class ViewMgr extends Sprite implements IMgr {
 
     }
 
-    initListener() {
+    initListener() {//系统用交互事件总代
         this.stage.on(Event.KEY_DOWN, this, this.kdHandler);
+        this.stage.on(Event.KEY_UP, this, this.kuHandler);
+        this.stage.on(Event.BLUR, this, this.blurHandler);
         this.dh.eventPoxy.on(Conf.LOADING_PROGRESS, this, this.progress);
     }
 
@@ -65,7 +68,20 @@ export class ViewMgr extends Sprite implements IMgr {
                 break;
             case "KeyN":
                 this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+            case "KeyZ":
+                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.FF);
         }
+    }
+
+    kuHandler(e: Event) {
+        switch (e.nativeEvent.code) {
+            case "KeyZ":
+                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Normal);
+        }
+    }
+
+    blurHandler(e: Event) {
+        this.dh.eventPoxy.event(Conf.STAGE_BLUR);
     }
 
     /**
