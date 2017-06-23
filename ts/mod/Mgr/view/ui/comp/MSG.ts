@@ -12,9 +12,12 @@ import Texture = laya.resource.Texture;
 /**
  * Created by ShanFeng on 6/5/2017.
  */
+export enum SpeedEnum {Slow, Normal, Fast}
+
 export class MSG extends Sprite {
     bgImg: UIImg;
     txt: Text = new Text();
+    dur = [60, 90, 120];
 
     constructor(private cmd: Cmd) {
         super();

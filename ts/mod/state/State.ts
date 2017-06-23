@@ -4,7 +4,6 @@
 import DH from "../../data/DH";
 import Conf from "../../data/Conf";
 export enum StateEnum {Normal, Auto, FF}
-export enum SpeedEnum {Slow, Normal, Fast}
 
 export interface IState {
     id: StateEnum
@@ -35,11 +34,10 @@ export class NormalState extends State {
 
 export class AutoState extends State {
     id = StateEnum.Auto;
-    speed = SpeedEnum.Normal;
-    dur = [60, 90, 120];
+    delay: number;
 
     pause() {
-        this.wait(this.dur[this.speed]);
+        this.wait(this.delay);
     }
 }
 
@@ -51,7 +49,7 @@ export class FFState extends State {
     }
 
     wait(dur = 0) {
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME, );
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME,);
     }
 }
 
