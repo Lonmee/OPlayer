@@ -1,6 +1,7 @@
 import {IMgr} from "./Mgr";
 import {Cmd} from "../../data/sotry/Story";
 import {DigitalDic, StringDic} from "./value/ODictionary";
+import DH from "../../data/DH";
 import Dictionary = laya.utils.Dictionary;
 /**
  * Created by ShanFeng on 5/8/2017.
@@ -12,6 +13,9 @@ export default class ValueMgr implements IMgr {
     exVDic = new DigitalDic();
 
     constructor() {
+        DH.instance.vDic = this.vDic;
+        DH.instance.sDic = this.sDic;
+        DH.instance.exVDic = this.exVDic;
     }
 
     exe(cmd: Cmd) {

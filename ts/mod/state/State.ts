@@ -34,7 +34,7 @@ export class NormalState extends State {
 
 export class AutoState extends State {
     id = StateEnum.Auto;
-    delay: number;
+    delay = 60;
 
     pause() {
         this.wait(this.delay);

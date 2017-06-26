@@ -61,7 +61,6 @@ export default class UILayer extends Layer {
                 }
                 else
                     this.showMenu(parseInt(cmd.para[0]));
-
                 break;
             case 218: //"强制存档读档"
                 this.showMenu(MenuEnum.save);

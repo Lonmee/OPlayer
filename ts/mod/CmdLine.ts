@@ -54,6 +54,7 @@ export default class CmdLine {
 
     private dh: DH = DH.instance;
     private cmdArr: Cmd[] = [];
+    private lock: boolean;
 
     constructor() {
         this.changeState(StateEnum.Normal);
@@ -129,9 +130,12 @@ export default class CmdLine {
     }
 
     resume(e: Event | number = null) {
-        this.pause = false;
-        if (typeof e == "number")
+        if (!this.lock)
+            this.pause = false;
+        if (typeof e == "number") {
+            this.lock = this.pause = false;
             this.update(e);
+        }
     }
 
     complete() {
@@ -192,19 +196,28 @@ export default class CmdLine {
                 console.log(cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //需暂停等待
-                case 150: //"刷新UI画面"
+                // case 150: //"刷新UI画面"
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
                 case 218: //"强制存档读档"
+                    if (cmd.para[0] != "10008" && cmd.para[0] != "10009")
+                        this.lock = this.pause = true;
+                    this.viewMgr.exe(cmd);
+                    return;
                 case 110: //"打开指定网页";
-                case 111: //"禁用开启菜单功能";
+                // case 111: //"禁用开启菜单功能";
 
+                case 100 : { //"显示文章"
+                    this.pause = true;
+                    this.state.pause();
+                    this.viewMgr.exe(cmd);
+                    return;
+                }
                 case 101: //剧情分歧
                 case 1010: //剧情分歧EX
                 case 1011: //剧情分歧EX2
-                case 204:  //按钮分歧
-                case 100 : { //"显示文章"
-                    this.pause = true;
+                case 204: { //按钮分歧
+                    this.lock = this.pause = true;
                     this.state.pause();
                     this.viewMgr.exe(cmd);
                     return;

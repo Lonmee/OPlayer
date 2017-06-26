@@ -4,6 +4,7 @@ import CmdLine from "../mod/CmdLine";
 import Story from "./sotry/Story";
 import {IMgr} from "../mod/Mgr/Mgr";
 import Preloader from "../mod/loader/Preloader";
+import {DigitalDic, StringDic} from "../mod/Mgr/value/ODictionary";
 import EventDispatcher = laya.events.EventDispatcher;
 /**
  * Created by ShanFeng on 4/24/2017.
@@ -22,6 +23,12 @@ export default class DH {
     cmdLine: CmdLine;
     mgrArr: IMgr[];
     preloader: Preloader;
+    //region 运行时共享数据组
+    imgDic: laya.utils.Dictionary;
+    vDic: DigitalDic;
+    sDic: StringDic;
+    exVDic: DigitalDic;
+    //endregion
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();

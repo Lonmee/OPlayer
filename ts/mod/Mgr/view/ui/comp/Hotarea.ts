@@ -40,7 +40,7 @@ export class HotareaSelector extends Sprite {
             this.hotRec.width = parseInt(rec[2]);
             this.hotRec.height = parseInt(rec[3]);
         } else {
-            let img = DH.instance.cmdLine.viewMgr.gl.imgDir.get(rec[0]);
+            let img = DH.instance.imgDic.get(rec[0]);
             if (img) {
                 this.hotRec.x = img.x;
                 this.hotRec.y = img.y;

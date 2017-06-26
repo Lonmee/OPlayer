@@ -39,6 +39,12 @@ export class GameImg extends Sprite {
         super();
         this.loadImage(getGameImgLink(path));
     }
+
+    reload(path: string) {
+        this.graphics.clear();
+        this.loadImage(getGameImgLink(path));
+        return this;
+    }
 }
 
 export function getBtnData(idx: number) {

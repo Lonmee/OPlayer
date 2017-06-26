@@ -56,8 +56,8 @@ export class MSG extends Sprite {
                 case "2":
                     Layouter.bottom(this);
             }
-            this.txt.x = this.width - this.txt.width >> 1;
-            this.txt.y = (this.height - this.txt.height >> 1) + 10;
+            this.txt.x = tw.textX;
+            this.txt.y = tw.textY;
             this.addChild(this.txt);
             Laya.stage.once(Event.CLICK, this, this.clickHandler);
         }
