@@ -84,7 +84,8 @@ export default class CmdList extends Dictionary {
                 cmd.code == 203 ? cmd.links : "",
                 cmd.code == 101 || cmd.code == 1010 || cmd.code == 1011 ||
                 cmd.code == 204 || cmd.code == 200 || cmd.code == 217 ? cmd.links : "",
-                cmd.code == 209 ? cmd.links : "");
+                cmd.code == 209 ? cmd.links : "",
+                cmd.code == 210 ? cmd.para[0] + " frames" : "");
         }
         console.log("               next scene: ", s.link);
     }

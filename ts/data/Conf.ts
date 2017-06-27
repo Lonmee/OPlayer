@@ -4,6 +4,7 @@ import Story from "./sotry/Story";
  * 框架静态数据预置
  */
 interface Frameworks {
+    ver?: string
     width?: number
     height?: number
     bgColor?: string
@@ -70,7 +71,7 @@ export default class Conf {
     static starName: StarName = {single: "data/game.bin", multiple: "game00.bin"};
 
     //dynamic
-    static frameworks: Frameworks = {bgColor: "#0", showStatus: false};
+    static frameworks: Frameworks = {ver: "1.0", bgColor: "#0", showStatus: false};
     static info: Info = {};
 
     constructor() {

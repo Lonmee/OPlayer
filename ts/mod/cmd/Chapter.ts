@@ -1,6 +1,7 @@
 import Scene from "./Scene";
 import {Cmd, DChapter} from "../../data/sotry/Story";
 import CmdList from "./CmdList";
+import DH from "../../data/DH";
 /**
  * Created by ShanFeng on 5/8/2017.
  */
@@ -16,7 +17,7 @@ export default class Chapter extends DChapter {
             this.formScene();
     }
 
-    printSceneArr() {
+    printSceneArr(current: boolean | number = false) {
         //for dynamic usage
         /*if (this.cmdList == null)
          require(["js/mod/cmd/CmdList.js"], (CmdList) => {
@@ -24,9 +25,13 @@ export default class Chapter extends DChapter {
          for (let s of this.sceneArr)
          this.cmdList.printChapter(s, this.sceneArr);
          });*/
-
-        for (let s of this.sceneArr)
-            this.cmdList.printChapter(s, this.sceneArr);
+        if (current)
+            this.cmdList.printChapter(this.sceneArr[DH.instance.cmdLine.restoreSid], this.sceneArr);
+        else if (typeof current == "number")
+            this.cmdList.printChapter(this.sceneArr[current], this.sceneArr);
+        else
+            for (let s of this.sceneArr)
+                this.cmdList.printChapter(s, this.sceneArr);
     }
 
     getScene(idx: number): Scene {
