@@ -25,6 +25,7 @@ export default class CmdLine {
     restoreSid: number;
     appending: [number, number, number][] = [];
     snap: [number, number, number];
+
     assMgr: AssMgr;
     viewMgr: ViewMgr;
     valueMgr: ValueMgr;
@@ -67,7 +68,7 @@ export default class CmdLine {
         //endregion
 
         Laya.timer.frameLoop(1, this, this.update);
-        // this.showProcess = true;
+        // this.reportor.showProcess = true;
     }
 
     /**
