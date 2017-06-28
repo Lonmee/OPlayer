@@ -9,7 +9,6 @@ import DH from "../../data/DH";
 export default class Chapter extends DChapter {
     repeat: [number[], Cmd[][]] = [[], []];
     sceneArr: Scene[] = [];
-    cmdList: CmdList = new CmdList();
 
     constructor(dc: DChapter) {
         super(dc);
@@ -17,27 +16,7 @@ export default class Chapter extends DChapter {
             this.formScene();
     }
 
-    printSceneArr(current: boolean | number = false) {
-        //for dynamic usage
-        /*if (this.cmdList == null)
-         require(["js/mod/cmd/CmdList.js"], (CmdList) => {
-         this.cmdList = new CmdList.default();
-         for (let s of this.sceneArr)
-         this.cmdList.printChapter(s, this.sceneArr);
-         });*/
-        if (current)
-            this.cmdList.printChapter(this.sceneArr[DH.instance.cmdLine.restoreSid], this.sceneArr);
-        else if (typeof current == "number")
-            this.cmdList.printChapter(this.sceneArr[current], this.sceneArr);
-        else
-            for (let s of this.sceneArr)
-                this.cmdList.printChapter(s, this.sceneArr);
-    }
-
     getScene(idx: number): Scene {
-        // while (this.repeat[0].length > 0 || this.cmdArr.length && idx >= this.sceneArr.length) {
-        //     this.formScene();
-        // }
         return this.sceneArr[idx] || new Scene;
     }
 

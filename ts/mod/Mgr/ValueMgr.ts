@@ -78,7 +78,7 @@ export default class ValueMgr implements IMgr {
      * @param p2
      * @returns {any}
      */
-    digByType(type: string, p2: string, p4: string = "") {
+    private digByType(type: string, p2: string, p4: string = "") {
         switch (parseInt(type)) {
             case 0:
                 return parseInt(p2);
@@ -108,7 +108,7 @@ export default class ValueMgr implements IMgr {
         }
     }
 
-    digByTag(p: string) {
+    private digByTag(p: string) {
         switch (this.parsePara(p, 0)) {
             case "EX" :
                 return this.exVDic.get(this.parsePara(p, 1));

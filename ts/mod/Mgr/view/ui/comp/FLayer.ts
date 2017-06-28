@@ -7,5 +7,12 @@ export default class FLayer extends Sprite {
 
     constructor(data: DFLayer[]) {
         super();
+        this.initView(data);
+    }
+
+    initView(data) {
+        for (let fd of data) {
+
+        }
     }
 }

@@ -11,6 +11,7 @@ import {HotareaSelector} from "./comp/Hotarea";
 import Event = laya.events.Event;
 export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
 export default class UIFac {
+    fLayer: FLayer;
     private msg: MSG;
     private hotarea: HotareaSelector;
     private dh: DH = DH.instance;
@@ -83,7 +84,7 @@ export default class UIFac {
     }
 
     getFLayer() {
-        return new FLayer(this.dh.story.fLayerArr);
+        return this.fLayer ? this.fLayer : this.fLayer = new FLayer(this.dh.story.fLayerArr);
     }
 
     getHotarea() {

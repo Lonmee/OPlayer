@@ -8,6 +8,7 @@ import Rectangle = laya.maths.Rectangle;
 import Event = laya.events.Event;
 
 export class HotareaSelector extends Sprite {
+    private preCache = [];
     private hotRec: Rectangle;
     private hit: [number, number, string];
 
@@ -29,6 +30,8 @@ export class HotareaSelector extends Sprite {
 
     reset(cmd: Cmd) {
         this.hit = null;
+        this.preCache = [];
+        this.graphics.clear();
         return this;
     }
 
@@ -50,7 +53,10 @@ export class HotareaSelector extends Sprite {
                 this.hotRec.width = this.hotRec.height = 0;
             }
         }
-
+        if (this.preCache.indexOf(this.hotRec.x) == -1) {
+            this.preCache.push(this.hotRec.x);
+            this.updatePreview();
+        }
         let bingo = this.hotRec && this.hit && this.hotRec.contains(this.hit[0], this.hit[1]);
         if (bingo) {
             if (cmd.para[3] == "0")
@@ -61,8 +67,15 @@ export class HotareaSelector extends Sprite {
 
         if (bingo && this.parent) {
             this.hit = null;
+            this.preCache = [];
+            this.graphics.clear();
             this.parent.removeChild(this);
         }
         return bingo;
+    }
+
+    updatePreview() {
+        this.graphics.drawRect(this.hotRec.x, this.hotRec.y, this.hotRec.width, this.hotRec.height, "#FFFFFF");
+        this.alpha = .5;
     }
 }

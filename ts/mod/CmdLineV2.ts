@@ -8,6 +8,7 @@ import {Cmd, DChapter} from "../data/sotry/Story";
 import {AutoState, FFState, IState, NormalState, StateEnum} from "./state/State";
 import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
+import CmdList from "./cmd/CmdList";
 import Scene from "./cmd/Scene";
 import {IMgr} from "./Mgr/Mgr";
 import Event = laya.events.Event;
@@ -22,6 +23,11 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
+    showCode: boolean;
+    private _showProcess: boolean;
+    callCount: number = 0;
+    frame: number = 0;
+    pauseCound: number = 0;
     restoreSid: number;
     appending: [number, number, number][] = [];
     snap: [number, number, number];
@@ -42,12 +48,11 @@ export default class CmdLine {
     private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     private state: IState;
     private pause: boolean = true;
-    chapter: Chapter;
+    private chapter: Chapter;
     private curSid: number = 0;
     private curCid: number = 0;
 
     private dh: DH = DH.instance;
-    private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
     private lock: boolean;
 
@@ -68,6 +73,22 @@ export default class CmdLine {
 
         Laya.timer.frameLoop(1, this, this.update);
         // this.showProcess = true;
+    }
+
+    set showProcess(value: boolean) {
+        if (value)
+            Laya.timer.frameLoop(1, this, this.showFrame);
+        else {
+            Laya.timer.clear(this, this.showFrame);
+        }
+        this.callCount = this.frame = 0;
+        this.pauseCound = 1;
+        this._showProcess = value;
+    }
+
+    showFrame() {
+        console.log("frame:", this.frame++, "updated:", this.callCount, "times");
+        this.callCount = 0;
     }
 
     /**
@@ -143,10 +164,13 @@ export default class CmdLine {
         this.dh.story.gotoChapter(this.snap[2]);
     }
 
+    cmdList: CmdList = new CmdList();
+
     update(sid = NaN) {
-        this.reportor.callCount++;
+        this.callCount++;
         if (this.pause) {
-            this.reportor.logPause();
+            if (this._showProcess)
+                console.log("           pause:", this.pauseCound++);
             return;
         }
         if (sid > 0 || this.curCid >= this.cmdArr.length) {
@@ -168,7 +192,8 @@ export default class CmdLine {
 
         while (this.curCid < this.cmdArr.length) {
             let cmd = this.cmdArr[this.curCid++];
-            this.reportor.logProcess(cmd);
+            if (this._showProcess || this.showCode)
+                console.log(cmd.code, this.cmdList.get(cmd.code));
             switch (cmd.code) {
                 //需暂停等待
                 // case 150: //"刷新UI画面"
@@ -204,9 +229,10 @@ export default class CmdLine {
                 }
                 //状态指令
                 case 210: {//等待
-                    this.reportor.pauseCound = 1;
+                    this.pauseCound = 1;
                     let dur = parseInt(cmd.para[0]);
-                    this.reportor.logWait(dur);
+                    if (this._showProcess || this.showCode)
+                        console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
                     this.pause = true;
                     return this.state.wait(--dur);//当前帧算入等待中故减掉1
                 }
