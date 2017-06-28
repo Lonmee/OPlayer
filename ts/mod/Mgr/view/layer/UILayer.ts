@@ -79,8 +79,11 @@ export default class UILayer extends Layer {
         }
         if (cmd.para[7] == "1")
             this.addChild(this.msg = this.uiFac.getMSG(cmd));
-        else
+        else {
+            if (this.msg && this.msg.parent)
+                this.removeChild(this.msg);
             this.msg = this.uiFac.getMSG(cmd);
+        }
     }
 
     private showSelector(cmd: Cmd) {

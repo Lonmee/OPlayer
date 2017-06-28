@@ -62,10 +62,10 @@ export default class Reportor {
          this.cmdList.printChapter(s, this.sceneArr);
          });*/
         let chapter = DH.instance.cmdLine.chapter;
-        if (current)
-            this.cmdList.printChapter(chapter.sceneArr[DH.instance.cmdLine.restoreSid], chapter.sceneArr);
-        else if (typeof current == "number")
+        if (typeof current == "number")
             this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
+        else if (current)
+            this.cmdList.printChapter(chapter.sceneArr[DH.instance.cmdLine.restoreSid], chapter.sceneArr);
         else
             for (let s of chapter.sceneArr)
                 this.cmdList.printChapter(s, chapter.sceneArr);

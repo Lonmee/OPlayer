@@ -37,10 +37,14 @@ export default class ValueMgr implements IMgr {
                 let v1 = cmd.para[1] == "0" ? 0 : cmd.para[5] == "0" ? this.digByTag(cmd.para[0]) : this.digByType("4", cmd.para[0]);
                 let v2 = this.digByType(cmd.para[2], cmd.para[3], cmd.para[4]);
 
-                if (cmd.code == 207)
-                    this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
-                else
+                if (cmd.code == 207) {
+                    // console.log("set value", cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
+                    this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
+                }
+                else {
+                    // console.log("set exValue", cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                     this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
+                }
                 break;
             case 215://"字符串"
                 //0: 字符串索引  1:字符串内容

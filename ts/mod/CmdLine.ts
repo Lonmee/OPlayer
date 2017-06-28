@@ -42,6 +42,7 @@ export default class CmdLine {
 
     private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     private state: IState;
+    private lock: boolean = true;
     private pause: boolean = true;
     chapter: Chapter;
     private curSid: number = 0;
@@ -50,10 +51,10 @@ export default class CmdLine {
     private dh: DH = DH.instance;
     private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
-    private lock: boolean;
 
     constructor() {
-        this.changeState(StateEnum.Normal);
+        this.changeState(StateEnum.FF);
+        // this.changeState(StateEnum.Normal);
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
@@ -69,6 +70,7 @@ export default class CmdLine {
 
         Laya.timer.frameLoop(1, this, this.update);
         // this.reportor.showProcess = true;
+        // this.reportor.showCode = true;
     }
 
     /**
@@ -80,9 +82,10 @@ export default class CmdLine {
             this.curSid = this.snap[1];
         else
             this.curSid = 0;
+        this.curCid = 0;
         this.chapter = new Chapter(c);
         this.cmdArr = [];
-        this.pause = false;
+        this.lock = this.pause = false;
     }
 
     /**
@@ -103,7 +106,7 @@ export default class CmdLine {
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
         }
-        if (ind == 2) {
+        if (ind == 2 && !this.lock) {
             this.resume();
         }
         return StateEnum[ind];
@@ -119,13 +122,9 @@ export default class CmdLine {
     }
 
     complete() {
-        if (this.appending.length > 0) {
-            this.restoreChapter();
-        } else {
-            //todo:chapter complete
-            this.curCid = this.curSid = 0;
-            console.log("chapter complete");
-        }
+        //todo:chapter complete
+        this.curCid = this.curSid = 0;
+        console.log("chapter complete");
     }
 
     /**
@@ -139,9 +138,12 @@ export default class CmdLine {
             this.appending = [];
         } else
             this.snap = this.appending.pop();
-        // this.snap = snap || this.appending.pop();
         console.log("restore to chapter:", this.snap);
-        this.dh.story.gotoChapter(this.snap[2]);
+        if (this.chapter.id == this.snap[2]) {
+            this.curCid = 0;
+            this.update(this.snap[1])
+        } else
+            this.dh.story.gotoChapter(this.snap[2]);
     }
 
     update(sid = NaN) {
@@ -150,7 +152,7 @@ export default class CmdLine {
             this.reportor.logPause();
             return;
         }
-        if (sid > 0 || this.curCid >= this.cmdArr.length) {
+        if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             this.cmdArr = s.cmdArr;
             this.restoreSid = this.curSid;
@@ -164,7 +166,10 @@ export default class CmdLine {
         }
         if (this.curSid == -1) {
             this.pause = true;
-            return this.complete();
+            if (this.appending.length > 0)
+                this.restoreChapter();
+            else
+                return this.complete();
         }
 
         while (this.curCid < this.cmdArr.length) {
@@ -213,7 +218,8 @@ export default class CmdLine {
                 }
                 case 103://"自动播放剧情"
                 case 104: {//"快进剧情"
-                    return this.changeState(cmd);
+                    this.changeState(cmd);
+                    return this.update();
                 }
 
                 //repeat end
@@ -256,7 +262,7 @@ export default class CmdLine {
                     //兼容条件结构特例
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
-                    return this.update();
+                    return this.update(/*this.curSid*/);
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
@@ -288,7 +294,7 @@ export default class CmdLine {
                     //兼容条件结构特例
                     if (choice == 1 || choice == 2 && cmd.links.length == 2)
                         this.curSid = cmd.links[choice - 1];
-                    return this.update();
+                    return this.update(this.curSid);
                 }
 
                 default: {//非逻辑命令分发

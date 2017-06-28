@@ -45,7 +45,7 @@ export class FFState extends State {
     id = StateEnum.FF;
 
     pause() {
-        this.wait();
+        this.wait(0);
     }
 
     wait(dur = 0) {
