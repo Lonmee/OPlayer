@@ -260,9 +260,7 @@ export default class CmdLine {
                     }
 
                     //兼容条件结构特例
-                    if (choice == 1 || choice == 2 && cmd.links.length == 2)
-                        this.curSid = cmd.links[choice - 1];
-                    return this.update(/*this.curSid*/);
+                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
@@ -292,9 +290,7 @@ export default class CmdLine {
 
                     let choice = pass ? 1 : 2;
                     //兼容条件结构特例
-                    if (choice == 1 || choice == 2 && cmd.links.length == 2)
-                        this.curSid = cmd.links[choice - 1];
-                    return this.update(this.curSid);
+                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
                 }
 
                 default: {//非逻辑命令分发

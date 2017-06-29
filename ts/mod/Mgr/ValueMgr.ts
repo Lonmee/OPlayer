@@ -38,11 +38,9 @@ export default class ValueMgr implements IMgr {
                 let v2 = this.digByType(cmd.para[2], cmd.para[3], cmd.para[4]);
 
                 if (cmd.code == 207) {
-                    // console.log("set value", cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                     this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                 }
                 else {
-                    // console.log("set exValue", cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                     this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
                 }
                 break;
