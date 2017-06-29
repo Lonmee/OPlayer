@@ -17,7 +17,7 @@ export default class Chapter extends DChapter {
     }
 
     getScene(idx: number): Scene {
-        return this.sceneArr[idx] || new Scene;
+        return this.sceneArr[idx];
     }
 
     /**
