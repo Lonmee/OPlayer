@@ -60,15 +60,14 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217://高级条件分歧
                     let logic = cmd.code == 200 || cmd.code == 217;
-                    if (!logic)//条件结构特例
-                        s.link = NaN;
-                    /**p.s:stl means SceneToLink*/
-                    let stl = this.formBranchScene(cmd.links = logic ? [this.sceneArr.length] : [],
+                    let scenesToLinks = this.formBranchScene(cmd.links = logic ? [this.sceneArr.length] : [],
                         logic ? [s] : []);
-                    while (stl.length) {
-                        let ts = stl.pop();
+                    while (scenesToLinks.length) {
+                        let ts = scenesToLinks.pop();
                         ts.link = isNaN(ts.link) ? NaN : this.sceneArr.length;
                     }
+                    if (!logic)//条件结构特例
+                        s.link = NaN;
                     return s;
                 /*********************branch end*****************/
             }
@@ -115,15 +114,11 @@ export default class Chapter extends DChapter {
                 case 200://条件分歧
                 case 217: //高级条件分歧
                     let logic = cmd.code == 200 || cmd.code == 217;
-                    if (!logic) //条件结构特例
+                    this.formBranchScene(cmd.links = logic ? [this.sceneArr.length] : [],
+                        logic ? branchScene = branchScene.concat(s) : branchScene);
+                    if (!logic) {//条件结构特例
                         s.link = NaN;
-                    let stl = this.formBranchScene(cmd.links = logic ? [this.sceneArr.length] : [], logic ? [s] : []);
-                    while (stl.length) {
-                        let ts = stl.pop();
-                        ts.link = isNaN(ts.link) ? NaN : this.sceneArr.length;
                     }
-                    this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
-                    branchScene.push(s);
                     break;
 
                 //options
@@ -131,10 +126,10 @@ export default class Chapter extends DChapter {
                 case 212: //按钮分歧内容
                 case 211: //条件分歧else内容
                     //去除无用scene，且防止空选项误删
-                    // if (s.cmdArr.length == 1 && branchScene.indexOf(s) == -1)
-                    //     this.sceneArr.pop();
-                    // else
-                    //     s.cmdArr.pop();
+                    if (s.cmdArr.length == 1 && branchScene.indexOf(s) == -1)
+                        this.sceneArr.pop();
+                    else
+                        s.cmdArr.pop();
                     this.sceneArr.push(s = new Scene(this.sceneArr.length + 1));
                     links.push(s.link - 1);
                     branchScene.push(s);
@@ -145,10 +140,10 @@ export default class Chapter extends DChapter {
                 case 205: //按钮分歧
                 case 201: //条件分歧
                     //去除无用scene，且防止空选项误删
-                    // if (s.cmdArr.length == 1 && branchScene.indexOf(s) == -1)
-                    //     this.sceneArr.pop();
-                    // else
-                    //     s.cmdArr.pop();
+                    if (s.cmdArr.length == 1 && branchScene.indexOf(s) == -1)
+                        this.sceneArr.pop();
+                    else
+                        s.cmdArr.pop();
                     return branchScene;
             }
         }

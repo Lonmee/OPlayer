@@ -150,27 +150,20 @@ export default class CmdLine {
         this.reportor.callCount++;
         if (this.pause) {
             this.reportor.logPause();
-        } else
-            this.exe(this.nextCmd(sid));
-    }
-
-    nextCmd(sid = NaN): Cmd {
-        if (this.curCid == this.cmdArr.length) {
+            return;
+        }
+        if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
-            //检查Scene结束
             if (s == null) {
-                this.pause = true;
+                this.lock = this.pause = true;
                 if (this.appending.length > 0)
-                    this.restoreChapter();
+                    return this.restoreChapter();
                 else
-                    this.complete();
-                return;
+                    return this.complete();
             }
             this.cmdArr = s.cmdArr;
             this.restoreSid = this.curSid;
             this.curSid = s.link;
-
-            //检查是否有剧情还原
             if (!this.snap) {
                 this.curCid = 0;
             } else {
@@ -178,136 +171,135 @@ export default class CmdLine {
                 this.snap = null;
             }
         }
-        return this.cmdArr[this.curCid++];
-    }
 
-    exe(cmd: Cmd) {
-        this.reportor.logProcess(cmd);
-        if (!cmd)
-            return;
-        switch (cmd.code) {
-            //需暂停等待
-            // case 150: //"刷新UI画面"
-            case 208: //"返回标题画面"
-            case 214: //"呼叫游戏界面"
-            case 218: //"强制存档读档"
-                if (cmd.para[0] != "10008" && cmd.para[0] != "10009")
+        while (this.curCid < this.cmdArr.length) {
+            let cmd = this.cmdArr[this.curCid++];
+            this.reportor.logProcess(cmd);
+            switch (cmd.code) {
+                //需暂停等待
+                // case 150: //"刷新UI画面"
+                case 208: //"返回标题画面"
+                case 214: //"呼叫游戏界面"
+                case 218: //"强制存档读档"
+                    if (cmd.para[0] != "10008" && cmd.para[0] != "10009")
+                        this.lock = this.pause = true;
+                    this.viewMgr.exe(cmd);
+                    return;
+                case 110: //"打开指定网页";
+                // case 111: //"禁用开启菜单功能";
+
+                case 100 : { //"显示文章"
+                    this.pause = true;
+                    this.state.pause();
+                    this.viewMgr.exe(cmd);
+                    return;
+                }
+                case 101: //剧情分歧
+                case 1010: //剧情分歧EX
+                case 1011: //剧情分歧EX2
+                case 204: { //按钮分歧
                     this.lock = this.pause = true;
-                this.viewMgr.exe(cmd);
-                return;
-            case 110: //"打开指定网页";
-            // case 111: //"禁用开启菜单功能";
-
-            case 100 : { //"显示文章"
-                this.pause = true;
-                this.state.pause();
-                this.viewMgr.exe(cmd);
-                return;
-            }
-            case 101: //剧情分歧
-            case 1010: //剧情分歧EX
-            case 1011: //剧情分歧EX2
-            case 204: { //按钮分歧
-                this.lock = this.pause = true;
-                this.state.pause();
-                this.viewMgr.exe(cmd);
-                return;
-            }
-            case 151: {//"返回游戏界面"
-                this.pause = false;
-                this.viewMgr.exe(cmd);
-                return;
-            }
-            //状态指令
-            case 210: {//等待
-                this.reportor.pauseCound = 1;
-                let dur = parseInt(cmd.para[0]);
-                this.reportor.logWait(dur);
-                this.pause = true;
-                return this.state.wait(--dur);//当前帧算入等待中故减掉1
-            }
-            case 103://"自动播放剧情"
-            case 104: {//"快进剧情"
-                this.changeState(cmd);
-                return this.update();
-            }
-
-            //repeat end
-            case 203:
-            //repeat interrupt
-            case 209: {
-                //设置链接目标等待刷新
-                // this.curSid = cmd.links[0];
-                //return
-                //强制刷新不等待时沿
-                return this.update(cmd.links[0]);
-            }
-
-            //跳转剧情
-            case 206 : {
-                this.pause = true;
-                console.log("gotoChapter:", parseInt(cmd.para[0]));
-                this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                return;
-            }
-            //呼叫子剧情
-            case 251: {
-                this.pause = true;
-                this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
-                console.log("insert chapter:", this.curCid, this.restoreSid, this.chapter.id);
-                this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                return;
-            }
-
-            //条件分歧
-            case 200:
-                let choice;
-                if (cmd.para[0].split("|")[0] == "MO") {
+                    this.state.pause();
                     this.viewMgr.exe(cmd);
-                    choice = this.viewMgr.ul.checkHotarea(cmd) ? 1 : 2;
-                } else {
-                    choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
+                    return;
+                }
+                case 151: {//"返回游戏界面"
+                    this.pause = false;
+                    this.viewMgr.exe(cmd);
+                    return;
+                }
+                //状态指令
+                case 210: {//等待
+                    this.reportor.pauseCound = 1;
+                    let dur = parseInt(cmd.para[0]);
+                    this.reportor.logWait(dur);
+                    this.pause = true;
+                    return this.state.wait(--dur);//当前帧算入等待中故减掉1
+                }
+                case 103://"自动播放剧情"
+                case 104: {//"快进剧情"
+                    this.changeState(cmd);
+                    return this.update();
                 }
 
-                //兼容条件结构特例
-                return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
+                //repeat end
+                case 203:
+                //repeat interrupt
+                case 209: {
+                    //设置链接目标等待刷新
+                    // this.curSid = cmd.links[0];
+                    //return
+                    //强制刷新不等待时沿
+                    return this.update(cmd.links[0]);
+                }
 
-            case 217: {//高级条件分歧
-                let len = parseInt(cmd.para[3]);
-                let moCmd;
-                let pass;
-                for (let i = 4; i < 4 + len; i++) {
-                    let p = cmd.para[i].split("&");
+                //跳转剧情
+                case 206 : {
+                    this.pause = true;
+                    console.log("gotoChapter:", parseInt(cmd.para[0]));
+                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
+                    return;
+                }
+                //呼叫子剧情
+                case 251: {
+                    this.pause = true;
+                    this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
+                    console.log("insert chapter:", this.curCid, this.restoreSid, this.chapter.id);
+                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
+                    return;
+                }
 
-                    if (p[0].split("|")[0] == "MO") {
-                        moCmd = cmd;
-                    }
-
-                    if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
-                        if (pass = this.valueMgr.judge(p))
-                            break;
+                //条件分歧
+                case 200:
+                    let choice;
+                    if (cmd.para[0].split("|")[0] == "MO") {
+                        this.viewMgr.exe(cmd);
+                        choice = this.viewMgr.ul.checkHotarea(cmd) ? 1 : 2;
                     } else {
-                        if (!(pass = this.valueMgr.judge(p)))
-                            break;
+                        choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
                     }
-                    pass = cmd.para[0] == "0" ? false : true;
+
+                    //兼容条件结构特例
+                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
+
+                case 217: {//高级条件分歧
+                    let len = parseInt(cmd.para[3]);
+                    let moCmd;
+                    let pass;
+                    for (let i = 4; i < 4 + len; i++) {
+                        let p = cmd.para[i].split("&");
+
+                        if (p[0].split("|")[0] == "MO") {
+                            moCmd = cmd;
+                        }
+
+                        if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
+                            if (pass = this.valueMgr.judge(p))
+                                break;
+                        } else {
+                            if (!(pass = this.valueMgr.judge(p)))
+                                break;
+                        }
+                        pass = cmd.para[0] == "0" ? false : true;
+                    }
+
+                    if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
+                        this.viewMgr.exe(cmd);
+                        pass = this.viewMgr.ul.checkHotarea(cmd);
+                    }
+
+                    let choice = pass ? 1 : 2;
+                    //兼容条件结构特例
+                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
                 }
 
-                if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
-                    this.viewMgr.exe(cmd);
-                    pass = this.viewMgr.ul.checkHotarea(cmd);
+                default: {//非逻辑命令分发
+                    for (let mgr of this.mgrArr)
+                        mgr.exe(cmd);
                 }
-
-                let choice = pass ? 1 : 2;
-                //兼容条件结构特例
-                return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
-            }
-
-            default: {//非逻辑命令分发
-                for (let mgr of this.mgrArr)
-                    mgr.exe(cmd);
-                return this.reportor.callCount > 1000 ? this.reportor.callCount = 0 : this.update();
             }
         }
+        //Scene最后一位时将退出while无法衔接，会造成一帧浪费，故领起下个Scene进入while
+        return this.curCid == this.cmdArr.length ? this.update() : null;
     }
 };
