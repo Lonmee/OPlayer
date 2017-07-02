@@ -251,21 +251,19 @@ export default class CmdLine {
 
                 //条件分歧
                 case 200:
-                    let choice;
+                    let bingo;
                     if (cmd.para[0].split("|")[0] == "MO") {
                         this.viewMgr.exe(cmd);
-                        choice = this.viewMgr.ul.checkHotarea(cmd) ? 1 : 2;
+                        bingo = this.viewMgr.ul.checkHotarea(cmd);
                     } else {
-                        choice = this.valueMgr.judge(cmd.para) ? 1 : 2;
+                        bingo = this.valueMgr.judge(cmd.para);
                     }
-
-                    //兼容条件结构特例
-                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
+                    return this.update(cmd.links[bingo ? 0 : 1]);
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
                     let moCmd;
-                    let pass;
+                    let bingo;
                     for (let i = 4; i < 4 + len; i++) {
                         let p = cmd.para[i].split("&");
 
@@ -274,23 +272,20 @@ export default class CmdLine {
                         }
 
                         if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
-                            if (pass = this.valueMgr.judge(p))
+                            if (bingo = this.valueMgr.judge(p))
                                 break;
                         } else {
-                            if (!(pass = this.valueMgr.judge(p)))
+                            if (!(bingo = this.valueMgr.judge(p)))
                                 break;
                         }
-                        pass = cmd.para[0] == "0" ? false : true;
+                        bingo = cmd.para[0] == "0" ? false : true;
                     }
 
-                    if (pass && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
+                    if (bingo && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
                         this.viewMgr.exe(cmd);
-                        pass = this.viewMgr.ul.checkHotarea(cmd);
+                        bingo = this.viewMgr.ul.checkHotarea(cmd);
                     }
-
-                    let choice = pass ? 1 : 2;
-                    //兼容条件结构特例
-                    return this.update(choice == 1 || choice == 2 && cmd.links.length == 2 ? cmd.links[choice - 1] : NaN);
+                    return this.update(cmd.links[bingo ? 0 : 1]);
                 }
 
                 default: {//非逻辑命令分发
