@@ -28,7 +28,7 @@ export class HotareaSelector extends Sprite {
         this.hit = [e.stageX, e.stageY, e.type];
     }
 
-    reset(cmd: Cmd) {
+    reset(cmd: Cmd = null) {
         this.hit = null;
         this.preCache = [];
         this.graphics.clear();
@@ -66,9 +66,7 @@ export class HotareaSelector extends Sprite {
         }
 
         if (bingo && this.parent) {
-            this.hit = null;
-            this.preCache = [];
-            this.graphics.clear();
+            this.reset();
             this.parent.removeChild(this);
         }
         return bingo;

@@ -6,6 +6,7 @@ import DH from "../../data/DH";
  */
 export default class Reportor {
     private _showProcess: boolean = false;
+    showValue: boolean = false;
     showCode: boolean = false;
     callCount: number = 0;
     frame: number = 0;
