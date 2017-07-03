@@ -97,6 +97,7 @@ export class MSG extends Sprite {
     update(cmd: Cmd) {
         Laya.stage.once(Event.CLICK, this, this.clickHandler);
         this.txt.text = this.formatContent(cmd.para[2]);
+        this.bgImg.visible = cmd.para[7] == "1";
         return this;
     }
 

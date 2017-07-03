@@ -113,6 +113,20 @@ export default class CmdLine {
         return StateEnum[ind];
     }
 
+    /**
+     * 浮层及高级UI临时命令行插入（待测）
+     * @param chapter
+     * @returns {number}
+     */
+    insertTempChapter(chapter: Chapter) {
+        this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
+        this.chapter = chapter;
+        this.curSid = this.curCid = 0;
+        this.lock = this.pause = false;
+        console.log("insert temp chapter At:", this.curCid, this.restoreSid, this.chapter.id);
+        return this.cc = 0;
+    }
+
     resume(e: Event | number | boolean = null) {
         if (!this.lock)
             this.pause = false;
@@ -258,7 +272,7 @@ export default class CmdLine {
                 case 251: {
                     this.pause = true;
                     this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
-                    console.log("insert chapter:", this.curCid, this.restoreSid, this.chapter.id);
+                    console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }
