@@ -127,6 +127,10 @@ export default class CmdLine {
         return this.cc = 0;
     }
 
+    /**
+     *
+     * @param e Event|null为普通激活，number为强制并指定sid激活，boolean=true，为强制不指定sid激活
+     */
     resume(e: Event | number | boolean = null) {
         if (!this.lock)
             this.pause = false;
