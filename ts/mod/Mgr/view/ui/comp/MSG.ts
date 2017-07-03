@@ -67,7 +67,7 @@ export class MSG extends Sprite {
         //todo:对话关闭条件需修改
         // if (!this.contains(e.target))
         //     return;
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME, true);
         if (this.parent)
             this.parent.removeChild(this);
     }

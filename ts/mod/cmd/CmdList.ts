@@ -81,7 +81,8 @@ export default class CmdList extends Dictionary {
         for (let cmd of s.cmdArr) {
             console.log("      code:", cmd.code, this.get(cmd.code),
                 cmd.code == 100 ? cmd.para[2] : "",
-                cmd.code == 203 || cmd.code == 209 ? "=> " + cmd.links[0] : "",
+                cmd.code == 203 || cmd.code == 209 || cmd.code == 211 || cmd.code == 102 ||
+                cmd.code == 108 || cmd.code == 212 || cmd.code == 201 || cmd.code == 205 ? "=> " + cmd.links[0] : "",
                 cmd.code == 101 || cmd.code == 1010 || cmd.code == 1011 || cmd.code == 204 ? cmd.links : "",
                 cmd.code == 200 || cmd.code == 217 ? cmd.para[5] + " ? " + cmd.links[0] + " : " + cmd.links[1] : "",
                 cmd.code == 210 ? cmd.para[0] + " frames" : "",

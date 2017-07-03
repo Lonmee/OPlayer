@@ -31,8 +31,6 @@ export default class Chapter extends DChapter {
     private formScene(otl = null) {
         let s = this.insertScene();
         let ote = [];
-        if (otl && otl.length > 0)
-            ote.push(s);
         while (this.cmdArr.length) {
             let cmd: Cmd = this.cmdArr.shift();
             switch (cmd.code) {
@@ -46,6 +44,7 @@ export default class Chapter extends DChapter {
                 case 209 : //interrupt
                     this.repeat[1][parseInt(cmd.para[0]) - 1].push(cmd);
                     s.cmdArr.push(cmd);
+                    s.link = NaN;
                     s = this.insertScene();
                     break;
                 case 203 : //end
@@ -56,6 +55,7 @@ export default class Chapter extends DChapter {
                     this.repeat[1].reverse();
                     cmd.links = [this.repeat[0].pop()];
                     s.cmdArr.push(cmd);
+                    s.link = NaN;
                     s = this.insertScene();
                     break;
                 /*********************repeat end*****************/
@@ -69,27 +69,40 @@ export default class Chapter extends DChapter {
                 case 217: //高级条件分歧
                     s.cmdArr.push(cmd);
                     let te = this.formScene(cmd.links = cmd.code == 200 || cmd.code == 217 ? [s.link] : []);
-                    while (te.length) {
-                        te.pop().link = this.sceneArr.length;
-                    }
+                    while (te.length)
+                        te.pop().push(this.sceneArr.length);
+                    s.link = NaN;
                     s = this.insertScene();
                     break;
                 //options
                 case 108: //分支选项内容
                 case 212: //按钮分歧内容
+                    if (otl.length == 0) {
+                        otl.push(s.link - 1);
+                    } else {
+                        otl.push(s.link);
+                        s.cmdArr.push(cmd);
+                        ote.push(cmd.links = []);
+                        s = this.insertScene();
+                    }
+                    break;
                 case 211: //条件分歧else内容
                     s.cmdArr.push(cmd);
-                    if (ote.length > 0)
-                        s = this.insertScene();
-                    otl.push(s.link - 1);
-                    ote.push(s);
+                    ote.push(cmd.links = []);
+                    otl.push(s.link);
+                    s = this.insertScene();
                     break;
                 //end
                 case 102: //剧情分歧
                 case 205: //按钮分歧
+                    s.cmdArr.push(cmd);
+                    ote.push(cmd.links = []);
+                    return ote;
                 case 201: //条件分歧
-                    if (cmd.code == 201 && otl.length == 1)
+                    if (otl.length == 1)
                         otl.push(s.link);
+                    s.cmdArr.push(cmd);
+                    ote.push(cmd.links = []);
                     return ote;
                 /*********************branch end*****************/
                 default:

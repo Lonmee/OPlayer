@@ -113,13 +113,14 @@ export default class CmdLine {
         return StateEnum[ind];
     }
 
-    resume(e: Event | number = null) {
+    resume(e: Event | number | boolean = null) {
         if (!this.lock)
             this.pause = false;
         if (typeof e == "number") {
             this.lock = this.pause = false;
             this.update(e);
-        }
+        } else if (typeof e == "boolean" && e)
+            this.lock = this.pause = false;
     }
 
     complete() {
@@ -164,7 +165,7 @@ export default class CmdLine {
             }
             this.cmdArr = s.cmdArr;
             this.restoreSid = this.curSid;
-            this.curSid = s.link;
+            this.curSid = isNaN(s.link) ? s.cmdArr[s.cmdArr.length - 1][0] : s.link;
             if (!this.snap) {
                 this.curCid = 0;
             } else {
@@ -219,12 +220,18 @@ export default class CmdLine {
                     this.pause = true;
                     return this.state.wait(--dur);//当前帧算入等待中故减掉1
                 }
-                case 103://"自动播放剧情"
+                case 103: //"自动播放剧情"
                 case 104: {//"快进剧情"
                     this.changeState(cmd);
                     return this.update();
                 }
-
+                case 108 :
+                case 212 :
+                case 211 :
+                case 102 :
+                case 205 :
+                case 201 :
+                    return this.update(cmd.links[0]);
                 //repeat end
                 case 203:
                 //repeat interrupt

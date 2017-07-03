@@ -104,7 +104,7 @@ export default class UILayer extends Layer {
         } else {
             this.removeChild(this.uiFac.getMenu(idx));
             if (this.numChildren == 0 || this.numChildren == 1 && this.getChildAt(0) instanceof MSG) {
-                this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+                this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME, true);
             }
         }
     }
