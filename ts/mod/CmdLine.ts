@@ -51,6 +51,7 @@ export default class CmdLine {
     private dh: DH = DH.instance;
     private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
+    private cc: number = 0;
 
     constructor() {
         // this.changeState(StateEnum.FF);
@@ -150,7 +151,7 @@ export default class CmdLine {
         this.reportor.callCount++;
         if (this.pause) {
             this.reportor.logPause();
-            return;
+            return this.cc = 0;
         }
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
@@ -173,6 +174,8 @@ export default class CmdLine {
         }
 
         while (this.curCid < this.cmdArr.length) {
+            this.cc++;
+            // console.log(this.cc);
             let cmd = this.cmdArr[this.curCid++];
             this.reportor.logProcess(cmd);
             switch (cmd.code) {
@@ -184,7 +187,7 @@ export default class CmdLine {
                     if (cmd.para[0] != "10008" && cmd.para[0] != "10009")
                         this.lock = this.pause = true;
                     this.viewMgr.exe(cmd);
-                    return;
+                    return this.cc = 0;
                 case 110: //"打开指定网页";
                 // case 111: //"禁用开启菜单功能";
 
@@ -192,7 +195,7 @@ export default class CmdLine {
                     this.pause = true;
                     this.state.pause();
                     this.viewMgr.exe(cmd);
-                    return;
+                    return this.cc = 0;
                 }
                 case 101: //剧情分歧
                 case 1010: //剧情分歧EX
@@ -201,12 +204,12 @@ export default class CmdLine {
                     this.lock = this.pause = true;
                     this.state.pause();
                     this.viewMgr.exe(cmd);
-                    return;
+                    return this.cc = 0;
                 }
                 case 151: {//"返回游戏界面"
                     this.pause = false;
                     this.viewMgr.exe(cmd);
-                    return;
+                    return this.cc = 0;
                 }
                 //状态指令
                 case 210: {//等待
@@ -230,7 +233,11 @@ export default class CmdLine {
                     // this.curSid = cmd.links[0];
                     //return
                     //强制刷新不等待时沿
-                    return this.update(cmd.links[0]);
+                    if (this.cc > 5000) {
+                        this.cc = 0;
+                        return this.curSid = cmd.links[0];
+                    } else
+                        return this.update(cmd.links[0]);
                 }
 
                 //跳转剧情
@@ -238,7 +245,7 @@ export default class CmdLine {
                     this.pause = true;
                     console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    return;
+                    return this.cc = 0;
                 }
                 //呼叫子剧情
                 case 251: {
@@ -246,7 +253,7 @@ export default class CmdLine {
                     this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
                     console.log("insert chapter:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    return;
+                    return this.cc = 0;
                 }
 
                 //条件分歧
@@ -295,6 +302,6 @@ export default class CmdLine {
             }
         }
         //Scene最后一位时将退出while无法衔接，会造成一帧浪费，故领起下个Scene进入while
-        return this.curCid == this.cmdArr.length ? this.update() : null;
+        return this.curCid == this.cmdArr.length ? this.update() : this.cc = 0;
     }
 };
