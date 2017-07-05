@@ -16,7 +16,7 @@ export interface IState {
      * @param dur frame(s)
      */
     wait(dur: number);
-    update(mgr: IMgr): void;
+    update(...mgrs: IMgr[]): void;
 }
 
 class State implements IState {
@@ -25,9 +25,10 @@ class State implements IState {
     /**动画刷新倍率，用以降低刷新率**/
     speed: number = Browser.onPC ? 1 : 2;
 
-    update(mgr: IMgr): void {
+    update(...mgrs: IMgr[]): void {
         if (++this.counter % this.speed == 0)
-            mgr.update(this.counter = this.speed);
+            for (let m of mgrs)
+                m.update(this.counter = this.speed);
     }
 
     pause() {
@@ -56,8 +57,9 @@ export class AutoState extends State {
 export class FFState extends State {
     id = StateEnum.FF;
 
-    update(mgr: ViewMgr): void {
-        mgr.update(0);
+    update(...mgrs: IMgr[]): void {
+        for (let m of mgrs)
+            m.update(0);
     }
 
     pause() {

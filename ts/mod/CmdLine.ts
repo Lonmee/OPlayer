@@ -169,8 +169,7 @@ export default class CmdLine {
 
     tick() {
         if (!this.lockAnimal) {
-            this.state.update(this.viewMgr);
-            this.state.update(this.audioMgr);
+            this.state.update(this.viewMgr, this.audioMgr);
         }
         if (!this.pause)
             this.update();
