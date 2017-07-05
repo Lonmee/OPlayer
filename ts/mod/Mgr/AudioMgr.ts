@@ -18,6 +18,10 @@ export default class AudioMgr implements IMgr {
         }
     }
 
+    update(speed: number) {
+
+    }
+
     play(url: string) {
         SoundManager.playSound(url)
     }

@@ -5,6 +5,7 @@ import DH from "../../data/DH";
 import Conf from "../../data/Conf";
 import {ViewMgr} from "../Mgr/ViewMgr";
 import Browser = laya.utils.Browser;
+import {IMgr} from "../Mgr/Mgr";
 export enum StateEnum {Normal, Auto, FF}
 
 export interface IState {
@@ -15,7 +16,7 @@ export interface IState {
      * @param dur frame(s)
      */
     wait(dur: number);
-    update(mgr: ViewMgr): void;
+    update(mgr: IMgr): void;
 }
 
 class State implements IState {
@@ -24,7 +25,7 @@ class State implements IState {
     /**动画刷新倍率，用以降低刷新率**/
     speed: number = Browser.onPC ? 1 : 2;
 
-    update(mgr: ViewMgr): void {
+    update(mgr: IMgr): void {
         if (++this.counter % this.speed == 0)
             mgr.update(this.counter = this.speed);
     }

@@ -29,14 +29,14 @@ export default class CmdLine {
     assMgr: AssMgr;
     viewMgr: ViewMgr;
     valueMgr: ValueMgr;
-    soundMgr: AudioMgr;
+    audioMgr: AudioMgr;
     videoMgr: VideoMgr;
 
     mgrArr: IMgr[] = [
         this.assMgr = new AssMgr(),
         this.viewMgr = new ViewMgr(),
         this.valueMgr = new ValueMgr(),
-        this.soundMgr = new AudioMgr(),
+        this.audioMgr = new AudioMgr(),
         this.videoMgr = new VideoMgr()
     ]
 
@@ -170,6 +170,7 @@ export default class CmdLine {
     tick() {
         if (!this.lockAnimal)
             this.state.update(this.viewMgr);
+        this.state.update(this.au);
         if (!this.pause)
             this.update();
         else {

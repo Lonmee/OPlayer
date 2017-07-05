@@ -4,4 +4,14 @@ import {Cmd} from "../../data/sotry/Story";
  */
 export interface IMgr {
     exe(cmd: Cmd)
+    update(speed: number): void;
+}
+
+export class Mgr implements IMgr {
+
+    exe(cmd: Cmd) {
+    }
+
+    update(speed: number): void {
+    }
 }
