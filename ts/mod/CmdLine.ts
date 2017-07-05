@@ -168,9 +168,10 @@ export default class CmdLine {
     }
 
     tick() {
-        if (!this.lockAnimal)
+        if (!this.lockAnimal) {
             this.state.update(this.viewMgr);
-        this.state.update(this.au);
+            this.state.update(this.audioMgr);
+        }
         if (!this.pause)
             this.update();
         else {
