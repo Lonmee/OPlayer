@@ -12,6 +12,7 @@ export default class AudioMgr implements IMgr {
             case 503://"播放语音"
             case 504://"播放背景音效"
             case 505://"淡出背景音乐"
+                this.fadeOut();
             case 506://"停止音效"
             case 507://"停止语音"
             case 508://"淡出音效"
@@ -19,6 +20,10 @@ export default class AudioMgr implements IMgr {
     }
 
     update(speed: number) {
+
+    }
+
+    fadeOut() {
 
     }
 
