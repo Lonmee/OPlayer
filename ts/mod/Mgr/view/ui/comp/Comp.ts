@@ -35,6 +35,8 @@ function getBGAudioLink(key: string) {
 
 //todo:移植到GameLayer范畴内
 export class GameImg extends Sprite {
+    tween: [string, number, number, number, number][] = [];
+
     constructor(path: string) {
         super();
         this.loadImage(getGameImgLink(path));
@@ -44,6 +46,23 @@ export class GameImg extends Sprite {
         this.graphics.clear();
         this.loadImage(getGameImgLink(path));
         return this;
+    }
+
+    moveTo(property: string, value: number, duration: number, passed: number = 0) {
+        if (duration <= 1)
+            this[property] = value;
+        else
+            this.tween.push([property, value, duration, passed, this[property]]);
+        return this;
+    }
+
+    update() {
+        if (this.tween.length)
+            for (let t of this.tween) {
+                this[t[0]] = t[4] + (t[1] - t[4]) * ++t[3] / t[2];
+                if (t[3] == t[2])
+                    this.tween.splice(this.tween.indexOf(t), 1);
+            }
     }
 }
 

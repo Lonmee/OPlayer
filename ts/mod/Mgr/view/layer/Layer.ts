@@ -12,4 +12,7 @@ export class Layer extends Sprite implements IMgr {
 
     exe(cmd: Cmd) {
     }
+
+    update() {
+    }
 }

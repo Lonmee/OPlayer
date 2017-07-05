@@ -44,6 +44,7 @@ export default class CmdLine {
     private state: IState;
     private lock: boolean = true;
     private pause: boolean = true;
+    lockAnimal: boolean;
     chapter: Chapter;
     private curSid: number = 0;
     private curCid: number = 0;
@@ -69,7 +70,7 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
         //endregion
 
-        Laya.timer.frameLoop(1, this, this.update);
+        Laya.timer.frameLoop(1, this, this.tick);
         // this.reportor.showProcess = true;
         // this.reportor.showCode = true;
     }
@@ -101,9 +102,9 @@ export default class CmdLine {
     changeState(cmd: Cmd | number) {
         let ind;
         if (typeof cmd == "number") {
-            this.state = this.states[ind = cmd];
+            this.dh.state = this.state = this.states[ind = cmd];
         } else {
-            this.state = cmd.code == 103 ? //自动播放剧情
+            this.dh.state = this.state = cmd.code == 103 ? //自动播放剧情
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
         }
@@ -166,12 +167,19 @@ export default class CmdLine {
             this.dh.story.gotoChapter(this.snap[2]);
     }
 
+    tick() {
+        if (!this.lockAnimal)
+            this.viewMgr.update();
+        if (!this.pause)
+            this.update();
+        else {
+            this.reportor.logPause();
+            this.cc = 0;
+        }
+    }
+
     update(sid = NaN) {
         this.reportor.callCount++;
-        if (this.pause) {
-            this.reportor.logPause();
-            return this.cc = 0;
-        }
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {

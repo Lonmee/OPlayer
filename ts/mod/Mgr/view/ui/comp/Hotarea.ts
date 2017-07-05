@@ -55,7 +55,7 @@ export class HotareaSelector extends Sprite {
         }
         if (this.preCache.indexOf(this.hotRec.x) == -1) {
             this.preCache.push(this.hotRec.x);
-            this.updatePreview();
+            // this.updatePreview();
         }
         let bingo = this.hotRec && this.hit && this.hotRec.contains(this.hit[0], this.hit[1]);
         if (bingo) {

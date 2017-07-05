@@ -7,6 +7,7 @@ import Preloader from "../mod/loader/Preloader";
 import {DigitalDic, StringDic} from "../mod/Mgr/value/ODictionary";
 import Reportor from "../mod/reportor/Reportor";
 import EventDispatcher = laya.events.EventDispatcher;
+import {IState} from "../mod/state/State";
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
@@ -31,6 +32,7 @@ export default class DH {
     exVDic: DigitalDic;
     //endregion
     reportor: Reportor;
+    state: IState;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();
