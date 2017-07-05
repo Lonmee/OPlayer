@@ -13,6 +13,6 @@ export class Layer extends Sprite implements IMgr {
     exe(cmd: Cmd) {
     }
 
-    update() {
+    update(delay: number = 1) {
     }
 }

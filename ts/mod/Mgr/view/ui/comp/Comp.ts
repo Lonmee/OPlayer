@@ -56,11 +56,16 @@ export class GameImg extends Sprite {
         return this;
     }
 
-    update() {
+    update(d: number = 1) {
         if (this.tween.length)
             for (let t of this.tween) {
-                this[t[0]] = t[4] + (t[1] - t[4]) * ++t[3] / t[2];
-                if (t[3] == t[2])
+                if (d == 0) {
+                    this[t[0]] = t[1];
+                    return this.tween.splice(this.tween.indexOf(t), 1);
+                }
+                let p = ++t[3] * d / t[2];
+                this[t[0]] = t[4] + (t[1] - t[4]) * (p > 1 ? 1 : p);
+                if (p == 1)
                     this.tween.splice(this.tween.indexOf(t), 1);
             }
     }
