@@ -110,9 +110,9 @@ export class ViewMgr extends Sprite implements IMgr {
         }
     }
 
-    update(delay: number) {
+    update(speed: number) {
         for (let i = this.layerArr.length; i > 0;) {
-            this.layerArr[--i].update(delay);
+            this.layerArr[--i].update(speed);
         }
     }
 }

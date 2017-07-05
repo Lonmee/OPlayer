@@ -115,9 +115,9 @@ export default class GameLayer extends Layer {
         return this.dh.vDic.get(key);
     }
 
-    update(d: number) {
+    update(speed: number) {
         for (let c of this._childs)
-            c.update(d);
+            c.update(speed);
     }
 };
 

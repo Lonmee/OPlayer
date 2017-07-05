@@ -21,6 +21,18 @@ export default class AudioMgr implements IMgr {
     play(url: string) {
         SoundManager.playSound(url)
     }
+
+    stop() {
+
+    }
+
+    pause() {
+
+    }
+
+    resume() {
+
+    }
 };
 /*
  501	播放背景音乐		 0：背景音乐的相对路径  1:音量 2:显示信息 3 网盘还是本地
