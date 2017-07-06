@@ -18,12 +18,12 @@ import Stage = laya.display.Stage;
  */
 export class ViewMgr extends Sprite implements IMgr {
     gl: GameLayer;
-    fl: FloatLayer;
     ul: UILayer;
+    fl: FloatLayer;
     layerArr: Layer[] = [
         this.gl = new GameLayer(),
-        this.fl = new FloatLayer(),
-        this.ul = new UILayer()
+        this.ul = new UILayer(),
+        this.fl = new FloatLayer()
     ];
     dh: DH = DH.instance;
 

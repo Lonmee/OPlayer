@@ -64,7 +64,7 @@ export default class GameLayer extends Layer {
              【11 是否为字符串指定(1,0)  12 字符串索引】*/
             case 401: //"淡出图片"
                 if (this.imgDic.indexOf(cmd.para[0]) > -1) {
-                    this.removeChild(this.imgDic.get(cmd.para[0])).destroy();
+                    this.removeChild(this.imgDic.get(cmd.para[0]))/*.destroy()*/;
                     this.imgDic.remove(cmd.para[0]);
                 }
                 break;

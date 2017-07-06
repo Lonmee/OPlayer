@@ -18,6 +18,11 @@ export function getUILink(key: string) {
     return DH.instance.getResLink(UI_PATH_SHIFTER + key);
 }
 
+const OTHER_PATH_SHIFTER = "graphics/other/";
+export function getOtherLink(key: string) {
+    return DH.instance.getResLink(OTHER_PATH_SHIFTER + key);
+}
+
 const BUTTON_PATH_SHIFTER = "graphics/button/";
 export function getBtnLink(key: string) {
     return DH.instance.getResLink(BUTTON_PATH_SHIFTER + key);
@@ -79,6 +84,13 @@ export class UIImg extends Sprite {
     constructor(path: string, repos = null) {
         super();
         this.loadImage(getUILink(path), 0, 0, 0, 0, repos);
+    }
+}
+
+export class OtherImg extends Sprite {
+    constructor(path: string, repos = null) {
+        super();
+        this.loadImage(getOtherLink(path), 0, 0, 0, 0, repos);
     }
 }
 

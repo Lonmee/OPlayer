@@ -53,6 +53,7 @@ export default class CmdLine {
     private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
     private cc: number = 0;
+    private cacheChapter: [boolean, boolean, number, number, Cmd[], Chapter];
 
     constructor() {
         // this.changeState(StateEnum.FF);
@@ -120,12 +121,12 @@ export default class CmdLine {
      * @returns {number}
      */
     insertTempChapter(chapter: Chapter) {
-        this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
+        this.cacheChapter = [this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter];
+        console.log("insert temp chapter At:", this.cacheChapter);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
         this.lock = this.pause = false;
-        console.log("insert temp chapter At:", this.curCid, this.restoreSid, this.chapter.id);
-        return this.cc = 0;
+        return this.update(0);
     }
 
     /**
@@ -156,15 +157,23 @@ export default class CmdLine {
     restoreChapter(snap: [number, number, number] = null) {
         if (snap) {
             this.snap = snap;
+            this.cacheChapter = null;
             this.appending = [];
-        } else
+            console.log("restore to chapter:", this.snap);
+        } else if (this.cacheChapter) {
+            this.chapter = this.cacheChapter[5];
+            this.cmdArr = this.cacheChapter[4];
+            this.curSid = this.cacheChapter[3];
+            this.curCid = this.cacheChapter[2];
+            this.pause = this.cacheChapter[1];
+            this.lock = this.cacheChapter[0];
+            console.log("restore to chapter:", this.cacheChapter);
+            this.cacheChapter = null;
+        } else {
             this.snap = this.appending.pop();
-        console.log("restore to chapter:", this.snap);
-        if (this.chapter.id == this.snap[2]) {
-            this.curCid = 0;
-            this.update(this.snap[1])
-        } else
             this.dh.story.gotoChapter(this.snap[2]);
+            console.log("restore to chapter:", this.snap);
+        }
     }
 
     tick() {
@@ -185,7 +194,7 @@ export default class CmdLine {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
                 this.lock = this.pause = true;
-                if (this.appending.length > 0)
+                if (this.cacheChapter || this.appending.length > 0)
                     return this.restoreChapter();
                 else
                     return this.complete();
