@@ -1,14 +1,15 @@
 import Sprite = laya.display.Sprite;
 import Graphics = laya.display.Graphics;
-import {BGImg, Button, Slider, UIImg} from "./Comp";
+import {BGImg, Button, Label, OtherImg, Slider, UIImg} from "./Comp";
 import DH from "../../../../../data/DH";
-import {IdxBtn, Path} from "../../../../../data/sotry/Story";
+import {CusUI, IdxBtn, Path} from "../../../../../data/sotry/Story";
 import {MgrEnum} from "../../../../CmdLineRev";
-import Event = laya.events.Event;
-import Handler = laya.utils.Handler;
 import {MenuEnum} from "../UIFac";
 import Conf from "../../../../../data/Conf";
 import {StateEnum} from "../../../../state/State";
+import Chapter from "../../../../cmd/Chapter";
+import Event = laya.events.Event;
+import Handler = laya.utils.Handler;
 /**
  * Created by ShanFeng on 5/29/2017.
  */
@@ -367,5 +368,68 @@ export class Setting extends Menu {
 }
 
 export class CUI extends Menu {
+    afterChapter: Chapter;
+    loadChapter: Chapter;
 
+    constructor(dcui: CusUI) {
+        DH.instance.cmdLine.insertTempChapter(new Chapter({id: NaN, name: "load", cmdArr: dcui.loadEvent}));
+        super(dcui);
+        // if (dcui.loadEvent.length)
+        //     this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: dcui.loadEvent});
+        if (dcui.afterEvent.length)
+            this.afterChapter = new Chapter({id: NaN, name: "load", cmdArr: dcui.afterEvent});
+
+        dcui.showEffect;//todo:dcui.showEffect
+    }
+
+    protected close(): any {
+        return super.close();
+    }
+
+    protected initView() {
+        for (let ctl of this.data.controls) {
+            switch (ctl.type) {
+                case 0://按钮
+                    let b;
+                    this.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) : ctl.index).pos(ctl.x, ctl.y));
+                    if (ctl.cmdArr.length)
+                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr})]);
+                    break;
+                case 1://字符串
+                case 2://变量
+                    let l: Label;
+                    if (ctl.type == 1) {
+                        this.addChild(l = new Label(DH.instance.sDic.get(ctl.index)));
+                        DH.instance.sDic.bind(ctl.index, l.update.bind(l));
+                    } else {
+                        this.addChild(l = new Label(DH.instance.vDic.get(ctl.index)));
+                        DH.instance.vDic.bind(ctl.index, l.update.bind(l));
+                    }
+                    l.pos(ctl.x, ctl.y);
+                    break;
+                case 3://图片
+                    let i = new OtherImg(ctl.useStr ? DH.instance.sDic.get(ctl.strIdx) : ctl.image1).pos(ctl.x, ctl.y);//todo:数值指定坐标
+                    this.addChild(i);
+                    break;
+                case 4://滚动条
+                    break;
+            }
+        }
+    }
+
+    exe(c: Chapter) {
+        DH.instance.cmdLine.insertTempChapter(c);
+    }
+
+    protected initAudio() {
+        return super.initAudio();
+    }
+
+    protected initListener() {
+        if (this.data.isMouseExit)
+            DH.instance.eventPoxy.on(Event.RIGHT_CLICK, this, this.close);
+        if (this.data.isKeyExit)
+            DH.instance.eventPoxy.on("Escape", this, this.close);
+        // this.exe(this.afterChapter);
+    }
 }

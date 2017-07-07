@@ -56,10 +56,19 @@ export class BinLoader implements IBinloader {
             this.load(Conf.localTest.mb);
             return;
         }
+
         let url: string = Conf.domain.cdn + "web/" +
             Conf.info.gid + "/" + Conf.info.ver + "/Map" +
             (Conf.info.qlty != "0" ? "_" + Conf.info.qlty : "") + ".bin";
         this.load(url);
+
+        //todo:jason格式的resourceBin下载&解析
+        /*url = (Conf.query("testPath") ? Conf.webApi.testSvr : Conf.webApi.svr) +
+         "api/oapi_map.php?action=create_bin&" +
+         "guid=" + Conf.info.gid +
+         "&version=" + Conf.info.ver +
+         "&quality=" + Conf.info.qlty;
+         this.loadJason(url);*/
 
         if (Conf.info.miniPath) {
             url = Conf.domain.cdn + Conf.info.miniPath;
@@ -88,13 +97,20 @@ export class BinLoader implements IBinloader {
             for (let i: number = 0; i < this.bufArr.length; i++) {
                 let byte: Byte = this.bufArr[i];
                 let len: number = byte.getInt32();
-                for (let i: number = 0; i < len; i++) {
-                    DH.instance.resMap.set(byte.getUTFBytes(byte.getInt32()),
-                        {size: byte.getInt32(), md5: byte.getUTFBytes(byte.getInt32())});
-                }
-                if (byte.bytesAvailable > 0) {
+                if (Conf.info.qlty == "31")
+                    for (let i: number = 0; i < len; i++)
+                        DH.instance.resMap.set(byte.getUTFBytes(byte.getInt32()), {
+                            size: byte.getInt32(), md5: byte.getUTFBytes(byte.getInt32()),
+                            info: byte.getUTFBytes(byte.getInt32()), obj: {w: NaN, h: NaN}
+                        });
+                else
+                    for (let i: number = 0; i < len; i++)
+                        DH.instance.resMap.set(byte.getUTFBytes(byte.getInt32()), {
+                            size: byte.getInt32(),
+                            md5: byte.getUTFBytes(byte.getInt32())
+                        });
+                if (byte.bytesAvailable > 0)
                     console.log("%c something left in assets bin", 'color: #FF5555');
-                }
                 byte.clear();
             }
             Conf.info.single = this.single = this.bufArr.length == 1;
@@ -497,16 +513,16 @@ export class BinLoader implements IBinloader {
             return {
                 cmdArr: parseCmdArr(),
                 type: byte.getInt32(),
-                isUserString: byte.getInt32() != 0,
+                useStr: byte.getInt32() != 0,
                 image1: parseUTF(),
                 image2: parseUTF(),
-                stringIndex: byte.getInt32(),
-                isUserVar: byte.getInt32() != 0,
+                strIdx: byte.getInt32(),
+                useVar: byte.getInt32() != 0,
                 x: byte.getInt32(),
                 y: byte.getInt32(),
-                isUserIndex: byte.getInt32() != 0,
+                useIdx: byte.getInt32() != 0,
                 index: byte.getInt32(),
-                maxIndex: byte.getInt32(),
+                maxIdx: byte.getInt32(),
                 color: new Color(parseUTF())
             }
         }
@@ -545,10 +561,10 @@ export class BinLoader implements IBinloader {
                 x: byte.getInt32(),
                 y: byte.getInt32(),
                 image: parseUTF(),
-                isUserString: byte.getInt32() != 0,
-                indexOfStr: byte.getInt32(),
-                stringIndex: byte.getInt32(),
-                varIndex: byte.getInt32(),
+                useStr: byte.getInt32() != 0,
+                idxOfStr: byte.getInt32(),
+                strIdx: byte.getInt32(),
+                varIdx: byte.getInt32(),
                 color: new Color(parseUTF())
             }
         }

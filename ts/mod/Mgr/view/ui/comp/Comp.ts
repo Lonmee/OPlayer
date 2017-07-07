@@ -5,6 +5,7 @@ import Sprite = laya.display.Sprite;
 import Event = laya.events.Event;
 import Point = laya.maths.Point;
 import Handler = laya.utils.Handler;
+import Text = laya.display.Text;
 /**
  * Created by ShanFeng on 5/31/2017.
  */
@@ -98,6 +99,20 @@ export class BGImg extends Sprite {
     constructor(path: string) {
         super();
         this.loadImage(getBGLink(path));
+    }
+}
+
+export class Label extends Sprite {
+    tf: Text;
+
+    constructor(str: string = "") {
+        super();
+        this.addChild(this.tf = new Text());
+        this.tf.text = str;
+    }
+
+    update(v) {
+        this.tf.text = v.toString();
     }
 }
 

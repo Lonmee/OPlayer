@@ -13,7 +13,12 @@ interface Frameworks {
 
 interface Domain {
     cdn?: string
-    resCdn: string;
+    resCdn: string
+}
+
+interface WebApi {
+    testSvr: string
+    svr: string
 }
 
 interface LoaderConf {
@@ -61,11 +66,15 @@ export default class Conf {
     static localTest: LocalTest = {on: false, mb: "local/Map.bin", sb: "local/Game.bin"};
     static domain: Domain = {
         cdn: "http://dlcdn1.cgyouxi.com/",
-        resCdn: "http://dlcdn1.cgyouxi.com/shareres/"
+        resCdn: "http://dlcdn1.cgyouxi.com/shareres/",
     };
     static domain4Test: Domain = {
         cdn: "http://testcdn.66rpg.com/",
         resCdn: "http://testcdn.66rpg.com/shareres/"
+    };
+    static webApi: WebApi = {
+        testSvr: "//test-cg.66rpg.com/",
+        svr: "//cgv2.66rpg.com/"
     };
     static loaderConf: LoaderConf = {};
     static starName: StarName = {single: "data/game.bin", multiple: "game00.bin"};
@@ -89,5 +98,12 @@ export default class Conf {
         //navigator.platform
         //navigator.appVersion
         //navigator.userAgent
+    }
+
+    static query(name: string) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) return (r[2]);
+        return null;
     }
 }

@@ -36,15 +36,17 @@ export class FloatElement extends Sprite {
         for (let e of this.eleData.itemArr) {
             let i;
             switch (e.type) {
-                case 0://todo:字符串加载图片
-                    i = new OtherImg(e.isUserString ? e.varIndex : e.image);
+                case 0://图片todo:字符串加载图片
+                    i = new OtherImg(e.useStr ? DH.instance.sDic.get(e.varIdx) : e.image);
                     i.autoSize = true;
                     this.pos(e.x, e.y);
                     this.addChild(i);
                     this.on(Event.CLICK, this, this.exe);
                     break;
-                case 1:
-                case 2:
+                case 1://字符串
+                    break;
+                case 2://数值
+                    break;
             }
         }
     }

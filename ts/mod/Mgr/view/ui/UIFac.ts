@@ -24,33 +24,26 @@ export default class UIFac {
     private constructMenu(type: number): Menu {
         let m: Menu;
         switch (type) {
-            case 0 :
+            case -1 :
                 m = new Title(this.dh.story.sys.title);
                 break;
-            case 1 :
             case 10001://游戏菜单
                 m = new Game(this.dh.story.sys.gMenu);
                 break;
-            case 2:
             case 10002://剧情回放
                 m = new Replay(this.dh.story.sys.Replay);
                 break;
-            case 3:
             case 10003://CG
                 m = new CG(this.dh.story.sys.CG);
                 break;
-            case 4:
             case 10004://BGM
                 m = new BGM(this.dh.story.sys.BGM);
                 break;
-            case 5:
             case 10005://存档
                 m = new Save(this.dh.story.sys.SaveData);
-            case 6:
             case 10006://读档
                 m = new Restore(this.dh.story.sys.SaveData);
                 break;
-            case 7:
             case 10007://环境设置
                 m = new Setting(this.dh.story.sys.Setting);
                 break;

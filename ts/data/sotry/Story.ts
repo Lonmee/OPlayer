@@ -206,16 +206,16 @@ export interface CusUI {
 export interface CusUIItem {
     cmdArr: Array<Cmd>
     type: number
-    isUserString: boolean
+    useStr: boolean
     image1: string
     image2: string
-    stringIndex: number
-    isUserVar: boolean
+    strIdx: number
+    useVar: boolean
     x: number
     y: number
-    isUserIndex: boolean
+    useIdx: boolean
     index: number
-    maxIndex: number
+    maxIdx: number
     color: Color
 }
 
@@ -232,10 +232,10 @@ export interface DFLayerItem {
     x: number
     y: number
     image: string
-    isUserString: boolean
-    indexOfStr: number
-    stringIndex: number
-    varIndex: number
+    useStr: boolean
+    idxOfStr: number
+    strIdx: number
+    varIdx: number
     color: Color
 }
 

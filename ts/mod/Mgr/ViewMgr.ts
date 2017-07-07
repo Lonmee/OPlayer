@@ -57,7 +57,12 @@ export class ViewMgr extends Sprite implements IMgr {
         this.stage.on(Event.KEY_DOWN, this, this.kdHandler);
         this.stage.on(Event.KEY_UP, this, this.kuHandler);
         this.stage.on(Event.BLUR, this, this.blurHandler);
+        this.stage.on(Event.RIGHT_CLICK, this, this.rcHandler);
         this.dh.eventPoxy.on(Conf.LOADING_PROGRESS, this, this.progress);
+    }
+
+    rcHandler(e: Event) {
+        this.dh.eventPoxy.event(e.type);
     }
 
     kdHandler(e: Event) {
@@ -71,6 +76,9 @@ export class ViewMgr extends Sprite implements IMgr {
                 break;
             case "KeyZ":
                 this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.FF);
+                break;
+            case "Escape":
+                this.dh.eventPoxy.event(e.type);
                 break;
         }
     }

@@ -39,6 +39,7 @@ export default class Preloader extends LoaderManager {
             super.load(this.preArr.shift(), Handler.create(this, this.next), Handler.create(this, this.progress), Loader.IMAGE, 2, true, "preload", false);
         } else {
             if (Conf.info.single) {
+                //todo:story.sys.skipTitle是否跳过标题
                 DH.instance.story.gotoChapter(DH.instance.story.sys.startStoryId);
                 delete DH.instance.binLoader;
             } else {
