@@ -26,6 +26,7 @@ export class MSG extends Sprite {
 
     private initView() {
         this.autoSize = true;
+        this.zOrder = 0;
         DH.instance.story.sys.MessageBox.name;
         DH.instance.story.sys.MessageBox.faceStyle;
         this.constructTalk(DH.instance.story.sys.MessageBox.talk);
@@ -97,6 +98,7 @@ export class MSG extends Sprite {
     update(cmd: Cmd) {
         this.once(Event.CLICK, this, this.clickHandler);
         this.txt.text = this.formatContent(cmd.para[2]);
+        this.updateZOrder();
         // this.bgImg.visible = cmd.para[7] == "1";
         return this;
     }

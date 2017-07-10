@@ -92,6 +92,7 @@ export default class UILayer extends Layer {
         let m: Menu = this.uiFac.getMenu(idx);
         m.once(Event.CLOSE, this, this.closeMenu, [idx]);
         this.ml.addChild(m);
+        this.updateZOrder();
     }
 
     private closeMenu(idx: number = NaN) {
