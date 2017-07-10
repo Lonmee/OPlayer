@@ -25,27 +25,27 @@ export default class UIFac {
         let m: Menu;
         switch (type) {
             case -1 :
-                m = new Title(this.dh.story.sys.title);
+                m = new Title(type, this.dh.story.sys.title);
                 break;
             case 10001://游戏菜单
-                m = new Game(this.dh.story.sys.gMenu);
+                m = new Game(type, this.dh.story.sys.gMenu);
                 break;
             case 10002://剧情回放
-                m = new Replay(this.dh.story.sys.Replay);
+                m = new Replay(type, this.dh.story.sys.Replay);
                 break;
             case 10003://CG
-                m = new CG(this.dh.story.sys.CG);
+                m = new CG(type, this.dh.story.sys.CG);
                 break;
             case 10004://BGM
-                m = new BGM(this.dh.story.sys.BGM);
+                m = new BGM(type, this.dh.story.sys.BGM);
                 break;
             case 10005://存档
-                m = new Save(this.dh.story.sys.SaveData);
+                m = new Save(type, this.dh.story.sys.SaveData);
             case 10006://读档
-                m = new Restore(this.dh.story.sys.SaveData);
+                m = new Restore(type, this.dh.story.sys.SaveData);
                 break;
             case 10007://环境设置
-                m = new Setting(this.dh.story.sys.Setting);
+                m = new Setting(type, this.dh.story.sys.Setting);
                 break;
             // case 10008://离开游戏 ignore
             //     break;
@@ -54,7 +54,7 @@ export default class UIFac {
             case  10010://新版商城
                 break;
             default:
-                m = new CUI(this.dh.story.sys.Cuis[type]);
+                m = new CUI(type, this.dh.story.sys.Cuis[type]);
         }
         return this.menuArr[type] = m;
     }

@@ -27,7 +27,7 @@ export class FloatElement extends Sprite {
 
     constructor(private eleData) {
         super();
-        this.chapter = eleData.cmdArr == 0 ? null : new Chapter({id: NaN, name: eleData.name, cmdArr: eleData.cmdArr});
+        this.chapter = eleData.cmdArr == 0 ? null : new Chapter({id: NaN, name: "float", cmdArr: eleData.cmdArr});
         this.autoSize = true;
         this.initView();
     }

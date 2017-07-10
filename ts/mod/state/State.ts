@@ -11,33 +11,50 @@ export enum StateEnum {Normal, Auto, FF}
 export interface IState {
     id: StateEnum
     pause();
-    /**
-     *
-     * @param dur frame(s)
-     */
     wait(dur: number);
+    stopTimming();
+    resumeTimming();
     update(...mgrs: IMgr[]): void;
 }
 
 class State implements IState {
     id: StateEnum;
-    counter: number = 0;
+    protected left: number = 0;
+    protected uc: number = 0;//update counter
     /**动画刷新倍率，用以降低刷新率**/
-    speed: number = Browser.onPC ? 1 : 2;
+    protected us: number = Browser.onPC ? 1 : 2;//update speed
+    protected timming: boolean = false;
 
     update(...mgrs: IMgr[]): void {
-        if (++this.counter % this.speed == 0)
-            for (let m of mgrs)
-                m.update(this.counter = this.speed);
+        if (this.timming) {
+            if (this.left > 0)
+                if (--this.left == 0)
+                    this.resume();
+            if (++this.uc % this.us == 0)
+                for (let m of mgrs)
+                    m.update(this.uc = this.us);
+        }
     }
 
     pause() {
     }
 
     wait(dur) {
-        Laya.timer.frameOnce(dur, null, () => {
-            DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
-        });
+        this.timming = true;
+        this.left = dur;
+    }
+
+    stopTimming() {
+        this.timming = false;
+    }
+
+    resumeTimming() {
+        this.timming = true;
+    }
+
+    resume() {
+        this.timming = false;
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 }
 
@@ -58,6 +75,8 @@ export class FFState extends State {
     id = StateEnum.FF;
 
     update(...mgrs: IMgr[]): void {
+        if (this.timming)
+            return;
         for (let m of mgrs)
             m.update(0);
     }

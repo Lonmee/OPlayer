@@ -44,7 +44,6 @@ export default class CmdLine {
     private state: IState;
     private lock: boolean = true;
     private pause: boolean = true;
-    lockAnimal: boolean;
     chapter: Chapter;
     private curSid: number = 0;
     private curCid: number = 0;
@@ -53,7 +52,7 @@ export default class CmdLine {
     private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
     private cc: number = 0;
-    private cacheChapter: [boolean, boolean, number, number, Cmd[], Chapter];
+    private cacheChapter: [boolean, boolean, number, number, Cmd[], Chapter][] = [];
 
     constructor() {
         // this.changeState(StateEnum.FF);
@@ -121,8 +120,9 @@ export default class CmdLine {
      * @returns {number}
      */
     insertTempChapter(chapter: Chapter) {
-        this.cacheChapter = [this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter];
-        console.log("insert temp chapter At:", this.cacheChapter);
+        this.state.stopTimming();
+        this.cacheChapter.push([this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
+        console.log("insert temp chapter name:" + chapter.name + " At:", [this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
         this.lock = this.pause = false;
@@ -141,6 +141,7 @@ export default class CmdLine {
             this.update(e);
         } else if (typeof e == "boolean" && e)
             this.lock = this.pause = false;
+        this.state.resumeTimming();
     }
 
     complete() {
@@ -157,29 +158,28 @@ export default class CmdLine {
     restoreChapter(snap: [number, number, number] = null) {
         if (snap) {
             this.snap = snap;
-            this.cacheChapter = null;
             this.appending = [];
             console.log("restore to chapter:", this.snap);
-        } else if (this.cacheChapter) {
-            this.chapter = this.cacheChapter[5];
-            this.cmdArr = this.cacheChapter[4];
-            this.curSid = this.cacheChapter[3];
-            this.curCid = this.cacheChapter[2];
-            this.pause = this.cacheChapter[1];
-            this.lock = this.cacheChapter[0];
-            console.log("restore to chapter:", this.cacheChapter);
-            this.cacheChapter = null;
+        } else if (this.cacheChapter.length) {
+            let cch = this.cacheChapter.pop();
+            this.chapter = cch[5];
+            this.cmdArr = cch[4];
+            this.curSid = cch[3];
+            this.curCid = cch[2];
+            this.pause = cch[1];
+            this.lock = cch[0];
+            console.log("restore from temp to chapter:", cch[5].name, cch);
+            if (this.chapter.name == "float" && this.pause == true)
+                this.update();
         } else {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
-            console.log("restore to chapter:", this.snap);
+            console.log("restore to chapter id:", this.snap[2]);
         }
     }
 
     tick() {
-        if (!this.lockAnimal) {
-            this.state.update(this.viewMgr, this.audioMgr);
-        }
+        this.state.update(this.viewMgr, this.audioMgr);
         if (!this.pause)
             this.update();
         else {
@@ -194,7 +194,7 @@ export default class CmdLine {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
                 this.lock = this.pause = true;
-                if (this.cacheChapter || this.appending.length > 0)
+                if (this.cacheChapter.length || this.appending.length > 0)
                     return this.restoreChapter();
                 else
                     return this.complete();
@@ -254,7 +254,7 @@ export default class CmdLine {
                     let dur = parseInt(cmd.para[0]);
                     this.reportor.logWait(dur);
                     this.pause = true;
-                    return this.state.wait(--dur);//当前帧算入等待中故减掉1
+                    return this.state.wait(dur);
                 }
                 case 103: //"自动播放剧情"
                 case 104: {//"快进剧情"

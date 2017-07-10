@@ -16,7 +16,7 @@ import Handler = laya.utils.Handler;
 export class Menu extends Sprite {
     protected btnArr: Button[];
 
-    constructor(protected data: any) {
+    constructor(protected idx: number, protected data: any) {
         super();
         this.initView();
         this.initAudio();
@@ -24,7 +24,7 @@ export class Menu extends Sprite {
     }
 
     protected close() {
-        this.event(Event.CLOSE);
+        this.event(Event.CLOSE, this.idx);
     }
 
     protected initView() {
@@ -55,8 +55,8 @@ export class Menu extends Sprite {
 }
 
 export class Title extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     protected initView() {
@@ -102,8 +102,8 @@ export class Title extends Menu {
 export class Game extends Menu {
     btnArr: Button[];
 
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -134,8 +134,8 @@ export class Game extends Menu {
 }
 
 export class Replay extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -147,8 +147,8 @@ export class Replay extends Menu {
 }
 
 export class CG extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -181,8 +181,8 @@ export class CG extends Menu {
 }
 
 export class BGM extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -200,8 +200,8 @@ export class BGM extends Menu {
 }
 
 export class Save extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -226,8 +226,8 @@ export class Save extends Menu {
 }
 
 export class Restore extends Menu {
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -256,8 +256,8 @@ export class Setting extends Menu {
     btnArr: Button[];
     sliders: Array<[Slider, number]>;
 
-    constructor(data: any) {
-        super(data);
+    constructor(ind: number, data: any) {
+        super(ind, data);
     }
 
     initView() {
@@ -368,18 +368,11 @@ export class Setting extends Menu {
 }
 
 export class CUI extends Menu {
-    afterChapter: Chapter;
-    loadChapter: Chapter;
-
-    constructor(dcui: CusUI) {
-        DH.instance.cmdLine.insertTempChapter(new Chapter({id: NaN, name: "load", cmdArr: dcui.loadEvent}));
-        super(dcui);
-        // if (dcui.loadEvent.length)
-        //     this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: dcui.loadEvent});
-        if (dcui.afterEvent.length)
-            this.afterChapter = new Chapter({id: NaN, name: "load", cmdArr: dcui.afterEvent});
-
-        dcui.showEffect;//todo:dcui.showEffect
+    constructor(ind: number, data: CusUI) {
+        if (data.loadEvent.length)
+            DH.instance.cmdLine.insertTempChapter(new Chapter({id: NaN, name: "load", cmdArr: data.loadEvent}));
+        super(ind, data);
+        data.showEffect;//todo:dcui.showEffect
     }
 
     protected close(): any {
@@ -387,6 +380,8 @@ export class CUI extends Menu {
     }
 
     protected initView() {
+        if (this.data.afterEvent.length)
+            DH.instance.cmdLine.insertTempChapter(new Chapter({id: NaN, name: "after", cmdArr: this.data.afterEvent}));
         for (let ctl of this.data.controls) {
             switch (ctl.type) {
                 case 0://按钮
@@ -430,6 +425,5 @@ export class CUI extends Menu {
             DH.instance.eventPoxy.on(Event.RIGHT_CLICK, this, this.close);
         if (this.data.isKeyExit)
             DH.instance.eventPoxy.on("Escape", this, this.close);
-        // this.exe(this.afterChapter);
     }
 }

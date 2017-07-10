@@ -14,10 +14,14 @@ import Label = laya.ui.Label;
 import Event = laya.events.Event;
 
 export default class UILayer extends Layer {
+    ml: Sprite;
     msg: MSG;
 
     constructor() {
         super();
+        this.ml = new Sprite();
+        this.ml.zOrder = 100;
+        this.addChild(this.ml);
     }
 
     exe(cmd: Cmd) {
@@ -87,16 +91,15 @@ export default class UILayer extends Layer {
     private showMenu(idx: number) {
         let m: Menu = this.uiFac.getMenu(idx);
         m.once(Event.CLOSE, this, this.closeMenu, [idx]);
-        this.addChild(m);
+        this.ml.addChild(m);
     }
 
     private closeMenu(idx: number = NaN) {
-        if (isNaN(idx)) {
-            while (this.numChildren) {
-                this.removeChildAt(0);
-            }
-        } else
-            this.removeChild(this.uiFac.getMenu(idx));
+        if (isNaN(idx))
+            while (this.ml.numChildren)
+                this.ml.removeChildAt(0);
+        else
+            this.ml.removeChild(this.uiFac.getMenu(idx));
         this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME, true);
     }
 
