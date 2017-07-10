@@ -75,8 +75,6 @@ export class FFState extends State {
     id = StateEnum.FF;
 
     update(...mgrs: IMgr[]): void {
-        if (this.timming)
-            return;
         for (let m of mgrs)
             m.update(0);
     }

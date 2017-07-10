@@ -388,7 +388,7 @@ export class CUI extends Menu {
                     let b;
                     this.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) : ctl.index).pos(ctl.x, ctl.y));
                     if (ctl.cmdArr.length)
-                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr})]);
+                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui_click", cmdArr: ctl.cmdArr})]);
                     break;
                 case 1://字符串
                 case 2://变量

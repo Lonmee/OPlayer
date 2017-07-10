@@ -42,7 +42,7 @@ export default class CmdLine {
 
     private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     private state: IState;
-    private lock: boolean = true;
+    private lock: boolean = false;
     private pause: boolean = true;
     chapter: Chapter;
     private curSid: number = 0;
@@ -66,8 +66,8 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.resetState);
 
         //region test only
-        this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
-        this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
+        // this.dh.eventPoxy.on(Event.CLICK, this, this.resume);
+        // this.dh.eventPoxy.on(Event.KEY_DOWN, this, this.resume);
         //endregion
 
         Laya.timer.frameLoop(1, this, this.tick);
@@ -100,6 +100,8 @@ export default class CmdLine {
     }
 
     changeState(cmd: Cmd | number) {
+        if (this.lock)
+            return;
         let ind;
         if (typeof cmd == "number") {
             this.dh.state = this.state = this.states[ind = cmd];
@@ -121,7 +123,8 @@ export default class CmdLine {
      */
     insertTempChapter(chapter: Chapter) {
         this.state.stopTimming();
-        this.cacheChapter.push([this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
+        // if (!(chapter.name == "cui_click"))
+            this.cacheChapter.push([this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         console.log("insert temp chapter name:" + chapter.name + " At:", [this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
@@ -201,7 +204,7 @@ export default class CmdLine {
             }
             this.cmdArr = s.cmdArr;
             this.restoreSid = this.curSid;
-            this.curSid = isNaN(s.link) ? s.cmdArr[s.cmdArr.length - 1][0] : s.link;
+            this.curSid = s.link;
             if (!this.snap) {
                 this.curCid = 0;
             } else {
@@ -212,7 +215,6 @@ export default class CmdLine {
 
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
-            // console.log(this.cc);
             let cmd = this.cmdArr[this.curCid++];
             this.reportor.logProcess(cmd);
             switch (cmd.code) {
@@ -221,8 +223,10 @@ export default class CmdLine {
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
                 case 218: //"强制存档读档"
-                    if (cmd.para[0] != "10008" && cmd.para[0] != "10009")
+                    if (cmd.para[0] != "10008" && cmd.para[0] != "10009") {
+                        this.resetState();
                         this.lock = this.pause = true;
+                    }
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 case 110: //"打开指定网页";
@@ -267,7 +271,7 @@ export default class CmdLine {
                 case 102 :
                 case 205 :
                 case 201 :
-                    return this.update(cmd.links[0]);
+                    return this.update(this.curSid = cmd.links[0]);
                 //repeat end
                 case 203:
                 //repeat interrupt
@@ -280,7 +284,7 @@ export default class CmdLine {
                         this.cc = 0;
                         return this.curSid = cmd.links[0];
                     } else
-                        return this.update(cmd.links[0]);
+                        return this.update(this.curSid = cmd.links[0]);
                 }
 
                 //跳转剧情
@@ -308,7 +312,7 @@ export default class CmdLine {
                     } else {
                         bingo = this.valueMgr.judge(cmd.para);
                     }
-                    return this.update(cmd.links[bingo ? 0 : 1]);
+                    return this.update(this.curSid = cmd.links[bingo ? 0 : 1]);
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
@@ -335,7 +339,7 @@ export default class CmdLine {
                         this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
                     }
-                    return this.update(cmd.links[bingo ? 0 : 1]);
+                    return this.update(this.curSid = cmd.links[bingo ? 0 : 1]);
                 }
 
                 default: {//非逻辑命令分发
