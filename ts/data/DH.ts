@@ -50,7 +50,7 @@ export default class DH {
             "\ndh.cmdLine.showCode = [boolean] on //开关命令码log",
             "\ndh.cmdLine.showProcess = [boolean] on //开关执行过程log",
             "\ndh.cmdLine.chapter.printSceneArr() //打印当前scene详情",
-            "\ndh.cmdLine.changeState([number] state) //设置播放状态，0：正常、1：自动、2：快进",
+            "\ndh.cmdLine.switchState([number] state) //设置播放状态，0：正常、1：自动、2：快进",
             "\nshortcut:\"s\"//开关state面板; \"n\"//单步步进; \"z\"//快进",
             "\n@ OPlayer:26 new BinLoader([boolean] local?) //开启本地数据模式，文件置于oplayer/local，默认不开启"
         );

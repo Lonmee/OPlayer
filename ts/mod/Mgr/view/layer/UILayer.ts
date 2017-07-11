@@ -79,7 +79,6 @@ export default class UILayer extends Layer {
         if (!cmd) {
             if (this.msg && this.msg.parent)
                 this.removeChild(this.msg);
-            return;
         } else
             this.addChild(this.msg = this.uiFac.getMSG(cmd));
     }

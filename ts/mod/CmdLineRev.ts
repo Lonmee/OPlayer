@@ -53,7 +53,7 @@ export default class CmdLine {
     private cmdArr: Cmd[] = [];
 
     constructor() {
-        // this.changeState(StateEnum.FF);
+        // this.switchState(StateEnum.FF);
         this.changeState(StateEnum.Normal);
         this.dh.mgrArr = this.mgrArr;
 

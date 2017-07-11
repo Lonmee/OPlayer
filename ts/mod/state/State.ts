@@ -12,8 +12,8 @@ export interface IState {
     id: StateEnum
     pause();
     wait(dur: number);
-    stopTimming();
-    resumeTimming();
+    freeze();
+    unfreeze();
     update(...mgrs: IMgr[]): void;
 }
 
@@ -44,11 +44,11 @@ class State implements IState {
         this.left = dur;
     }
 
-    stopTimming() {
+    freeze() {
         this.timming = false;
     }
 
-    resumeTimming() {
+    unfreeze() {
         this.timming = true;
     }
 
