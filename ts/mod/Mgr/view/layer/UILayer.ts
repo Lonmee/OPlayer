@@ -104,8 +104,9 @@ export default class UILayer extends Layer {
     }
 
     private showHotarea(cmd: Cmd) {
-        if (this.uiFac.getHotarea().parent == null)
-            this.addChild(this.uiFac.getHotarea().reset(cmd));
+        this.uiFac.getHotarea().reset(cmd);
+        // if (this.uiFac.getHotarea().parent == null)
+        //     this.addChild(this.uiFac.getHotarea().reset(cmd));
     }
 
     checkHotarea(cmd: Cmd) {

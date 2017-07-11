@@ -135,7 +135,7 @@ export default class CmdLine {
      * @returns {number}
      */
     insertTempChapter(chapter: Chapter) {
-        this.cacheChapter.push([this.lock, isNaN(this.chapter.id) ? false : this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
+        this.cacheChapter.push([this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         console.log("insert temp chapter name:" + chapter.name + " At:", [this.lock, this.pause, this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
@@ -157,12 +157,11 @@ export default class CmdLine {
             let cch = this.cacheChapter.pop();
             this.chapter = cch[5];
             this.cmdArr = cch[4];
-            this.curSid = cch[3];
+            this.restoreSid = this.curSid = cch[3];
             this.curCid = cch[2];
             this.pause = cch[1];
             this.lock = cch[0];
             console.log("restore from temp to chapter:", cch[5].name, "with:", cch);
-            // this.update();
         } else {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
@@ -211,10 +210,8 @@ export default class CmdLine {
                 // case 150: //"刷新UI画面"
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
-                case 218: //"强制存档读档"
                     if (this.cacheChapter.length) {
-                        this.viewMgr.exe(cmd);
-                        continue;
+                        this.restoreChapter();
                     }
                     if (cmd.para[0] != "10008" && cmd.para[0] != "10009") {
                         this.resetState();

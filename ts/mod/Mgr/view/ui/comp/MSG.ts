@@ -60,7 +60,7 @@ export class MSG extends Sprite {
             this.txt.x = tw.textX;
             this.txt.y = tw.textY;
             this.addChild(this.txt);
-            this.once(Event.CLICK, this, this.clickHandler);
+            Laya.stage.once(Event.CLICK, this, this.clickHandler);
         }
     }
 
@@ -96,7 +96,7 @@ export class MSG extends Sprite {
      * @returns {MSG}
      */
     update(cmd: Cmd) {
-        this.once(Event.CLICK, this, this.clickHandler);
+        Laya.stage.once(Event.CLICK, this, this.clickHandler);
         this.txt.text = this.formatContent(cmd.para[2]);
         this.updateZOrder();
         // this.bgImg.visible = cmd.para[7] == "1";

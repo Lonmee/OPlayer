@@ -105,10 +105,10 @@ export class BGImg extends Sprite {
 export class Label extends Sprite {
     tf: Text;
 
-    constructor(str: string = "") {
+    constructor(str:string = "") {
         super();
         this.addChild(this.tf = new Text());
-        this.tf.text = str;
+        this.tf.text
     }
 
     update(v) {

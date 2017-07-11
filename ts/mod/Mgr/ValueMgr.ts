@@ -13,6 +13,7 @@ export default class ValueMgr extends Mgr {
     exVDic = new DigitalDic();
 
     constructor() {
+        super();
         DH.instance.vDic = this.vDic;
         DH.instance.sDic = this.sDic;
         DH.instance.exVDic = this.exVDic;
@@ -25,6 +26,9 @@ export default class ValueMgr extends Mgr {
             // 1:数值名称
             // 2:显示信息
             //     break;
+            case 218: //"强制存档读档"
+                //todo:强制
+                break;
             case 207://"数值操作"
             //0：数值索引
             // 1:操作符id(=,+=,-=,*=,/=,%=)
