@@ -7,6 +7,7 @@ import DH from "./data/DH";
 import CmdLine from "./mod/CmdLine";
 import Reportor from "./mod/reportor/Reportor";
 import Browser = laya.utils.Browser;
+import WebGL = laya.webgl.WebGL;
 export class OPlayer {
     constructor() {
 
@@ -19,7 +20,7 @@ export class OPlayer {
         Conf.info.qlty = qlty;
         Conf.info.miniPath = path;
 
-        Laya.init(Laya.Browser.width, Laya.Browser.height/*, WebGL*/);
+        Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
         DH.instance.reportor = new Reportor();
         DH.instance.cmdLine = new CmdLine();

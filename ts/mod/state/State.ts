@@ -3,17 +3,14 @@
  */
 import DH from "../../data/DH";
 import Conf from "../../data/Conf";
-import {ViewMgr} from "../Mgr/ViewMgr";
-import Browser = laya.utils.Browser;
 import {IMgr} from "../Mgr/Mgr";
+import Browser = laya.utils.Browser;
 export enum StateEnum {Normal, Auto, FF}
 
 export interface IState {
     id: StateEnum
     pause();
     wait(dur: number);
-    freeze();
-    unfreeze();
     update(...mgrs: IMgr[]): void;
 }
 
@@ -23,37 +20,24 @@ class State implements IState {
     protected uc: number = 0;//update counter
     /**动画刷新倍率，用以降低刷新率**/
     protected us: number = Browser.onPC ? 1 : 2;//update speed
-    protected timming: boolean = false;
 
     update(...mgrs: IMgr[]): void {
-        if (this.timming) {
-            if (this.left > 0)
-                if (--this.left == 0)
-                    this.resume();
-            if (++this.uc % this.us == 0)
-                for (let m of mgrs)
-                    m.update(this.uc = this.us);
-        }
+        if (this.left > 0)
+            if (--this.left == 0)
+                this.resume();
+        if (++this.uc % this.us == 0)
+            for (let m of mgrs)
+                m.update(this.uc = this.us);
     }
 
     pause() {
     }
 
     wait(dur) {
-        this.timming = true;
         this.left = dur;
     }
 
-    freeze() {
-        this.timming = false;
-    }
-
-    unfreeze() {
-        this.timming = true;
-    }
-
     resume() {
-        this.timming = false;
         DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 }
@@ -75,6 +59,10 @@ export class FFState extends State {
     id = StateEnum.FF;
 
     update(...mgrs: IMgr[]): void {
+        if (this.left > 0) {
+            this.left = 0;
+            this.resume();
+        }
         for (let m of mgrs)
             m.update(0);
     }
@@ -84,7 +72,7 @@ export class FFState extends State {
     }
 
     wait(dur = 0) {
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME,);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 }
 

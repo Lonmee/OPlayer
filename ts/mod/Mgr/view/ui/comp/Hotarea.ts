@@ -7,19 +7,16 @@ import Sprite = laya.display.Sprite;
 import Rectangle = laya.maths.Rectangle;
 import Event = laya.events.Event;
 
-export class HotareaSelector/* extends Sprite*/ {
+export class HotareaSelector {
     refresh: boolean;
-    // private preCache = [];
     private hotRec: Rectangle;
     private hit: [number, number, string];
 
     constructor() {
-        // super();
         this.initView();
     }
 
     initView() {
-        // this.size(Laya.stage.width, Laya.stage.height);
         this.hotRec = new Rectangle();
         Laya.stage.on(Event.MOUSE_MOVE, this, this.mHandler);
         Laya.stage.on(Event.MOUSE_DOWN, this, this.mHandler);
@@ -35,8 +32,6 @@ export class HotareaSelector/* extends Sprite*/ {
             this.refresh = true;
             this.hit = null;
         }
-        // this.preCache = [];
-        // this.graphics.clear();
         return this;
     }
 
@@ -58,10 +53,6 @@ export class HotareaSelector/* extends Sprite*/ {
                 this.hotRec.width = this.hotRec.height = 0;
             }
         }
-        // if (this.preCache.indexOf(this.hotRec.x) == -1) {
-        //     this.preCache.push(this.hotRec.x);
-        // this.updatePreview();
-        // }
         let bingo = this.hotRec && this.hit && this.hotRec.contains(this.hit[0], this.hit[1]);
         if (bingo) {
             if (cmd.para[3] == "0")
@@ -70,17 +61,8 @@ export class HotareaSelector/* extends Sprite*/ {
                 bingo = this.hit[2] == Event.MOUSE_DOWN;
         }
 
-        // if (bingo && this.parent) {
-        //     this.reset();
-        // this.parent.removeChild(this);
-        // }
         if (bingo)
-            this.refresh = false;
+            this.refresh = this.hit = null;
         return bingo;
     }
-
-    // updatePreview() {
-    //     this.graphics.drawRect(this.hotRec.x, this.hotRec.y, this.hotRec.width, this.hotRec.height, "#FFFFFF");
-    //     this.alpha = .5;
-    // }
 }

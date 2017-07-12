@@ -24,9 +24,7 @@ export class Menu extends Sprite {
     }
 
     protected close() {
-        this.event(Event.CLOSE, this.idx
-        )
-        ;
+        this.event(Event.CLOSE, this.idx);
     }
 
     protected initView() {
@@ -431,7 +429,7 @@ export class CUI extends Menu {
     exeLoadChapter() {
         if (this.loadChapter)
             this.exe(this.loadChapter);
-        return this;
+        return this
     }
 
     exeAfterChapter() {
@@ -448,6 +446,5 @@ export class CUI extends Menu {
             DH.instance.eventPoxy.on(Event.RIGHT_CLICK, this, this.close);
         if (this.data.isKeyExit)
             DH.instance.eventPoxy.on("Escape", this, this.close);
-        // this.exe(this.afterChapter);
     }
 }

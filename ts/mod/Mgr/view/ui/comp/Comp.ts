@@ -105,7 +105,7 @@ export class BGImg extends Sprite {
 export class Label extends Sprite {
     tf: Text;
 
-    constructor(str:string = "") {
+    constructor(str: string = "") {
         super();
         this.addChild(this.tf = new Text());
         this.tf.text
@@ -216,7 +216,7 @@ export class Slider extends Sprite {
     }
 
     private initMask(tex) {
-        this.barMask.graphics.drawRect(0, 0, tex.width, tex.height, 0xFFFFFF);
+        this.barMask.graphics.drawRect(0, 0, tex.width, tex.height, "#FFFFFF");
         this.barMask.x = -50;
         this.barMask.width = tex.width;
         this.bar.mask = this.barMask;

@@ -18,12 +18,12 @@ import Stage = laya.display.Stage;
  */
 export class ViewMgr extends Sprite implements IMgr {
     gl: GameLayer;
-    fl: FloatLayer;
     ul: UILayer;
+    fl: FloatLayer;
     layerArr: Layer[] = [
         this.gl = new GameLayer(),
-        this.fl = new FloatLayer(),
-        this.ul = new UILayer()
+        this.ul = new UILayer(),
+        this.fl = new FloatLayer()
     ];
     dh: DH = DH.instance;
 
@@ -110,9 +110,26 @@ export class ViewMgr extends Sprite implements IMgr {
      * @param cmd
      */
     exe(cmd: Cmd) {
-        // UI交互类 & UI控制指令:this.ul.exe(cmd);
-        // 悬浮组件:this.fl.exe(cmd);
-        // 视图操作命令:this.gl.exe(cmd);
+        switch (cmd.code) {
+            //UI控制指令
+            case 150: //"刷新UI画面"
+                break;
+            case 151: //"返回游戏界面"
+                this.swapUlFl();
+                break;
+            case 208: //"返回标题画面"
+            case 214:  //"呼叫游戏界面"
+                this.swapUlFl("u");
+                break;
+            case 218: //"强制存档读档"
+                break;
+            case 110: //"打开指定网页";
+                break;
+            case 111: //"禁用开启菜单功能";
+            // UI交互类 & UI控制指令:this.ul.exe(cmd);
+            // 悬浮组件:this.fl.exe(cmd);
+            // 视图操作命令:this.gl.exe(cmd);
+        }
         for (let i = this.layerArr.length; i > 0;) {
             this.layerArr[--i].exe(cmd);
         }
@@ -122,5 +139,9 @@ export class ViewMgr extends Sprite implements IMgr {
         for (let i = this.layerArr.length; i > 0;) {
             this.layerArr[--i].update(speed);
         }
+    }
+
+    swapUlFl(layer: string = "") {
+        this.addChild(layer == "u" ? this.ul : this.fl);
     }
 }

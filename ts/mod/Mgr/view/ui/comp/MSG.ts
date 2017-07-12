@@ -25,8 +25,7 @@ export class MSG extends Sprite {
     }
 
     private initView() {
-        this.autoSize = true;
-        this.zOrder = 0;
+        this.size(Laya.stage.width, Laya.stage.height);
         DH.instance.story.sys.MessageBox.name;
         DH.instance.story.sys.MessageBox.faceStyle;
         this.constructTalk(DH.instance.story.sys.MessageBox.talk);
@@ -49,26 +48,23 @@ export class MSG extends Sprite {
             this.txt.text = this.formatContent(this.cmd.para[2]);
             switch (this.cmd.para[5]) {
                 case "0":
-                    Layouter.top(this);
+                    Layouter.top(this.bgImg);
                     break;
                 case "1":
-                    Layouter.center(this);
+                    Layouter.center(this.bgImg);
                     break;
                 case "2":
-                    Layouter.bottom(this);
+                    Layouter.bottom(this.bgImg);
             }
             this.txt.x = tw.textX;
             this.txt.y = tw.textY;
-            this.addChild(this.txt);
-            Laya.stage.once(Event.CLICK, this, this.clickHandler);
+            this.bgImg.addChild(this.txt);
+            this.once(Event.CLICK, this, this.clickHandler);
         }
     }
 
     protected clickHandler(e: Event) {
-        //todo:对话关闭条件需修改
-        // if (!this.contains(e.target))
-        //     return;
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME, true);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
         if (this.parent)
             this.parent.removeChild(this);
     }
@@ -96,10 +92,8 @@ export class MSG extends Sprite {
      * @returns {MSG}
      */
     update(cmd: Cmd) {
-        Laya.stage.once(Event.CLICK, this, this.clickHandler);
+        this.once(Event.CLICK, this, this.clickHandler);
         this.txt.text = this.formatContent(cmd.para[2]);
-        this.updateZOrder();
-        // this.bgImg.visible = cmd.para[7] == "1";
         return this;
     }
 

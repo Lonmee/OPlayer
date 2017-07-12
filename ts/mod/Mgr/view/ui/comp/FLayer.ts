@@ -51,7 +51,8 @@ export class FloatElement extends Sprite {
         }
     }
 
-    exe() {
+    exe(e:Event) {
+        // e.stopPropagation();
         DH.instance.cmdLine.insertTempChapter(this.chapter);
     }
 

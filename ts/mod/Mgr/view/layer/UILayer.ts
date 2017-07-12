@@ -55,16 +55,7 @@ export default class UILayer extends Layer {
                 this.showMenu(MenuEnum.title);
                 break;
             case 214: //"呼叫游戏界面"
-                if (parseInt(cmd.para[0]) == 10008) {
-                    this.dh.eventPoxy.event(Conf.QUITE_GAME);
-                    this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
-                }
-                else if (parseInt(cmd.para[0]) == 10009) {
-                    this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
-                    this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
-                }
-                else
-                    this.showMenu(parseInt(cmd.para[0]));
+                this.showMenu(parseInt(cmd.para[0]));
                 break;
             case 218: //"强制存档读档"
                 this.showMenu(MenuEnum.save);
@@ -80,7 +71,7 @@ export default class UILayer extends Layer {
             if (this.msg && this.msg.parent)
                 this.removeChild(this.msg);
         } else
-            this.addChild(this.msg = this.uiFac.getMSG(cmd));
+            this.addChildAt(this.msg = this.uiFac.getMSG(cmd), 0);
     }
 
     private showSelector(cmd: Cmd) {
@@ -90,8 +81,9 @@ export default class UILayer extends Layer {
     private showMenu(idx: number) {
         let m: Menu = this.uiFac.getMenu(idx);
         m.once(Event.CLOSE, this, this.closeMenu, [idx]);
+        if (idx < 1000)
+            this.closeMenu();
         this.ml.addChild(m);
-        this.updateZOrder();
     }
 
     private closeMenu(idx: number = NaN) {
@@ -100,13 +92,10 @@ export default class UILayer extends Layer {
                 this.ml.removeChildAt(0);
         else
             this.ml.removeChild(this.uiFac.getMenu(idx));
-        this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME, true);
     }
 
     private showHotarea(cmd: Cmd) {
-        this.uiFac.getHotarea().reset(cmd);
-        // if (this.uiFac.getHotarea().parent == null)
-        //     this.addChild(this.uiFac.getHotarea().reset(cmd));
+        this.uiFac.getHotarea().reset(cmd)
     }
 
     checkHotarea(cmd: Cmd) {
