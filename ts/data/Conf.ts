@@ -58,6 +58,7 @@ export default class Conf {
     static PLAY_CHAPTER: string = "play_chapter";
     static CMD_LINE_RESUME: string = "cmd_line_resume";
     static ITEM_CHOOSEN: string = "item_choosen";
+    static TEMP_CMD_DONE: string = "temp_cmd_done";
     static CHANGE_STATE: string = "change_state";
     static QUITE_GAME: string = "quite_game";
 

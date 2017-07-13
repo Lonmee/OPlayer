@@ -23,15 +23,15 @@ export class HotareaSelector {
     }
 
     protected mHandler(e: Event) {
-        if (this.refresh)
-            this.hit = [e.stageX, e.stageY, e.type];
+        // if (this.refresh)
+        this.hit = [e.stageX, e.stageY, e.type];
     }
 
     reset(cmd: Cmd = null) {
-        if (!this.refresh) {
-            this.refresh = true;
-            this.hit = null;
-        }
+        // if (!this.refresh) {
+        //     this.refresh = true;
+        // this.hit = null;
+        // }
         return this;
     }
 
@@ -60,7 +60,6 @@ export class HotareaSelector {
             else
                 bingo = this.hit[2] == Event.MOUSE_DOWN;
         }
-
         if (bingo)
             this.refresh = this.hit = null;
         return bingo;

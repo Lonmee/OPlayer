@@ -305,6 +305,8 @@ export default class CmdLine {
                     if (cmd.para[0].split("|")[0] == "MO") {
                         this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
+                        this.curSid = cmd.links[bingo ? 0 : 1];
+                        return bingo ? null : this.update(this.curSid);
                     } else {
                         bingo = this.valueMgr.judge(cmd.para);
                     }

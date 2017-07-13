@@ -395,7 +395,7 @@ export class CUI extends Menu {
             switch (ctl.type) {
                 case 0://按钮
                     let b;
-                    this.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) : ctl.index).pos(ctl.x, ctl.y));
+                    this.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) - 1 : ctl.index).pos(ctl.x, ctl.y));
                     if (ctl.cmdArr.length)
                         b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr})]);
                     break;
