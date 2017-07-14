@@ -43,7 +43,6 @@ export default class CmdLine {
     private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     private state: IState;
     private frozen: boolean = false;
-    private lock: boolean = false;
     private pause: boolean = true;
     chapter: Chapter;
     private curSid: number = 0;
@@ -63,7 +62,7 @@ export default class CmdLine {
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
         this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
-        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.resetStateAndLock);
+        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.resetState);
 
         Laya.timer.frameLoop(1, this, this.tick);
         // this.reportor.showProcess = true;
@@ -79,23 +78,19 @@ export default class CmdLine {
         this.curCid = 0;
         this.curSid = this.snap ? this.snap[1] : 0;
         this.cmdArr = [];
-        this.lock = this.pause = false;
+        this.pause = false;
     }
 
     /**
      * 舞台失焦等意外
      * 仅重置快进
      */
-    resetStateAndLock(lock: boolean = false) {
+    resetState() {
         if (this.state.id == StateEnum.FF)
             this.switchState(StateEnum.Normal);
-        if (lock)
-            this.lock = this.pause = true;
     }
 
     switchState(cmd: Cmd | number) {
-        if (this.lock)
-            return;
         let ind;
         if (typeof cmd == "number") {
             this.dh.state = this.state = this.states[ind = cmd];
@@ -104,7 +99,7 @@ export default class CmdLine {
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
                 this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
         }
-        if (ind == 2 && !this.lock) {
+        if (ind == 2) {
             this.resume();
         }
         return StateEnum[ind];
@@ -114,15 +109,10 @@ export default class CmdLine {
      *
      * @param e Event|null为普通激活，number为强制并指定sid激活，boolean=true，为强制不指定sid激活
      */
-    resume(e: any | number | boolean = null) {
-        if (typeof e == "boolean" && e) {
-            this.lock = this.pause = false;
-        }
-        else if (typeof e == "number") {
-            this.lock = this.pause = false;
+    resume(e: number = -1) {
+        this.pause = false;
+        if (e > -1)
             this.update(e);
-        } else if (!this.lock)
-            this.pause = false;
     }
 
     complete() {
@@ -142,7 +132,7 @@ export default class CmdLine {
         console.log("insert temp chapter name:" + chapter.name + " At:", [this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
-        this.lock = this.pause = false;
+        this.pause = false;
         return this.update(0);
     }
 
@@ -155,6 +145,7 @@ export default class CmdLine {
         if (snap) {
             this.snap = snap;
             this.appending = [];
+            this.cacheChapter = [];
             console.log("restore to chapter:", this.snap);
         } else if (this.cacheChapter.length) {
             let cch = this.cacheChapter.pop();
@@ -168,7 +159,6 @@ export default class CmdLine {
             this.dh.story.gotoChapter(this.snap[2]);
             console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
         }
-        this.lock = false;
     }
 
     tick() {
@@ -187,7 +177,7 @@ export default class CmdLine {
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
-                this.resetStateAndLock(true);
+                this.resetState();
                 if (this.cacheChapter.length || this.appending.length)
                     return this.restoreChapter();
                 else
@@ -220,14 +210,13 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.switchState(StateEnum.Auto);
                     else {
-                        this.resetStateAndLock(true);
+                        this.resetState();
                         this.frozen = true;
                         this.viewMgr.exe(cmd);
                     }
                     return this.cc = 0;
                 case 110: //"打开指定网页";
                 // case 111: //"禁用开启菜单功能";
-
                 case 100 : { //"显示文章"
                     this.pause = true;
                     this.state.pause();
@@ -238,7 +227,7 @@ export default class CmdLine {
                 case 1010: //剧情分歧EX
                 case 1011: //剧情分歧EX2
                 case 204: { //按钮分歧
-                    this.resetStateAndLock(true);
+                    this.resetState();
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
@@ -253,7 +242,8 @@ export default class CmdLine {
                     this.reportor.pauseCound = 1;
                     let dur = parseInt(cmd.para[0]);
                     this.reportor.logWait(dur);
-                    return this.state.wait(dur);
+                    this.state.wait(dur);
+                    return this.cc = 0;
                 }
                 case 103: //"自动播放剧情"
                 case 104: {//"快进剧情"
@@ -271,20 +261,13 @@ export default class CmdLine {
                 case 203:
                 //repeat interrupt
                 case 209: {
-                    //设置链接目标等待刷新
-                    // this.curSid = cmd.links[0];
-                    //return
-                    //强制刷新不等待时沿
-                    if (this.cc > 5000) {
-                        this.cc = 0;
-                        return this.curSid = cmd.links[0];
-                    } else
-                        return this.update(this.curSid = cmd.links[0]);
+                    //调用栈不足5000次强制刷新不等待时沿
+                    this.curSid = cmd.links[0];
+                    return this.cc > 5000 ? this.cc = 0 : this.update(this.curSid);
                 }
-
                 //跳转剧情
                 case 206 : {
-                    this.resetStateAndLock(true);
+                    this.resetState();
                     console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     this.appending = [];
@@ -292,7 +275,7 @@ export default class CmdLine {
                 }
                 //呼叫子剧情
                 case 251: {
-                    this.resetStateAndLock(true);
+                    this.resetState();
                     this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
                     console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
@@ -306,11 +289,11 @@ export default class CmdLine {
                         this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
                         this.curSid = cmd.links[bingo ? 0 : 1];
-                        return bingo ? null : this.update(this.curSid);
+                        return bingo ? this.cc = 0 : this.update(this.curSid);
                     } else {
                         bingo = this.valueMgr.judge(cmd.para);
+                        return this.update(this.curSid = cmd.links[bingo ? 0 : 1]);
                     }
-                    return this.update(this.curSid = cmd.links[bingo ? 0 : 1]);
 
                 case 217: {//高级条件分歧
                     let len = parseInt(cmd.para[3]);
@@ -318,11 +301,8 @@ export default class CmdLine {
                     let bingo;
                     for (let i = 4; i < 4 + len; i++) {
                         let p = cmd.para[i].split("&");
-
-                        if (p[0].split("|")[0] == "MO") {
+                        if (p[0].split("|")[0] == "MO")
                             moCmd = cmd;
-                        }
-
                         if (cmd.para[0] == "0") {// cmd.para[0] || : &&;
                             if (bingo = this.valueMgr.judge(p))
                                 break;
@@ -336,6 +316,8 @@ export default class CmdLine {
                     if (bingo && moCmd) {//如果其他条件都满足，就把通过权交给异步的交互操作
                         this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
+                        this.curSid = cmd.links[bingo ? 0 : 1]
+                        return bingo ? this.cc = 0 : this.update(this.curSid);
                     }
                     return this.update(this.curSid = cmd.links[bingo ? 0 : 1]);
                 }
