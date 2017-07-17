@@ -6,10 +6,6 @@ import DH from "../../data/DH";
  */
 export default class Reporter {
     private _showProcess: boolean = false;
-    showValue: boolean = false;
-    showCode: boolean = false;
-    callCount: number = 0;
-    frame: number = 0;
     sleepCount: number = 0;
     cmdList: CmdList;
 
@@ -18,61 +14,28 @@ export default class Reporter {
             this.addInterruptor();
     }
 
-    set showProcess(value: boolean) {
-        if (value)
-            Laya.timer.frameLoop(1, this, this.showFrame);
-        else {
-            Laya.timer.clear(this, this.showFrame);
-        }
-        this.callCount = this.frame = 0;
-        this.sleepCount = 1;
-        this._showProcess = value;
-    }
-
-    get showProcess() {
-        return this._showProcess;
-    }
-
-    logPause() {
-        if (this.showProcess)
-            console.log("           pause:", this.sleepCount++);
+    logSleep() {
+        if (this._showProcess)
+            console.log("           sleep:", this.sleepCount++);
     }
 
     logWait(dur) {
-        if (this.showProcess || this.showCode)
+        if (this._showProcess)
             console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
     }
 
     logProcess(cmd) {
-        if (this.showProcess || this.showCode)
+        if (this._showProcess)
             console.log(cmd.code, this.cmdList.get(cmd.code));
     }
 
-    showFrame() {
-        console.log("frame:", this.frame++, "updated:", this.callCount, "times");
-        this.callCount = 0;
-    }
-
     printSceneArr(current: number = -1) {
-        if (this.cmdList == null)
-            require(["js/mod/cmd/CmdList.js"], (CmdList) => {
-                this.cmdList = new CmdList.default();
-
-                let chapter = DH.instance.cmdLine.chapter;
-                if (current < 0)
-                    for (let s of chapter.sceneArr)
-                        this.cmdList.printChapter(s, chapter.sceneArr);
-                else
-                    this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
-            });
-        else {
-            let chapter = DH.instance.cmdLine.chapter;
-            if (current < 0)
-                for (let s of chapter.sceneArr)
-                    this.cmdList.printChapter(s, chapter.sceneArr);
-            else
-                this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
-        }
+        let chapter = DH.instance.cmdLine.chapter;
+        if (current < 0)
+            for (let s of chapter.sceneArr)
+                this.cmdList.printChapter(s, chapter.sceneArr);
+        else
+            this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
     }
 
     addInterruptor() {

@@ -88,7 +88,6 @@ export default class CmdLine {
 
     insertTempChapter(chapter: Chapter) {
         this.cacheChapter.push([this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
-        console.log("insert temp chapter name:" + chapter.name + " At:", [this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
         this.switchState(StateEnum.Temp);
@@ -100,25 +99,21 @@ export default class CmdLine {
             this.snap = snap;
             this.appending = [];
             this.cacheChapter = [];
-            console.log("restore to chapter:", this.snap);
         } else if (this.cacheChapter.length) {
             let cch = this.cacheChapter.pop();
             this.chapter = cch[3];
             this.cmdArr = cch[2];
             this.restoreSid = this.curSid = cch[1];
             this.curCid = cch[0];
-            console.log("restore from temp to chapter:", cch[3].name, "with:", cch);
         } else {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
-            console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
         }
         this.switchState(StateEnum.Normal);
     }
 
     update(sid = NaN) {
         if (this.state.id == StateEnum.Sleep)
-            return this.reporter.callCount++;//test only;
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
@@ -141,7 +136,7 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
             let cmd = this.cmdArr[this.curCid++];
-            this.reporter.logProcess(cmd);//test only
+            this.reporter.logProcess(cmd);
             switch (cmd.code) {
                 //需暂停等待
                 // case 150: //"刷新UI画面"
