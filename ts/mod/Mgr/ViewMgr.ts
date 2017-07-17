@@ -92,7 +92,7 @@ export class ViewMgr extends Sprite implements IMgr {
     }
 
     blurHandler(e: Event) {
-        this.dh.eventPoxy.event(Conf.STAGE_BLUR);
+        this.dh.eventPoxy.event(Conf.STAGE_BLUR, StateEnum.Normal);
     }
 
     /**

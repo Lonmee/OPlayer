@@ -5,7 +5,7 @@ import VideoMgr from "./Mgr/VideoMgr";
 import AudioMgr from "./Mgr/AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {Cmd, DChapter} from "../data/sotry/Story";
-import {AutoState, FFState, IState, NormalState, SleepState, StateEnum, TempState} from "./state/State";
+import {AutoState, FFState, IState, NormalState, SleepState, StateEnum, FrozenState} from "./state/State";
 import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
 import Scene from "./cmd/Scene";
@@ -36,7 +36,7 @@ export default class CmdLine {
     ]
 
     chapter: Chapter;
-    private states: IState[] = [new NormalState(), new AutoState(), new FFState(), new TempState(), new SleepState()];
+    private states: IState[] = [new NormalState(), new AutoState(), new FFState(), new FrozenState(), new SleepState()];
     private state: IState;
     private cc: number = 0;
     private restoreSid: number;
@@ -51,18 +51,17 @@ export default class CmdLine {
     private reporter = this.dh.reporter = new Reportor();
 
     constructor() {
-        this.switchState(StateEnum.Sleep);
+        this.state = this.states[StateEnum.Sleep];
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
-        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.switchState);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.switchState);
+        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
         this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
         this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.switchState);
 
         Laya.timer.frameLoop(1, this, this.tick);
         // this.reporter.showProcess = true;
-        // this.reporter.showCode = true;
     }
 
     tick() {
@@ -75,10 +74,25 @@ export default class CmdLine {
         this.curCid = 0;
         this.curSid = this.snap ? this.snap[1] : 0;
         this.cmdArr = [];
+        this.switchState(StateEnum.Normal);
     }
 
     switchState(sId: number) {
-        this.state = this.states[sId];
+        if (sId != this.state.id)
+            this.state = this.states[sId];
+    }
+
+    private sleepFor(dur: number) {
+        this.switchState(StateEnum.Sleep);
+        this.state.wait(dur);
+        this.reporter.logWait(dur);
+    }
+
+    private resume(link: number = NaN) {
+        this.state.wait(0);
+        this.switchState(StateEnum.Normal);
+        if (!isNaN(link))
+            this.update(link);
     }
 
     complete() {
@@ -87,10 +101,11 @@ export default class CmdLine {
     }
 
     insertTempChapter(chapter: Chapter) {
+        this.switchState(StateEnum.Frozen);
         this.cacheChapter.push([this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
+        console.log("temp At", [this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
-        this.switchState(StateEnum.Temp);
         return this.update(0);
     }
 
@@ -101,6 +116,7 @@ export default class CmdLine {
             this.cacheChapter = [];
         } else if (this.cacheChapter.length) {
             let cch = this.cacheChapter.pop();
+            console.log("temp restore At", cch);
             this.chapter = cch[3];
             this.cmdArr = cch[2];
             this.restoreSid = this.curSid = cch[1];
@@ -109,11 +125,11 @@ export default class CmdLine {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
         }
-        this.switchState(StateEnum.Normal);
     }
 
     update(sid = NaN) {
         if (this.state.id == StateEnum.Sleep)
+            return this.reporter.logSleep();
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
@@ -149,7 +165,7 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.switchState(StateEnum.Auto);
                     else {
-                        this.switchState(StateEnum.Temp);
+                        this.switchState(StateEnum.Frozen);
                         this.viewMgr.exe(cmd);
                     }
                     return this.cc = 0;
@@ -158,6 +174,7 @@ export default class CmdLine {
                 case 100 : { //"显示文章"
                     this.state.pause();
                     this.viewMgr.exe(cmd);
+                    this.switchState(StateEnum.Sleep);
                     return this.cc = 0;
                 }
                 case 101: //剧情分歧
@@ -174,10 +191,7 @@ export default class CmdLine {
                 }
                 //状态指令
                 case 210: {//等待
-                    this.reporter.sleepCount = 1;
-                    let dur = parseInt(cmd.para[0]);
-                    this.reporter.logWait(dur);
-                    this.state.wait(dur);
+                    this.sleepFor(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }
                 case 103: { //"自动播放剧情"
@@ -208,13 +222,15 @@ export default class CmdLine {
                     console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     this.appending = [];
+                    this.switchState(StateEnum.Sleep);
                     return this.cc = 0;
                 }
                 //呼叫子剧情
                 case 251: {
-                    this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
                     console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
+                    this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
+                    this.switchState(StateEnum.Sleep);
                     return this.cc = 0;
                 }
 

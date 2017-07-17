@@ -5,9 +5,13 @@ import DH from "../../data/DH";
  * Created by ShanFeng on 6/27/2017.
  */
 export default class Reporter {
+    set showProcess(value: boolean) {
+        this._showProcess = value;
+    }
+
     private _showProcess: boolean = false;
     sleepCount: number = 0;
-    cmdList: CmdList;
+    cmdList: CmdList = new CmdList();
 
     constructor() {
         if (!Conf.debug)
