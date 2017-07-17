@@ -5,7 +5,7 @@ import DH from "../../data/DH";
 import Conf from "../../data/Conf";
 import {IMgr} from "../Mgr/Mgr";
 import Browser = laya.utils.Browser;
-export enum StateEnum {Normal, Auto, FF}
+export enum StateEnum {Normal, Auto, FF, Temp, Sleep}
 
 export interface IState {
     id: StateEnum
@@ -73,6 +73,29 @@ export class FFState extends State {
 
     wait(dur = 0) {
         DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+    }
+}
+
+export class TempState extends State {
+    id = StateEnum.Temp;
+
+    update(...mgrs: IMgr[]): void {
+
+    }
+
+    pause() {
+        this.wait(0);
+    }
+
+    wait(dur = 0) {
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+    }
+}
+
+export class SleepState extends State {
+    id = StateEnum.Sleep;
+
+    pause() {
     }
 }
 

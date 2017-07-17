@@ -5,16 +5,15 @@ import VideoMgr from "./Mgr/VideoMgr";
 import AudioMgr from "./Mgr/AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {Cmd, DChapter} from "../data/sotry/Story";
-import {AutoState, FFState, IState, NormalState, StateEnum} from "./state/State";
+import {AutoState, FFState, IState, NormalState, SleepState, StateEnum, TempState} from "./state/State";
 import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
 import Scene from "./cmd/Scene";
 import {IMgr} from "./Mgr/Mgr";
+import Reportor from "./reporter/Reporter";
 import Event = laya.events.Event;
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
-
-export enum MgrEnum {ass, view, value, audio, video}
 /**
  * 逻辑控制器
  * 负责命令分发至各管理器
@@ -22,17 +21,13 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
-    restoreSid: number;
-    appending: [number, number, number][] = [];
-    snap: [number, number, number];
+    private assMgr: AssMgr;
+    private viewMgr: ViewMgr;
+    private valueMgr: ValueMgr;
+    private audioMgr: AudioMgr;
+    private videoMgr: VideoMgr;
 
-    assMgr: AssMgr;
-    viewMgr: ViewMgr;
-    valueMgr: ValueMgr;
-    audioMgr: AudioMgr;
-    videoMgr: VideoMgr;
-
-    mgrArr: IMgr[] = [
+    private mgrArr: IMgr[] = [
         this.assMgr = new AssMgr(),
         this.viewMgr = new ViewMgr(),
         this.valueMgr = new ValueMgr(),
@@ -40,107 +35,66 @@ export default class CmdLine {
         this.videoMgr = new VideoMgr()
     ]
 
-    private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
-    private state: IState;
-    private frozen: boolean = false;
-    private pause: boolean = true;
     chapter: Chapter;
+    private states: IState[] = [new NormalState(), new AutoState(), new FFState(), new TempState(), new SleepState()];
+    private state: IState;
+    private cc: number = 0;
+    private restoreSid: number;
+    private appending: [number, number, number][] = [];
+    private cacheChapter: [number, number, Cmd[], Chapter][] = [];
+    private snap: [number, number, number];
     private curSid: number = 0;
     private curCid: number = 0;
+    private cmdArr: Cmd[] = [];
 
     private dh: DH = DH.instance;
-    private reportor = DH.instance.reportor;
-    private cmdArr: Cmd[] = [];
-    private cc: number = 0;
-    private cacheChapter: [number, number, Cmd[], Chapter][] = [];
+    private reporter = this.dh.reporter = new Reportor();
 
     constructor() {
-        this.switchState(StateEnum.Normal);
+        this.switchState(StateEnum.Sleep);
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
-        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.resume);
+        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.switchState);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOOSEN, this, this.switchState);
         this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
-        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.resetState);
+        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.switchState);
 
         Laya.timer.frameLoop(1, this, this.tick);
-        // this.reportor.showProcess = true;
-        // this.reportor.showCode = true;
+        // this.reporter.showProcess = true;
+        // this.reporter.showCode = true;
     }
 
-    /**
-     * 章节数据准备完毕启动该句柄
-     * @param c
-     */
+    tick() {
+        this.state.update(this.viewMgr, this.audioMgr);
+        this.update();
+    }
+
     playHandler(c: DChapter) {
         this.chapter = new Chapter(c);
         this.curCid = 0;
         this.curSid = this.snap ? this.snap[1] : 0;
         this.cmdArr = [];
-        this.pause = false;
     }
 
-    /**
-     * 舞台失焦等意外
-     * 仅重置快进
-     */
-    resetState() {
-        if (this.state.id == StateEnum.FF)
-            this.switchState(StateEnum.Normal);
-    }
-
-    switchState(cmd: Cmd | number) {
-        let ind;
-        if (typeof cmd == "number") {
-            this.dh.state = this.state = this.states[ind = cmd];
-        } else {
-            this.dh.state = this.state = cmd.code == 103 ? //自动播放剧情
-                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
-                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
-        }
-        if (ind == 2) {
-            this.resume();
-        }
-        return StateEnum[ind];
-    }
-
-    /**
-     *
-     * @param e Event|null为普通激活，number为强制并指定sid激活，boolean=true，为强制不指定sid激活
-     */
-    resume(e: number = -1) {
-        this.pause = false;
-        if (e > -1)
-            this.update(e);
+    switchState(sId: number) {
+        this.state = this.states[sId];
     }
 
     complete() {
-        //todo:chapter complete
         this.curCid = this.curSid = 0;
         console.log("chapter complete");
     }
 
-
-    /**
-     * 浮层及高级UI临时命令行插入（待测）
-     * @param chapter
-     * @returns {number}
-     */
     insertTempChapter(chapter: Chapter) {
         this.cacheChapter.push([this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         console.log("insert temp chapter name:" + chapter.name + " At:", [this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
-        this.pause = false;
+        this.switchState(StateEnum.Temp);
         return this.update(0);
     }
 
-    /**
-     * 恢复剧情
-     * 缺省参数时恢复父剧情，外部入参用例用于恢复存盘，将自动抹去已存父剧情
-     * @param snap [number, number, number]:[cmdId, sceneId, storyId]
-     */
     restoreChapter(snap: [number, number, number] = null) {
         if (snap) {
             this.snap = snap;
@@ -159,25 +113,15 @@ export default class CmdLine {
             this.dh.story.gotoChapter(this.snap[2]);
             console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
         }
-    }
-
-    tick() {
-        if (!this.frozen)
-            this.state.update(this.viewMgr, this.audioMgr);
-        if (!this.pause)
-            this.update();
-        else {
-            this.reportor.logPause();
-            this.cc = 0;
-        }
+        this.switchState(StateEnum.Normal);
     }
 
     update(sid = NaN) {
-        this.reportor.callCount++;//test only
+        if (this.state.id == StateEnum.Sleep)
+            return this.reporter.callCount++;//test only;
         if (!isNaN(sid) || this.curCid >= this.cmdArr.length) {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
-                this.resetState();
                 if (this.cacheChapter.length || this.appending.length)
                     return this.restoreChapter();
                 else
@@ -197,7 +141,7 @@ export default class CmdLine {
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
             let cmd = this.cmdArr[this.curCid++];
-            this.reportor.logProcess(cmd);//test only
+            this.reporter.logProcess(cmd);//test only
             switch (cmd.code) {
                 //需暂停等待
                 // case 150: //"刷新UI画面"
@@ -210,15 +154,13 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.switchState(StateEnum.Auto);
                     else {
-                        this.resetState();
-                        this.frozen = true;
+                        this.switchState(StateEnum.Temp);
                         this.viewMgr.exe(cmd);
                     }
                     return this.cc = 0;
                 case 110: //"打开指定网页";
                 // case 111: //"禁用开启菜单功能";
                 case 100 : { //"显示文章"
-                    this.pause = true;
                     this.state.pause();
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
@@ -227,28 +169,29 @@ export default class CmdLine {
                 case 1010: //剧情分歧EX
                 case 1011: //剧情分歧EX2
                 case 204: { //按钮分歧
-                    this.resetState();
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
                 case 151: {//"返回游戏界面"
-                    this.frozen = false;
+                    this.switchState(StateEnum.Normal);
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
                 //状态指令
                 case 210: {//等待
-                    this.pause = true;
-                    this.reportor.pauseCound = 1;
+                    this.reporter.sleepCount = 1;
                     let dur = parseInt(cmd.para[0]);
-                    this.reportor.logWait(dur);
+                    this.reporter.logWait(dur);
                     this.state.wait(dur);
                     return this.cc = 0;
                 }
-                case 103: //"自动播放剧情"
+                case 103: { //"自动播放剧情"
+                    this.switchState(parseInt(cmd.para[0]) ? StateEnum.Auto : StateEnum.Normal);
+                    return this.cc = 0;
+                }
                 case 104: {//"快进剧情"
-                    this.switchState(cmd);
-                    return this.update();
+                    this.switchState(parseInt(cmd.para[0]) ? StateEnum.FF : StateEnum.Normal);
+                    return this.cc = 0;
                 }
                 case 108 :
                 case 212 :
@@ -267,7 +210,6 @@ export default class CmdLine {
                 }
                 //跳转剧情
                 case 206 : {
-                    this.resetState();
                     console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     this.appending = [];
@@ -275,7 +217,6 @@ export default class CmdLine {
                 }
                 //呼叫子剧情
                 case 251: {
-                    this.resetState();
                     this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
                     console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));

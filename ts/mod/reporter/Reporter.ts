@@ -4,15 +4,14 @@ import DH from "../../data/DH";
 /**
  * Created by ShanFeng on 6/27/2017.
  */
-export default class Reportor {
+export default class Reporter {
     private _showProcess: boolean = false;
     showValue: boolean = false;
     showCode: boolean = false;
     callCount: number = 0;
     frame: number = 0;
-    pauseCound: number = 0;
-
-    cmdList: CmdList = new CmdList();
+    sleepCount: number = 0;
+    cmdList: CmdList;
 
     constructor() {
         if (!Conf.debug)
@@ -26,7 +25,7 @@ export default class Reportor {
             Laya.timer.clear(this, this.showFrame);
         }
         this.callCount = this.frame = 0;
-        this.pauseCound = 1;
+        this.sleepCount = 1;
         this._showProcess = value;
     }
 
@@ -36,7 +35,7 @@ export default class Reportor {
 
     logPause() {
         if (this.showProcess)
-            console.log("           pause:", this.pauseCound++);
+            console.log("           pause:", this.sleepCount++);
     }
 
     logWait(dur) {
@@ -54,51 +53,29 @@ export default class Reportor {
         this.callCount = 0;
     }
 
-    printSceneArr(current: boolean | number = false) {
-        //for dynamic usage
-        /*if (this.cmdList == null)
-         require(["js/mod/cmd/CmdList.js"], (CmdList) => {
-         this.cmdList = new CmdList.default();
-         for (let s of this.sceneArr)
-         this.cmdList.printChapter(s, this.sceneArr);
-         });*/
-        let chapter = DH.instance.cmdLine.chapter;
-        if (typeof current == "number")
-            this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
-        else if (current)
-            this.cmdList.printChapter(chapter.sceneArr[DH.instance.cmdLine.restoreSid], chapter.sceneArr);
-        else
-            for (let s of chapter.sceneArr)
-                this.cmdList.printChapter(s, chapter.sceneArr);
+    printSceneArr(current: number = -1) {
+        if (this.cmdList == null)
+            require(["js/mod/cmd/CmdList.js"], (CmdList) => {
+                this.cmdList = new CmdList.default();
+
+                let chapter = DH.instance.cmdLine.chapter;
+                if (current < 0)
+                    for (let s of chapter.sceneArr)
+                        this.cmdList.printChapter(s, chapter.sceneArr);
+                else
+                    this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
+            });
+        else {
+            let chapter = DH.instance.cmdLine.chapter;
+            if (current < 0)
+                for (let s of chapter.sceneArr)
+                    this.cmdList.printChapter(s, chapter.sceneArr);
+            else
+                this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
+        }
     }
 
     addInterruptor() {
-        // window.onerror = function (m, f, l, c, e) {
-        //     let eInfo = {
-        //         msg: m,
-        //         file: f,
-        //         line: l,
-        //         column: c,
-        //         error: JSON.stringify(e),
-        //         gIndex: GloableData.getInstance().gameInfo.gIndex,
-        //         guid: GloableData.getInstance().gameMainData.Headr.guid,
-        //         sid: GloableData.getInstance().iMain.storyId,
-        //         pos: GloableData.getInstance().iMain.pos,
-        //         plat: plat
-        //     };
-        //
-        //     let DataTime = new Date().getTime() / 1000;
-        //     let uploadData = {
-        //         sn: '9',
-        //         sv: '1',
-        //         ei: JSON.stringify(eInfo),
-        //         rt: '1',
-        //         sign: DataTime
-        //     };
-        //     AjaxManager.getInstance().sendAjaxPost("http://support.66rpg.com/report/bug", uploadData, this, null);
-        //     // HttpManager.getInstance().sendPostRequest("http://support.66rpg.com/report/bug", uploadData, null, "json", null);
-        // }
-        // }
         Laya.Browser.onMobile
         /**
          * "Win32"
