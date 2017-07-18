@@ -3,13 +3,13 @@ import Graphics = laya.display.Graphics;
 import {BGImg, Button, Label, OtherImg, Slider, UIImg} from "./Comp";
 import DH from "../../../../../data/DH";
 import {CusUI, IdxBtn, Path} from "../../../../../data/sotry/Story";
+import {MgrEnum} from "../../../../CmdLineRev";
 import {MenuEnum} from "../UIFac";
 import Conf from "../../../../../data/Conf";
 import {StateEnum} from "../../../../state/State";
 import Chapter from "../../../../cmd/Chapter";
 import Event = laya.events.Event;
 import Handler = laya.utils.Handler;
-import {MgrEnum} from "../../../Mgr";
 /**
  * Created by ShanFeng on 5/29/2017.
  */
@@ -116,15 +116,15 @@ export class Game extends Menu {
             this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
                 switch ((<Button>e.target).idx) {
                     case 0:
-                        MenuEnum.save
+                        MenuEnum.save;
                     case 1:
-                        MenuEnum.restore
+                        MenuEnum.restore;
                     case 2:
-                        MenuEnum.replay
+                        MenuEnum.replay;
                     case 3:
                         DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
                     case 4:
-                        MenuEnum.setting
+                        MenuEnum.setting;
                     case 5:
                         this.close();
                 }
@@ -300,6 +300,7 @@ export class Setting extends Menu {
                 switch ((<Button>e.target).idx) {
                     case 0:
                         this.close();
+                        // DH.instance.mgrArr[MgrEnum.view].exe({code: 151, para: [], idt: 0});//so crazy
                         break;
                     case 1:
                         DH.instance.mgrArr[MgrEnum.view].exe({code: 208, para: [], idt: 0});//so crazy
