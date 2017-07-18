@@ -5,8 +5,9 @@ import Story from "./sotry/Story";
 import {IMgr} from "../mod/Mgr/Mgr";
 import Preloader from "../mod/loader/Preloader";
 import {DigitalDic, StringDic} from "../mod/Mgr/value/ODictionary";
+import Reportor from "../mod/reportor/Reportor";
 import EventDispatcher = laya.events.EventDispatcher;
-import Reporter from "../mod/reporter/Reporter";
+import {IState} from "../mod/state/State";
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
@@ -24,13 +25,14 @@ export default class DH {
     cmdLine: CmdLine;
     mgrArr: IMgr[];
     preloader: Preloader;
-    reporter: Reporter;
     //region 运行时共享数据组
     imgDic: laya.utils.Dictionary;
     vDic: DigitalDic;
     sDic: StringDic;
     exVDic: DigitalDic;
     //endregion
+    reportor: Reportor;
+    state: IState;
 
     static get instance(): DH {
         return this._instance ? this._instance : this._instance = new DH();
