@@ -18,8 +18,9 @@ export default class UIFac {
     private menuArr: Menu[] = [];
 
     getMenu(type: number) {
-        if (this.menuArr[type] && this.menuArr[type] instanceof CUI) {
+        if (this.menuArr[type] && type < 10000) {
             (<CUI>this.menuArr[type]).exeLoadChapter();
+            (<CUI>this.menuArr[type]).updateControls();
             (<CUI>this.menuArr[type]).exeAfterChapter();
         }
         return this.menuArr[type] || this.constructMenu(type);

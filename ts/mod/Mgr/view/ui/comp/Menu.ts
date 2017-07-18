@@ -369,6 +369,7 @@ export class Setting extends Menu {
 export class CUI extends Menu {
     private afterChapter: Chapter;
     private loadChapter: Chapter;
+    private controlSpr: Sprite;
 
     constructor(ind: number, data: CusUI) {
         if (data.loadEvent.length)
@@ -382,42 +383,49 @@ export class CUI extends Menu {
     }
 
     protected initView() {
-        if (this.data.loadEvent.length)
-            this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: this.data.loadEvent});
+        this.addChild(this.controlSpr = new Sprite());
         if (this.data.afterEvent.length)
             DH.instance.cmdLine.insertTempChapter(this.afterChapter = new Chapter({
                 id: NaN,
                 name: "after",
                 cmdArr: this.data.afterEvent
             }));
+        this.updateControls();
+        this.exeAfterChapter();
+    }
+
+    updateControls() {
+        while (this.controlSpr.numChildren)
+            this.controlSpr.removeChildAt(0);
         for (let ctl of this.data.controls) {
             switch (ctl.type) {
                 case 0://按钮
                     let b;
-                    this.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) - 1 : ctl.index).pos(ctl.x, ctl.y));
+                    this.controlSpr.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) - 1 : ctl.index).pos(ctl.x, ctl.y));
                     if (ctl.cmdArr.length)
-                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr})]);
+                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr.concat([])})]);
                     break;
                 case 1://字符串
                 case 2://变量
                     let l: Label;
                     if (ctl.type == 1) {
-                        this.addChild(l = new Label(DH.instance.sDic.get(ctl.index)));
+                        this.controlSpr.addChild(l = new Label(DH.instance.sDic.get(ctl.index)));
                         DH.instance.sDic.bind(ctl.index, l.update.bind(l));
                     } else {
-                        this.addChild(l = new Label(DH.instance.vDic.get(ctl.index)));
+                        this.controlSpr.addChild(l = new Label(DH.instance.vDic.get(ctl.index)));
                         DH.instance.vDic.bind(ctl.index, l.update.bind(l));
                     }
                     l.pos(ctl.x, ctl.y);
                     break;
                 case 3://图片
                     let i = new OtherImg(ctl.useStr ? DH.instance.sDic.get(ctl.strIdx) : ctl.image1).pos(ctl.x, ctl.y);//todo:数值指定坐标
-                    this.addChild(i);
+                    this.controlSpr.addChild(i);
                     break;
                 case 4://滚动条
                     break;
             }
         }
+        return this;
     }
 
     exe(c: Chapter) {
@@ -434,6 +442,7 @@ export class CUI extends Menu {
     exeAfterChapter() {
         if (this.afterChapter)
             this.exe(this.afterChapter);
+        return this;
     }
 
     protected initAudio() {
