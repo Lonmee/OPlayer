@@ -38,7 +38,7 @@ export default class CmdLine {
         this.valueMgr = new ValueMgr(),
         this.audioMgr = new AudioMgr(),
         this.videoMgr = new VideoMgr()
-    ]
+    ];
 
     private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
     private state: IState;

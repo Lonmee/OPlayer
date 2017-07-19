@@ -116,15 +116,15 @@ export class Game extends Menu {
             this.btnArr[i].on(Event.CLICK, null, (e: Event) => {
                 switch ((<Button>e.target).idx) {
                     case 0:
-                        MenuEnum.save
+                        MenuEnum.save;
                     case 1:
-                        MenuEnum.restore
+                        MenuEnum.restore;
                     case 2:
-                        MenuEnum.replay
+                        MenuEnum.replay;
                     case 3:
                         DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
                     case 4:
-                        MenuEnum.setting
+                        MenuEnum.setting;
                     case 5:
                         this.close();
                 }
