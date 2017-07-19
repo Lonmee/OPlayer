@@ -270,7 +270,11 @@ export default class Story {
         if (Conf.info.single) {
             for (let c of this.dChapterArr) {
                 if (c.id == id) {
-                    DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, {name: c.name, id: c.id, cmdArr: c.cmdArr.concat([])});
+                    DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, {
+                        name: c.name,
+                        id: c.id,
+                        cmdArr: c.cmdArr
+                    });
                 }
             }
         } else {

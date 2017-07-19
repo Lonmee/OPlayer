@@ -385,6 +385,9 @@ export class CUI extends Menu {
 
     protected initView() {
         this.addChild(this.controlSpr = new Sprite());
+        if (this.data.loadEvent.length) {
+            this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: this.data.loadEvent});
+        }
         if (this.data.afterEvent.length)
             DH.instance.cmdLine.insertTempChapter(this.afterChapter = new Chapter({
                 id: NaN,
@@ -402,9 +405,14 @@ export class CUI extends Menu {
             switch (ctl.type) {
                 case 0://按钮
                     let b;
-                    this.controlSpr.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) - 1 : ctl.index).pos(ctl.x, ctl.y));
+                    this.controlSpr.addChild(b = new Button(ctl.useIdx ? DH.instance.vDic.get(ctl.index) - 1 : ctl.index)
+                        .pos(ctl.useVar ? DH.instance.vDic.get(ctl.x) : ctl.x, ctl.useVar ? DH.instance.vDic.get(ctl.y) : ctl.y));
                     if (ctl.cmdArr.length)
-                        b.on(Event.CLICK, this, this.exe, [new Chapter({id: NaN, name: "cui", cmdArr: ctl.cmdArr.concat([])})]);
+                        b.on(Event.CLICK, this, this.exe, [new Chapter({
+                            id: NaN,
+                            name: "cui",
+                            cmdArr: ctl.cmdArr
+                        })]);
                     break;
                 case 1://字符串
                 case 2://变量

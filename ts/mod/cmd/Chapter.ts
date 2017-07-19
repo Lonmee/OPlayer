@@ -10,6 +10,7 @@ export default class Chapter extends DChapter {
 
     constructor(dc: DChapter) {
         super(dc);
+        this.cmdArr = this.cmdArr.concat();
         this.formScene();
     }
 
