@@ -273,7 +273,7 @@ export default class Story {
                     DH.instance.eventPoxy.event(Conf.PLAY_CHAPTER, {
                         name: c.name,
                         id: c.id,
-                        cmdArr: c.cmdArr
+                        cmdArr: c.cmdArr.concat()
                     });
                 }
             }

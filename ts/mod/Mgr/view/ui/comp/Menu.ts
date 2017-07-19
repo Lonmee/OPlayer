@@ -374,7 +374,11 @@ export class CUI extends Menu {
 
     constructor(ind: number, data: CusUI) {
         if (data.loadEvent.length)
-            DH.instance.cmdLine.insertTempChapter(new Chapter({id: NaN, name: "load", cmdArr: data.loadEvent}));
+            DH.instance.cmdLine.insertTempChapter(new Chapter({
+                id: NaN,
+                name: "load",
+                cmdArr: data.loadEvent.concat()
+            }));
         super(ind, data);
         data.showEffect;//todo:dcui.showEffect
     }
@@ -411,7 +415,7 @@ export class CUI extends Menu {
                         b.on(Event.CLICK, this, this.exe, [new Chapter({
                             id: NaN,
                             name: "cui",
-                            cmdArr: ctl.cmdArr
+                            cmdArr: ctl.cmdArr.concat()
                         })]);
                     break;
                 case 1://字符串

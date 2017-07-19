@@ -10,7 +10,8 @@ export default class Chapter extends DChapter {
 
     constructor(dc: DChapter) {
         super(dc);
-        this.cmdArr = this.cmdArr.concat();
+        //值传开关，当前为数据轻量化关掉，但传入参数会被吸收导致外部数据缺失，外部可使用concat()方法复制一份作为入参
+        // this.cmdArr = this.cmdArr.concat();
         this.formScene();
     }
 
