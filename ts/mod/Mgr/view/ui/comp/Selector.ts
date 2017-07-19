@@ -35,7 +35,7 @@ export class Selector extends Sprite implements ISelectable {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 10);
+                btnV.y = i * (btnV.height + 10);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -70,7 +70,7 @@ export class SelectorEx extends Selector {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 10);
+                btnV.y = i * (btnV.height + 10);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";
@@ -94,7 +94,7 @@ export class SelectorEx2 extends Selector {
             if (db.image1.path != "" || db.image1.path != "") {
                 let btnV: Button = new Button(parseInt(DH.instance.story.sys.MessageBox.choiceButtonIndex), (e: Event) => this.clickHandler(e));
                 btnV.idx = i;
-                btnV.y = i * btnV.height + (i == 0 ? 0 : 10);
+                btnV.y = i * (btnV.height + 10);
                 let txt: Text = new Text();
                 txt.fontSize = 22;
                 txt.color = "#FFFFFF";

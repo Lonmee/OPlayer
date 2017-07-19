@@ -12,6 +12,7 @@ import {MSG} from "../ui/comp/MSG";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
 import Event = laya.events.Event;
+import Chapter from "../../../cmd/Chapter";
 
 export default class UILayer extends Layer {
     ml: Sprite;
@@ -90,8 +91,15 @@ export default class UILayer extends Layer {
         if (isNaN(idx))
             while (this.ml.numChildren)
                 this.ml.removeChildAt(0);
-        else
+        else {
             this.ml.removeChild(this.uiFac.getMenu(idx));
+            if (this.ml.numChildren == 0)
+                this.dh.cmdLine.insertTempChapter(new Chapter({
+                    id: NaN,
+                    name: "code_151",
+                    cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
+                }));
+        }
     }
 
     private showHotarea(cmd: Cmd) {

@@ -53,7 +53,9 @@ export default class CmdLine {
     private reportor = DH.instance.reportor;
     private cmdArr: Cmd[] = [];
     private cc: number = 0;
-    private cacheChapter: [number, number, Cmd[], Chapter][] = [];
+    private cachePause: boolean;
+    private cacheLock: boolean;
+    private cacheChapter: [number, number, number, Cmd[], Chapter][] = [];
 
     constructor() {
         this.switchState(StateEnum.Normal);
@@ -118,10 +120,10 @@ export default class CmdLine {
      */
     resume(e: any | number | boolean = null) {
         if (typeof e == "boolean" && e) {
-            this.lock = this.pause = false;
+            this.frozen = this.lock = this.pause = false;
         }
         else if (typeof e == "number") {
-            this.lock = this.pause = false;
+            this.frozen = this.lock = this.pause = false;
             this.update(e);
         } else if (!this.lock)
             this.pause = false;
@@ -140,10 +142,12 @@ export default class CmdLine {
      * @returns {number}
      */
     insertTempChapter(chapter: Chapter) {
-        this.cacheChapter.push([this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
-        console.log("insert temp chapter name:" + chapter.name + " At:", [this.curCid, this.restoreSid, this.cmdArr, this.chapter]);
+        this.cacheChapter.push([this.curCid, this.restoreSid, this.curSid, this.cmdArr, this.chapter]);
+        console.log("insert temp chapter name:" + chapter.name + " At:", this.cacheChapter[this.cacheChapter.length - 1]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
+        if (this.cacheLock == null)
+            this.markState();
         this.lock = this.pause = false;
         return this.update(0);
     }
@@ -160,17 +164,30 @@ export default class CmdLine {
             console.log("restore to chapter:", this.snap);
         } else if (this.cacheChapter.length) {
             let cch = this.cacheChapter.pop();
-            this.chapter = cch[3];
-            this.cmdArr = cch[2];
-            this.restoreSid = this.curSid = cch[1];
+            this.chapter = cch[4];
+            this.cmdArr = cch[3];
+            this.curSid = cch[2];
+            this.restoreSid = cch[1];
             this.curCid = cch[0];
-            console.log("restore from temp to chapter:", cch[3].name, "with:", cch);
+            console.log("restore from temp to chapter:", cch[4].name, "with:", cch);
         } else {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
             console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
         }
-        this.lock = false;
+    }
+
+    markState() {
+        this.cacheLock = this.lock;
+        this.cachePause = this.pause;
+        console.log("mark:", this.lock, this.pause);
+    }
+
+    restoreState() {
+        this.lock = this.cacheLock;
+        this.pause = this.cachePause;
+        this.cacheLock = this.cachePause = null;
+        console.log("remark:", this.lock, this.pause);
     }
 
     tick() {
@@ -190,9 +207,13 @@ export default class CmdLine {
             let s: Scene = this.chapter.getScene(isNaN(sid) ? this.curSid : this.curSid = sid);
             if (s == null) {
                 this.resetStateAndLock(true);
-                if (this.cacheChapter.length || this.appending.length)
-                    return this.restoreChapter();
-                else
+                if (this.cacheChapter.length || this.appending.length) {
+                    let isCache = this.cacheChapter.length;
+                    this.restoreChapter();
+                    if (isCache && !this.frozen)
+                        this.restoreState();
+                    return;
+                } else
                     return this.complete();
             }
             this.cmdArr = s.cmdArr;
@@ -217,6 +238,8 @@ export default class CmdLine {
                 case 214: //"呼叫游戏界面"
                     if (this.cacheChapter.length)
                         this.restoreChapter();
+                    else
+                        this.markState();
                     if (parseInt(cmd.para[0]) == 10008)
                         this.dh.eventPoxy.event(Conf.QUITE_GAME);
                     else if (parseInt(cmd.para[0]) == 10009)
@@ -247,6 +270,8 @@ export default class CmdLine {
                 case 151: {//"返回游戏界面"
                     this.frozen = false;
                     this.viewMgr.exe(cmd);
+                    if (this.cacheChapter.length == 0)
+                        this.restoreState();
                     return this.cc = 0;
                 }
                 //状态指令
