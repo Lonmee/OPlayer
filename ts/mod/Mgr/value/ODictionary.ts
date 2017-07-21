@@ -4,16 +4,19 @@ import Dictionary = laya.utils.Dictionary;
  */
 
 export interface IBindable {
-    watcher: Dictionary;
+    watcher: [Function[]];
     bind(key, fun);
     update();
 }
 
 class ODic extends Dictionary implements IBindable {
-    watcher: Dictionary = new Dictionary();
+    watcher: [Function[]];
 
     bind(key, fun) {
-        this.watcher.set(parseInt(key) + 1, fun);
+        if (this.watcher[key])
+            this.watcher[key].push(fun);
+        else
+            this.watcher[key] = [fun];
     }
 
     get(key: any): any {
@@ -21,13 +24,12 @@ class ODic extends Dictionary implements IBindable {
     }
 
     set(key: any, value: any): void {
-        let k;
-        super.set(k = parseInt(key) + 1, value);
+        super.set(parseInt(key) + 1, value);
     }
 
     update() {
-        for (let w of this.watcher)
-            for (let fun of w)
+        for (let w in this.watcher)
+            for (let fun of this.watcher[w])
                 fun.call(null, this.get(w));
     }
 }
