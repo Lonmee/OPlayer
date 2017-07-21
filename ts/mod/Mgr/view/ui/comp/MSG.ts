@@ -59,7 +59,7 @@ export class MSG extends Sprite {
             this.txt.x = tw.textX;
             this.txt.y = tw.textY;
             this.bgImg.addChild(this.txt);
-            this.once(Event.CLICK, this, this.clickHandler);
+            this.once(Event.MOUSE_DOWN, this, this.clickHandler);
         }
     }
 
@@ -92,7 +92,7 @@ export class MSG extends Sprite {
      * @returns {MSG}
      */
     update(cmd: Cmd) {
-        this.once(Event.CLICK, this, this.clickHandler);
+        this.once(Event.MOUSE_DOWN, this, this.clickHandler);
         this.txt.text = this.formatContent(cmd.para[2]);
         return this;
     }

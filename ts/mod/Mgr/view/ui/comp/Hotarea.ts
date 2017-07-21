@@ -20,11 +20,16 @@ export class HotareaSelector {
         this.hotRec = new Rectangle();
         Laya.stage.on(Event.MOUSE_MOVE, this, this.mHandler);
         Laya.stage.on(Event.MOUSE_DOWN, this, this.mHandler);
+        Laya.stage.on(Event.MOUSE_UP, this, this.muHandler);
     }
 
     protected mHandler(e: Event) {
         // if (this.refresh)
         this.hit = [e.stageX, e.stageY, e.type];
+    }
+
+    protected muHandler(e: Event) {
+        this.hit = null;
     }
 
     reset(cmd: Cmd = null) {
@@ -60,8 +65,8 @@ export class HotareaSelector {
             else
                 bingo = this.hit[2] == Event.MOUSE_DOWN;
         }
-        if (bingo)
-            this.refresh = this.hit = null;
+        // if (bingo)
+        //     this.refresh = this.hit = null;
         return bingo;
     }
 }

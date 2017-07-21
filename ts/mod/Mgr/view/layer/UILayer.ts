@@ -48,7 +48,6 @@ export default class UILayer extends Layer {
             }
 
             //UI控制指令
-            case 150: //"刷新UI画面"
             case 151: //"返回游戏界面"
                 this.closeMenu();
                 break;

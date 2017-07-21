@@ -26,6 +26,7 @@ export default class ValueMgr extends Mgr {
             // 1:数值名称
             // 2:显示信息
             //     break;
+            // case 150: //"刷新UI画面"
             case 218: //"强制存档读档"
                 //todo:强制
                 break;
@@ -209,4 +210,9 @@ export default class ValueMgr extends Mgr {
         }
     }
 
+    update() {
+        this.vDic.update();
+        this.sDic.update();
+        this.exVDic.update();
+    }
 };

@@ -2,7 +2,14 @@ import Dictionary = laya.utils.Dictionary;
 /**
  * Created by ShanFeng on 6/13/2017.
  */
-class ODic extends Dictionary {
+
+export interface IBindable {
+    watcher: Dictionary;
+    bind(key, fun);
+    update();
+}
+
+class ODic extends Dictionary implements IBindable {
     watcher: Dictionary = new Dictionary();
 
     bind(key, fun) {
@@ -16,9 +23,12 @@ class ODic extends Dictionary {
     set(key: any, value: any): void {
         let k;
         super.set(k = parseInt(key) + 1, value);
-        if (this.watcher.keys.indexOf(k) > -1)
-            this.watcher.get(k).call(null, value);
-        // (value, k) => this.watcher.get(k);
+    }
+
+    update() {
+        for (let w of this.watcher)
+            for (let fun of w)
+                fun.call(null, this.get(w));
     }
 }
 

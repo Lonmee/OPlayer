@@ -192,7 +192,7 @@ export default class CmdLine {
 
     tick() {
         if (!this.frozen)
-            this.state.update(this.viewMgr, this.audioMgr);
+            this.state.update(this.viewMgr, this.valueMgr);
         if (!this.pause)
             this.update();
         else {
