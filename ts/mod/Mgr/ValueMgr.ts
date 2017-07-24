@@ -209,10 +209,4 @@ export default class ValueMgr extends Mgr {
                 return v1 != v2;
         }
     }
-
-    update() {
-        this.vDic.update();
-        this.sDic.update();
-        this.exVDic.update();
-    }
 };

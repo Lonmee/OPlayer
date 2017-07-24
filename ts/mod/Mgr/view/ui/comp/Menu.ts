@@ -23,8 +23,9 @@ export class Menu extends Sprite {
         this.initListener();
     }
 
-    protected close() {
-        this.event(Event.CLOSE, this.idx);
+    close() {
+        if (this.parent)
+            this.parent.removeChild(this);
     }
 
     protected initView() {
@@ -368,6 +369,7 @@ export class Setting extends Menu {
 }
 
 export class CUI extends Menu {
+    bounds: any;
     private afterChapter: Chapter;
     private loadChapter: Chapter;
     private controlSpr: Sprite;
@@ -383,8 +385,14 @@ export class CUI extends Menu {
         data.showEffect;//todo:dcui.showEffect
     }
 
-    protected close(): any {
-        return super.close();
+    close() {
+        while (this.controlSpr.numChildren)
+            this.controlSpr.removeChildAt(0).destroy(true);
+        while (this.bounds.length) {
+            let ba = this.bounds.pop();
+            ba[0].unbind(ba[1], ba[2]);
+        }
+        this.parent.removeChild(this);
     }
 
     protected initView() {
@@ -403,8 +411,7 @@ export class CUI extends Menu {
     }
 
     updateControls() {
-        while (this.controlSpr.numChildren)
-            this.controlSpr.removeChildAt(0);
+        this.bounds = [];
         for (let ctl of this.data.controls) {
             switch (ctl.type) {
                 case 0://按钮
@@ -424,9 +431,11 @@ export class CUI extends Menu {
                     if (ctl.type == 1) {
                         this.controlSpr.addChild(l = new Label(DH.instance.sDic.get(ctl.index)));
                         DH.instance.sDic.bind(ctl.index, l.update.bind(l));
+                        this.bounds.push([DH.instance.sDic, ctl.index, l.update]);
                     } else {
                         this.controlSpr.addChild(l = new Label(DH.instance.vDic.get(ctl.index)));
                         DH.instance.vDic.bind(ctl.index, l.update.bind(l));
+                        this.bounds.push([DH.instance.sDic, ctl.index, l.update]);
                     }
                     l.pos(ctl.x, ctl.y);
                     break;
