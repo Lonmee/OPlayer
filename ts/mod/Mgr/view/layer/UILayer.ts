@@ -5,14 +5,12 @@ import Sprite = laya.display.Sprite;
 import {MenuEnum} from "../ui/UIFac";
 import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
-import Conf from "../../../../data/Conf";
-import {StateEnum} from "../../../state/State";
 import {Menu} from "../ui/comp/Menu";
 import {MSG} from "../ui/comp/MSG";
+import Chapter from "../../../cmd/Chapter";
 import Browser = laya.utils.Browser;
 import Label = laya.ui.Label;
 import Event = laya.events.Event;
-import Chapter from "../../../cmd/Chapter";
 
 export default class UILayer extends Layer {
     ml: Sprite;

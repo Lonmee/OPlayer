@@ -108,7 +108,7 @@ export class Label extends Sprite {
     constructor(str: string = "") {
         super();
         this.addChild(this.tf = new Text());
-        this.tf.text
+        this.tf.text = str;
     }
 
     update(v) {
