@@ -41,6 +41,8 @@ export default class GameLayer extends Layer {
                 else {
                     //todo:字符串指定图片
                     // cmd.para[11] == "0" ? new GameImg(cmd.para[1]) : new GameImg(this.dh.sDic.get(cmd.para[12])));
+                    if (cmd.para[11] == '1')
+                        debugger;
                     this.imgDic.set(imgId, gi = new GameImg(cmd.para[1]));
                     this.addChild(gi.pos(x, y));
                     gi.zOrder = imgId;

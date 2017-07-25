@@ -50,8 +50,13 @@ export class GameImg extends Sprite {
 
     reload(path: string) {
         this.graphics.clear();
-        this.loadImage(getGameImgLink(path));
+        this.loadImage(getGameImgLink(path), 0, 0, 0, 0, Handler.create(this, this.com));
         return this;
+    }
+
+    com(e) {
+        while (this.graphics.cmds && this.graphics.cmds.length > 1)
+            this.graphics.cmds.pop();
     }
 
     moveTo(property: string, value: number, duration: number, passed: number = 0) {
@@ -175,8 +180,8 @@ export class Button extends Sprite {
         }
         if (this.cHandler)
             this.cHandler.call(null, e);
-        else
-            console.log(this.name, "clicked");
+        // else
+        //     console.log(this.name, "clicked");
     }
 
     private switchImg(e: Event) {

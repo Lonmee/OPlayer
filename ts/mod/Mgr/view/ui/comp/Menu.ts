@@ -24,8 +24,8 @@ export class Menu extends Sprite {
     }
 
     close() {
-        if (this.parent)
-            this.parent.removeChild(this);
+        this.parent.removeChild(this);
+        this.event(Event.CLOSE, this.idx);
     }
 
     protected initView() {
@@ -392,6 +392,10 @@ export class CUI extends Menu {
             let ba = this.bounds.pop();
             ba[0].unbind(ba[1], ba[2]);
         }
+        if (this.data.isMouseExit)
+            DH.instance.eventPoxy.off(Event.RIGHT_CLICK, this, this.close);
+        if (this.data.isKeyExit)
+            DH.instance.eventPoxy.off("Escape", this, this.close);
         this.parent.removeChild(this);
     }
 

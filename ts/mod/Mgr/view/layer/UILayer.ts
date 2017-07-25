@@ -79,7 +79,9 @@ export default class UILayer extends Layer {
     private showMenu(idx: number) {
         if (idx < 1000)
             this.closeMenu();
-        this.ml.addChild(this.uiFac.getMenu(idx));
+        let m: Menu = this.uiFac.getMenu(idx);
+        m.once(Event.CLOSE, this, this.closeMenu, [idx]);
+        this.ml.addChild(m);
     }
 
     private closeMenu(idx: number = NaN) {
@@ -87,7 +89,6 @@ export default class UILayer extends Layer {
             while (this.ml.numChildren)
                 (<Menu>(this.ml.getChildAt(0))).close();
         else {
-            this.uiFac.getMenu(idx).close();
             if (this.ml.numChildren == 0)
                 this.dh.cmdLine.insertTempChapter(new Chapter({
                     id: NaN,

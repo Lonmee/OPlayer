@@ -143,7 +143,7 @@ export default class CmdLine {
      */
     insertTempChapter(chapter: Chapter) {
         this.cacheChapter.push([this.curCid, this.restoreSid, this.curSid, this.cmdArr, this.chapter]);
-        console.log("insert temp chapter name:" + chapter.name + " At:", this.cacheChapter[this.cacheChapter.length - 1]);
+        // console.log("insert temp chapter name:" + chapter.name + " At:", this.cacheChapter[this.cacheChapter.length - 1]);
         this.chapter = chapter;
         this.curSid = this.curCid = 0;
         if (this.cacheLock == null)
@@ -169,25 +169,25 @@ export default class CmdLine {
             this.curSid = cch[2];
             this.restoreSid = cch[1];
             this.curCid = cch[0];
-            console.log("restore from temp to chapter:", cch[4].name, "with:", cch);
+            // console.log("restore from temp to chapter:", cch[4].name, "with:", cch);
         } else {
             this.snap = this.appending.pop();
             this.dh.story.gotoChapter(this.snap[2]);
-            console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
+            // console.log("restore to chapter id:", this.snap[2], "with:", this.snap);
         }
     }
 
     markState() {
         this.cacheLock = this.lock;
         this.cachePause = this.pause;
-        console.log("mark:", this.lock, this.pause);
+        // console.log("mark:", this.lock, this.pause);
     }
 
     restoreState() {
         this.lock = this.cacheLock;
         this.pause = this.cachePause;
         this.cacheLock = this.cachePause = null;
-        console.log("remark:", this.lock, this.pause);
+        // console.log("remark:", this.lock, this.pause);
     }
 
     tick() {
@@ -312,7 +312,7 @@ export default class CmdLine {
                 //跳转剧情
                 case 206 : {
                     this.resetStateAndLock(true);
-                    console.log("gotoChapter:", parseInt(cmd.para[0]));
+                    // console.log("gotoChapter:", parseInt(cmd.para[0]));
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     this.appending = [];
                     return this.cc = 0;
@@ -321,7 +321,7 @@ export default class CmdLine {
                 case 251: {
                     this.resetStateAndLock(true);
                     this.appending.push([this.curCid, this.restoreSid, this.chapter.id]);
-                    console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
+                    // console.log("insert chapter At:", this.curCid, this.restoreSid, this.chapter.id);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }
@@ -370,6 +370,8 @@ export default class CmdLine {
                 default: {//非逻辑命令分发
                     for (let mgr of this.mgrArr)
                         mgr.exe(cmd);
+                    if (this.state.id == StateEnum.FF)//刷掉快进中的tween
+                        this.state.update(this.viewMgr);
                 }
             }
         }
