@@ -10,11 +10,9 @@ import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
 import Scene from "./cmd/Scene";
 import {IMgr} from "./Mgr/Mgr";
-import Event = laya.events.Event;
-import Browser = laya.utils.Browser;
-import Label = laya.ui.Label;
 
 export enum MgrEnum {ass, view, value, audio, video}
+
 /**
  * 逻辑控制器
  * 负责命令分发至各管理器
@@ -82,6 +80,7 @@ export default class CmdLine {
         this.curSid = this.snap ? this.snap[1] : 0;
         this.cmdArr = [];
         this.lock = this.pause = false;
+        // this.viewMgr.reset();
     }
 
     /**
@@ -333,7 +332,7 @@ export default class CmdLine {
                         this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
                         this.curSid = cmd.links[bingo ? 0 : 1];
-                        return bingo ? this.cc = 0 : this.update(this.curSid);
+                        return bingo && cmd.para[3] == '1' ? this.cc = 0 : this.update(this.curSid);
                     } else {
                         bingo = this.valueMgr.judge(cmd.para);
                     }

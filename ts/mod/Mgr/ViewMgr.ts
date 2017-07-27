@@ -13,6 +13,7 @@ import {StateEnum} from "../state/State";
 import Event = laya.events.Event;
 import Browser = laya.utils.Browser;
 import Stage = laya.display.Stage;
+
 /**
  * Created by Lonmee on 4/23/2017.
  */
@@ -143,5 +144,11 @@ export class ViewMgr extends Sprite implements IMgr {
 
     swapUlFl(layer: string = "") {
         this.addChild(layer == "u" ? this.ul : this.fl);
+    }
+
+    reset() {
+        for (let i = this.layerArr.length; i > 0;) {
+            this.layerArr[--i].reset();
+        }
     }
 }

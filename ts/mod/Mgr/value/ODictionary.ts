@@ -1,11 +1,14 @@
 import Dictionary = laya.utils.Dictionary;
+
 /**
  * Created by ShanFeng on 6/13/2017.
  */
 
 export interface IBindable {
     watcher: Function[][];
+
     bind(key, fun);
+
     unbind(key, fun);
 }
 
@@ -54,5 +57,8 @@ export class DigitalDic extends ODic {
 }
 
 export class StringDic extends ODic {
-
+    get(key: any): any {
+        let t = super.get(key);
+        return t ? t : "";
+    }
 }

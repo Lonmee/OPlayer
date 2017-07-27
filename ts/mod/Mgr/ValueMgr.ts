@@ -3,6 +3,7 @@ import {DigitalDic, StringDic} from "./value/ODictionary";
 import DH from "../../data/DH";
 import {Mgr} from "./Mgr";
 import Dictionary = laya.utils.Dictionary;
+
 /**
  * Created by ShanFeng on 5/8/2017.
  * 尊重用户主逻辑，各数值从1开始

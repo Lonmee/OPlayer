@@ -2,15 +2,13 @@
  * Created by ShanFeng on 5/8/2017.
  */
 import Sprite = laya.display.Sprite;
+import Event = laya.events.Event;
 import {MenuEnum} from "../ui/UIFac";
 import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
 import {Menu} from "../ui/comp/Menu";
 import {MSG} from "../ui/comp/MSG";
 import Chapter from "../../../cmd/Chapter";
-import Browser = laya.utils.Browser;
-import Label = laya.ui.Label;
-import Event = laya.events.Event;
 
 export default class UILayer extends Layer {
     ml: Sprite;
@@ -104,5 +102,12 @@ export default class UILayer extends Layer {
 
     checkHotarea(cmd: Cmd) {
         return this.uiFac.getHotarea().check(cmd);
+    }
+
+    reset() {
+        while (this.ml.numChildren)
+            this.ml.removeChildAt(0);
+        if (this.msg && this.msg.parent)
+            this.removeChild(this.msg);
     }
 };

@@ -6,35 +6,42 @@ import Event = laya.events.Event;
 import Point = laya.maths.Point;
 import Handler = laya.utils.Handler;
 import Text = laya.display.Text;
+
 /**
  * Created by ShanFeng on 5/31/2017.
  */
 const GRAPHICS_BG_PATH_SHIFTER = "graphics/background/";
+
 function getBGLink(key: string) {
     return DH.instance.getResLink(GRAPHICS_BG_PATH_SHIFTER + key);
 }
 
 const UI_PATH_SHIFTER = "graphics/ui/";
+
 export function getUILink(key: string) {
     return DH.instance.getResLink(UI_PATH_SHIFTER + key);
 }
 
 const OTHER_PATH_SHIFTER = "graphics/other/";
+
 export function getOtherLink(key: string) {
     return DH.instance.getResLink(OTHER_PATH_SHIFTER + key);
 }
 
 const BUTTON_PATH_SHIFTER = "graphics/button/";
+
 export function getBtnLink(key: string) {
     return DH.instance.getResLink(BUTTON_PATH_SHIFTER + key);
 }
 
 const GRAPHICS_PATH_SHIFTER = "graphics/";
+
 function getGameImgLink(key: string) {
     return DH.instance.getResLink(GRAPHICS_PATH_SHIFTER + key);
 }
 
 const AUDIO_BG_PATH_SHIFTER = "audio/bgm/";
+
 function getBGAudioLink(key: string) {
     return DH.instance.getResLink(AUDIO_BG_PATH_SHIFTER + key);
 }
@@ -43,14 +50,14 @@ function getBGAudioLink(key: string) {
 export class GameImg extends Sprite {
     tween: [string, number, number, number, number][] = [];
 
-    constructor(path: string) {
+    constructor(path: string, other: boolean = false) {
         super();
-        this.loadImage(getGameImgLink(path));
+        this.loadImage(other ? getOtherLink(path) : getGameImgLink(path));
     }
 
-    reload(path: string) {
+    reload(path: string, other: boolean = false) {
         this.graphics.clear();
-        this.loadImage(getGameImgLink(path), 0, 0, 0, 0, Handler.create(this, this.com));
+        this.loadImage(other ? getOtherLink(path) : getGameImgLink(path), 0, 0, 0, 0, Handler.create(this, this.com));
         return this;
     }
 
@@ -114,6 +121,7 @@ export class Label extends Sprite {
         super();
         this.addChild(this.tf = new Text());
         this.tf.text = str;
+        this.tf.size(20, 20);
     }
 
     update(v) {
@@ -157,6 +165,28 @@ export class Button extends Sprite {
             this.on(Event.MOUSE_OVER, this, this.switchImg);
             this.on(Event.MOUSE_OUT, this, this.restoreImg);
         }
+    }
+
+    update(idx) {
+        this.reInit(getBtnData(idx - 1));
+    }
+
+    private reInit({name, image1, image2, x, y}) {
+        this.name = name;
+        //如果图一为空则互换图一图二
+        if (image1.path.length == 0) {
+            image1 = image2;
+            image2.path = '';
+        }
+        if (image1.path.length) {
+            this.graphics = this.i1 = new Graphics();
+            this.i1.loadImage(getBtnLink(image1.path), 0, 0, 0, 0, this.completeHandler);
+        }
+        if (image2.path.length) {
+            this.i2 = new Graphics();
+            this.i2.loadImage(getBtnLink(image2.path));
+        } else
+            this.i2 = null;
     }
 
     completeHandler(e) {

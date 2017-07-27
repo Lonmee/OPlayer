@@ -1,8 +1,8 @@
-import Sprite = laya.display.Sprite;
 import Dictionary = laya.utils.Dictionary;
 import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
 import {GameImg} from "../ui/comp/Comp";
+
 /**
  * Created by ShanFeng on 5/16/2017.
  */
@@ -34,16 +34,14 @@ export default class GameLayer extends Layer {
                 let imgId = parseInt(cmd.para[0]);
                 let x = cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.getValue(cmd.para[3]);
                 let y = cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.getValue(cmd.para[4]);
+                let other = cmd.para.length > 11 && cmd.para[11] == "1";
+                let url = other ? this.dh.replaceVTX(this.dh.sDic.get(cmd.para[12])) : cmd.para[1];
                 if (this.imgDic.indexOf(imgId) > -1) {
                     gi = this.imgDic.get(imgId);
-                    gi.reload(cmd.para[1]).pos(x, y);
+                    gi.reload(url, other).pos(x, y);
                 }
                 else {
-                    //todo:字符串指定图片
-                    // cmd.para[11] == "0" ? new GameImg(cmd.para[1]) : new GameImg(this.dh.sDic.get(cmd.para[12])));
-                    if (cmd.para[11] == '1')
-                        debugger;
-                    this.imgDic.set(imgId, gi = new GameImg(cmd.para[1]));
+                    this.imgDic.set(imgId, gi = new GameImg(url, other));
                     this.addChild(gi.pos(x, y));
                     gi.zOrder = imgId;
                 }
@@ -66,7 +64,7 @@ export default class GameLayer extends Layer {
              【11 是否为字符串指定(1,0)  12 字符串索引】*/
             case 401: //"淡出图片"
                 if (this.imgDic.indexOf(cmd.para[0]) > -1) {
-                    this.removeChild(this.imgDic.get(cmd.para[0])).destroy(true);
+                    this.imgDic.get(cmd.para[0]).destroy(true);
                     this.imgDic.remove(cmd.para[0]);
                 }
                 break;

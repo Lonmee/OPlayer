@@ -8,6 +8,7 @@ import {DigitalDic, StringDic} from "../mod/Mgr/value/ODictionary";
 import Reportor from "../mod/reportor/Reportor";
 import EventDispatcher = laya.events.EventDispatcher;
 import {IState} from "../mod/state/State";
+
 /**
  * Created by ShanFeng on 4/24/2017.
  * means DataHolder
@@ -42,6 +43,46 @@ export default class DH {
         //todo:resource link for local mode
         let md5 = this.resMap.get(key.replace(/\\/g, '/').toLowerCase()).md5;
         return Conf.domain.resCdn + md5.substring(0, 2) + "/" + md5;
+    }
+
+    replaceVTX(_str: string): string {
+        let str: string = _str;
+        //TODO:工具转义有错误,问问工具改还是不改，做了容错。
+        let regV = /(\\|\/)[Vv]\[([0-9]+)]/;
+        let regT = /(\\|\/)[Tt]\[([0-9]+)]/;
+        let regX = /(\\|\/)[Xx]\[([0-9]+)]/;
+        let reg_val = /(\d+)/;
+
+        let regv_val: Array<any> = str.match(regV);
+        let regt_val: Array<any> = str.match(regT);
+        let regx_val: Array<any> = str.match(regX);
+        let val: Array<any>;
+        if (regv_val) {//替换所有数值
+            val = regv_val[0].match(reg_val);
+            if (val) {
+                _str = _str.replace(regV, this.vDic.get(val[0] - 1));
+            }
+        } else if (regt_val) {//替换所有字符串
+            val = regt_val[0].match(reg_val);
+            if (val) {
+                _str = _str.replace(regT, this.sDic.get(val[0] - 1));
+            }
+        } else if (regx_val) {//替换所有二周目
+            val = regx_val[0].match(reg_val);
+            _str = _str.replace(regX, this.exVDic.get(val[0] - 1));
+        }
+        if (str != _str) {
+            str = this.replaceVTX(_str);
+        }
+        regV = null;
+        regT = null;
+        regX = null;
+        reg_val = null;
+
+        regv_val = null;
+        regt_val = null;
+        regx_val = null;
+        return str;
     }
 
     get help() {

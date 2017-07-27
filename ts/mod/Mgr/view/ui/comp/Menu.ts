@@ -10,6 +10,7 @@ import {StateEnum} from "../../../../state/State";
 import Chapter from "../../../../cmd/Chapter";
 import Event = laya.events.Event;
 import Handler = laya.utils.Handler;
+
 /**
  * Created by ShanFeng on 5/29/2017.
  */
@@ -428,23 +429,28 @@ export class CUI extends Menu {
                             name: "cui",
                             cmdArr: ctl.cmdArr.concat()
                         })]);
+                    if (ctl.useIdx) {
+                        DH.instance.vDic.bind(ctl.index, b.update.bind(b));
+                        this.bounds.push([DH.instance.vDic, ctl.index, b.update]);
+                    }
                     break;
                 case 1://字符串
                 case 2://变量
                     let l: Label;
                     if (ctl.type == 1) {
-                        this.controlSpr.addChild(l = new Label(DH.instance.sDic.get(ctl.index)));
+                        this.controlSpr.addChild(l = new Label(DH.instance.replaceVTX(DH.instance.sDic.get(ctl.index - 1))));
                         DH.instance.sDic.bind(ctl.index, l.update.bind(l));
                         this.bounds.push([DH.instance.sDic, ctl.index, l.update]);
                     } else {
                         this.controlSpr.addChild(l = new Label(DH.instance.vDic.get(ctl.index)));
                         DH.instance.vDic.bind(ctl.index, l.update.bind(l));
-                        this.bounds.push([DH.instance.sDic, ctl.index, l.update]);
+                        this.bounds.push([DH.instance.vDic, ctl.index, l.update]);
                     }
-                    l.pos(ctl.x, ctl.y);
+                    l.pos(ctl.useVar ? DH.instance.vDic.get(ctl.x) : ctl.x, ctl.useVar ? DH.instance.vDic.get(ctl.y) : ctl.y);
                     break;
                 case 3://图片
-                    let i = new OtherImg(ctl.useStr ? DH.instance.sDic.get(ctl.strIdx) : ctl.image1).pos(ctl.x, ctl.y);//todo:数值指定坐标
+                    let i = new OtherImg(ctl.useStr ? DH.instance.replaceVTX(DH.instance.sDic.get(ctl.strIdx)) : ctl.image1)
+                        .pos(ctl.useVar ? DH.instance.vDic.get(ctl.x) : ctl.x, ctl.useVar ? DH.instance.vDic.get(ctl.y) : ctl.y);
                     this.controlSpr.addChild(i);
                     break;
                 case 4://滚动条
