@@ -8,10 +8,13 @@
     <title>test</title>
 </head>
 <body>
+<img id="xx">
 <script>
+    document.getElementById("xx").src = encodeURIComponent("xx#.png");
+    checkUrls("xx#.png")
     var count;
     var _ts;
-    window.requestAnimationFrame(loop);
+//    window.requestAnimationFrame(loop);
     function loop(ts) {
         _ts = ts;
         count++

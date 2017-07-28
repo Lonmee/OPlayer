@@ -8,7 +8,7 @@ export default class Reportor {
     private _showProcess: boolean = false;
     showValue: boolean = false;
     showCode: boolean = false;
-    callCount: number = 0;
+    callCount: number = 1;
     frame: number = 0;
     pauseCound: number = 0;
 
@@ -25,7 +25,7 @@ export default class Reportor {
         else {
             Laya.timer.clear(this, this.showFrame);
         }
-        this.callCount = this.frame = 0;
+        this.callCount = this.frame = 1;
         this.pauseCound = 1;
         this._showProcess = value;
     }
@@ -51,7 +51,7 @@ export default class Reportor {
 
     showFrame() {
         console.log("frame:", this.frame++, "updated:", this.callCount, "times");
-        this.callCount = 0;
+        this.callCount = 1;
     }
 
     printSceneArr(current: boolean | number = false) {

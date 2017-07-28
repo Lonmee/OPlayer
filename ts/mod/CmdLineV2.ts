@@ -25,7 +25,7 @@ export enum MgrEnum {ass, view, value, audio, video}
 export default class CmdLine {
     showCode: boolean;
     private _showProcess: boolean;
-    callCount: number = 0;
+    callCount: number = 1;
     frame: number = 0;
     pauseCound: number = 0;
     restoreSid: number;
@@ -81,14 +81,14 @@ export default class CmdLine {
         else {
             Laya.timer.clear(this, this.showFrame);
         }
-        this.callCount = this.frame = 0;
+        this.callCount = this.frame = 1;
         this.pauseCound = 1;
         this._showProcess = value;
     }
 
     showFrame() {
         console.log("frame:", this.frame++, "updated:", this.callCount, "times");
-        this.callCount = 0;
+        this.callCount = 1;
     }
 
     /**
