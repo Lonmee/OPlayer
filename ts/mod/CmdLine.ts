@@ -162,12 +162,11 @@ export default class CmdLine {
                 case 203:
                 //repeat interrupt
                 case 209: {
-                    if (this.cc > 5000) {
+                    if (this.cc > 8000) {
                         this.nextSid = cmd.links[0]
                         return this.cc = 0;
                     } else
                         return this.update(cmd.links[0]);
-
                 }
 
                 //跳转剧情
@@ -189,7 +188,6 @@ export default class CmdLine {
                 case 200: {
                     let bingo;
                     if (cmd.para[0].split("|")[0] == "MO") {
-                        this.viewMgr.exe(cmd);
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
                         this.nextSid = cmd.links[bingo ? 0 : 1];
                         if (bingo && cmd.para[3] == '1')
@@ -216,7 +214,6 @@ export default class CmdLine {
                         else {
                             if (p[0].split("|")[0] == "MO") {
                                 let moCmd: Cmd = {code: 200, idt: NaN, para: p};
-                                this.viewMgr.exe(moCmd);
                                 bingo = this.viewMgr.ul.checkHotarea(moCmd);
                             } else {
                                 bingo = this.valueMgr.judge(p);

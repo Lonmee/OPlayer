@@ -38,10 +38,6 @@ export default class UILayer extends Layer {
                 this.showSelector(cmd);
                 return;
             }
-            case 200: {//条件分歧之鼠标条件
-                this.showHotarea(cmd);
-                return;
-            }
 
             //UI控制指令
             case 151: //"返回游戏界面"
@@ -97,10 +93,6 @@ export default class UILayer extends Layer {
                     cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
                 }));
         }
-    }
-
-    private showHotarea(cmd: Cmd) {
-        this.uiFac.getHotarea().reset(cmd)
     }
 
     checkHotarea(cmd: Cmd) {

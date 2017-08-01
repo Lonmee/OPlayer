@@ -1,4 +1,3 @@
-import Sprite = laya.display.Sprite;
 import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
 
