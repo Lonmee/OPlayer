@@ -22,7 +22,7 @@ export enum MgrEnum {ass, view, value, audio, video}
 export default class CmdLine {
     private dh: DH = DH.instance;
     private reporter: Reporter;
-    private cc: number;//call counter
+    private cc: number = 0;//call counter
     private state: StateMgr;
 
     private assMgr: AssMgr;
@@ -86,7 +86,7 @@ export default class CmdLine {
     }
 
     nextScene(sid: number) {
-        this.cc = this.curCid = 0;
+        this.curCid = 0;
         let s;
         if (s = this.chapter.getScene(sid)) {
             this.curSid = sid;
