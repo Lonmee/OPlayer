@@ -73,7 +73,7 @@ export class ViewMgr extends Sprite implements IMgr {
                 Conf.frameworks.showStatus = !Conf.frameworks.showStatus;
                 break;
             case "KeyN":
-                this.dh.eventPoxy.event(Conf.CMD_LINE_RESUME);
+                this.dh.eventPoxy.event(Conf.ITEM_CHOSEN);
                 break;
             case "KeyZ":
                 this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.FF);
@@ -87,7 +87,7 @@ export class ViewMgr extends Sprite implements IMgr {
     kuHandler(e: Event) {
         switch (e.nativeEvent.code) {
             case "KeyZ":
-                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Normal);
+                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Play);
                 break;
         }
     }

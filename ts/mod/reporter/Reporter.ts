@@ -1,6 +1,8 @@
 import Conf from "../../data/Conf";
 import CmdList from "../cmd/CmdList";
 import DH from "../../data/DH";
+import Chapter from "../cmd/Chapter";
+
 /**
  * Created by ShanFeng on 6/27/2017.
  */
@@ -54,7 +56,7 @@ export default class Reportor {
         this.callCount = 1;
     }
 
-    printSceneArr(current: boolean | number = false) {
+    printSceneArr(chapter: Chapter) {
         //for dynamic usage
         /*if (this.cmdList == null)
          require(["js/mod/cmd/CmdList.js"], (CmdList) => {
@@ -62,14 +64,8 @@ export default class Reportor {
          for (let s of this.sceneArr)
          this.cmdList.printChapter(s, this.sceneArr);
          });*/
-        let chapter = DH.instance.cmdLine.chapter;
-        if (typeof current == "number")
-            this.cmdList.printChapter(chapter.sceneArr[current], chapter.sceneArr);
-        else if (current)
-            this.cmdList.printChapter(chapter.sceneArr[DH.instance.cmdLine.restoreSid], chapter.sceneArr);
-        else
-            for (let s of chapter.sceneArr)
-                this.cmdList.printChapter(s, chapter.sceneArr);
+        for (let s of chapter.sceneArr)
+            this.cmdList.printChapter(s, chapter.sceneArr);
     }
 
     addInterruptor() {

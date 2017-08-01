@@ -5,7 +5,7 @@ import VideoMgr from "./Mgr/VideoMgr";
 import AudioMgr from "./Mgr/AudioMgr";
 import Chapter from "./cmd/Chapter";
 import {Cmd, DChapter} from "../data/sotry/Story";
-import {AutoState, FFState, IState, NormalState, StateEnum} from "./state/State";
+import {AutoState, FFState, IState, PlayState, StateEnum} from "./state/State";
 import AssMgr from "./Mgr/AssMgr";
 import {ViewMgr} from "./Mgr/ViewMgr";
 import CmdList from "./cmd/CmdList";
@@ -45,7 +45,7 @@ export default class CmdLine {
         this.videoMgr = new VideoMgr()
     ]
 
-    private states: IState[] = [new NormalState(), new AutoState(), new FFState()];
+    private states: IState[] = [new PlayState(), new AutoState(), new FFState()];
     private state: IState;
     private pause: boolean = true;
     private chapter: Chapter;
@@ -57,7 +57,7 @@ export default class CmdLine {
     private lock: boolean;
 
     constructor() {
-        this.changeState(StateEnum.Normal);
+        this.changeState(StateEnum.Play);
         this.dh.mgrArr = this.mgrArr;
 
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
@@ -111,7 +111,7 @@ export default class CmdLine {
      */
     resetState() {
         if (this.state.id == StateEnum.FF)
-            this.changeState(StateEnum.Normal);
+            this.changeState(StateEnum.Play);
     }
 
     changeState(cmd: Cmd | number) {
@@ -120,8 +120,8 @@ export default class CmdLine {
             this.state = this.states[ind = cmd];
         } else {
             this.state = cmd.code == 103 ? //自动播放剧情
-                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Normal] :
-                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Normal];
+                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.Auto : ind = StateEnum.Play] :
+                this.states[parseInt(cmd.para[0]) ? ind = StateEnum.FF : ind = StateEnum.Play];
         }
         if (ind == 2) {
             this.resume();

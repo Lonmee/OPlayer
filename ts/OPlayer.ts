@@ -5,9 +5,9 @@ import {BinLoader} from "./mod/loader/BinLoader";
 import Conf from "./data/Conf";
 import DH from "./data/DH";
 import CmdLine from "./mod/CmdLine";
-import Reportor from "./mod/reportor/Reportor";
 import Browser = laya.utils.Browser;
 import WebGL = laya.webgl.WebGL;
+import Reportor from "./mod/reporter/Reporter";
 export class OPlayer {
     constructor() {
 
@@ -24,8 +24,8 @@ export class OPlayer {
 
         DH.instance.reportor = new Reportor();
         DH.instance.cmdLine = new CmdLine();
-        DH.instance.binLoader = new BinLoader();
-        // DH.instance.binLoader = new BinLoader(true);
+        // DH.instance.binLoader = new BinLoader();
+        DH.instance.binLoader = new BinLoader(true);
     }
 
 }

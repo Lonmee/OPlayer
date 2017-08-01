@@ -377,7 +377,7 @@ export class CUI extends Menu {
 
     constructor(ind: number, data: CusUI) {
         if (data.loadEvent.length)
-            DH.instance.cmdLine.insertTempChapter(new Chapter({
+            DH.instance.cmdLine.insertChapter(new Chapter({
                 id: NaN,
                 name: "load",
                 cmdArr: data.loadEvent.concat()
@@ -406,7 +406,7 @@ export class CUI extends Menu {
             this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: this.data.loadEvent});
         }
         if (this.data.afterEvent.length)
-            DH.instance.cmdLine.insertTempChapter(this.afterChapter = new Chapter({
+            DH.instance.cmdLine.insertChapter(this.afterChapter = new Chapter({
                 id: NaN,
                 name: "after",
                 cmdArr: this.data.afterEvent
@@ -461,7 +461,7 @@ export class CUI extends Menu {
     }
 
     exe(c: Chapter) {
-        DH.instance.cmdLine.insertTempChapter(c);
+        DH.instance.cmdLine.insertChapter(c);
         return this;
     }
 

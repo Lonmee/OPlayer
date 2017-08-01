@@ -11,23 +11,22 @@
         require(["vendor/laya/laya.webgl"/*, "vendor/laya/laya.ui"*/], function () {
 //          require(["vendor/laya/laya.debugtool"], function () {
             require(["js/OPlayer"], function () {
+//                start('01f566de0de098745079908103e582e8','5','','','32','web/01f566de0de098745079908103e582e8/5/Game_mini.bin','3');
 //                start('993061e30bb55b3933070aaa36f0a160','49','','','32','web/993061e30bb55b3933070aaa36f0a160/49/Game_mini.bin','1');//天生歌王
                 start('b3aa14e45dd8fa0953d491a1d7b0ecdc', '242', '', '', '32', 'web/b3aa14e45dd8fa0953d491a1d7b0ecdc/242/Game_mini.bin', '1');//篱笆庄
 //                start('b7d58fb848b81acaac4efee08320c1b9','301','isFlash','','32','web/b7d58fb848b81acaac4efee08320c1b9/301/Game_mini.bin','1');//再世为仙
 //                start('af2bcd0f04ebf7e74a8328e9c07d2189', '2445', '', '', '32', 'web/af2bcd0f04ebf7e74a8328e9c07d2189/2445/Game_mini.bin', '0');//卡牌游戏
 //                start('fab08d24088138e8cab33eed4e6f5c5b', '2179', '', '', '31', '', '1')//我们的回忆
 //                start('b3aa14e45dd8fa0953d491a1d7b0ecdc', '242', '', '', '31', 'web/b3aa14e45dd8fa0953d491a1d7b0ecdc/242/Game_mini.bin', '1');
-//                start('74a032d831f6e514b2510de8e06fc4c8', '20', '', '', '31', 'web/74a032d831f6e514b2510de8e06fc4c8/20/Game_mini.bin', '1');//姻缘结
+//                start('74a032d831f6e514b2510de8e06fc4c8', '20', '', '', '31', 'web/74a032d831 f6e514b2510de8e06fc4c8/20/Game_mini.bin', '1');//姻缘结
+//                start('4b33bc175658f7b56322b4e31479a9c2', '9', 'isFlash', '', '32', '', '1');
             });
 //          });
         });
     });
 
     function start(gid, version, m, s, q, gamebinpath, game_screen, gindex, plat) {
-        if (window.oplayer) {
-            window.oplayer.init(
-                gid, version, m, s, q, gamebinpath, game_screen, gindex, plat)
-        }
+        window.oplayer.init(gid, version, m, s, q, gamebinpath, game_screen, gindex, plat);
     }
 </script>
 </body>

@@ -59,6 +59,9 @@ export default class UILayer extends Layer {
             case 110: //"打开指定网页";
                 break;
             case 111: //"禁用开启菜单功能";
+                break;
+            case 150: //"刷新UI画面"
+                break;
         }
     }
 
@@ -88,7 +91,7 @@ export default class UILayer extends Layer {
                 (<Menu>(this.ml.getChildAt(0))).close();
         else {
             if (this.ml.numChildren == 0)
-                this.dh.cmdLine.insertTempChapter(new Chapter({
+                this.dh.cmdLine.insertChapter(new Chapter({
                     id: NaN,
                     name: "code_151",
                     cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
