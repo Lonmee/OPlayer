@@ -8,7 +8,6 @@ import {Cmd} from "../../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
 import FLayer from "./comp/FLayer";
 import {HotareaSelector} from "./comp/Hotarea";
-import Event = laya.events.Event;
 export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
 export default class UIFac {
     private fLayer: FLayer;

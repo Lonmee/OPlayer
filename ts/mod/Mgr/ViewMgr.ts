@@ -1,6 +1,7 @@
 import Sprite = laya.display.Sprite;
 import Stat = laya.utils.Stat;
-import WebGL = laya.webgl.WebGL;
+import Event = laya.events.Event;
+import Stage = laya.display.Stage;
 import Conf from "../../data/Conf";
 import DH from "../../data/DH";
 import UILayer from "./view/layer/UILayer";
@@ -10,9 +11,6 @@ import FloatLayer from "./view/layer/FloatLayer";
 import {Layer} from "./view/layer/Layer";
 import {IMgr} from "./Mgr";
 import {StateEnum} from "../state/State";
-import Event = laya.events.Event;
-import Browser = laya.utils.Browser;
-import Stage = laya.display.Stage;
 
 /**
  * Created by Lonmee on 4/23/2017.

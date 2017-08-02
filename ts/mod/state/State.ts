@@ -52,8 +52,6 @@ export class PauseState extends State {
     id = StateEnum.Pause;
 
     resume() {
-        DH.instance.reporter.pauseCound++;
-        DH.instance.reporter.logPause();
     }
 }
 
@@ -74,10 +72,6 @@ export class FFState extends State {
             m.update(0);
     }
 
-    pause() {
-        this.resume();
-    }
-
     wait(dur = 0) {
         this.resume();
     }
@@ -90,10 +84,9 @@ export class FrozenState extends State {
     }
 
     wait(dur = 0) {
+        this.resume();
     }
 
-    resume() {
-    }
 }
 
 export class StateMgr {
@@ -106,12 +99,12 @@ export class StateMgr {
         this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
         // this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.reset);
         Laya.timer.frameLoop(1, this, this.tick);
-        this.switchState(StateEnum.Pause);
+        this.curState = this.states[StateEnum.Pause];
     }
 
     private tick() {
+        this.dh.reporter.logFrame();//test only
         this.curState.resume();
-        this.dh.reporter.showFrame();
         this.curState.update(this.dh.cmdLine.mgrArr[MgrEnum.view]);
     }
 
@@ -121,7 +114,7 @@ export class StateMgr {
 
     mark(snap) {
         if (snap)
-            this.append.push(snap.push(this.curState.id));
+            this.append.push(snap.concat(this.curState.id));
         else
             this.append = [];
     }
@@ -130,7 +123,7 @@ export class StateMgr {
         let snap = this.append.pop();
         if (snap) {
             this.switchState(snap.pop());
-            this.dh.eventPoxy.event(Conf.RESTORE, snap);
+            this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
         }
         else
@@ -146,17 +139,15 @@ export class StateMgr {
     }
 
     switchState(idx: StateEnum) {
-        console.log("state:", idx);
-        this.curState = this.states[idx];
+        if (this.curState.id != idx)
+            this.curState = this.states[idx];
     }
 
     pause() {
-        this.dh.reporter.pauseCound = 0;
         this.switchState(StateEnum.Pause)
     }
 
     wait(dur: number) {
-        this.dh.reporter.logWait(dur);
         this.curState.wait(dur);
     }
 }

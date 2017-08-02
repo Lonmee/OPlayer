@@ -50,8 +50,8 @@ export default class CmdLine {
         this.state = new StateMgr();
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
         this.dh.eventPoxy.on(Conf.RESTORE, this, this.restore);
-        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.update);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.update);
+        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.resume);
     }
 
     printScene() {
@@ -72,6 +72,13 @@ export default class CmdLine {
         this.curCid = snap[0];
         this.curSid = snap[1];
         this.chapter = snap[2];
+        this.cmdArr = this.chapter.getScene(this.curSid).cmdArr;
+        console.log("restor:", snap);
+    }
+
+    resume(sid: number = NaN) {
+        this.state.reset();
+        this.update(sid);
     }
 
     complete() {
@@ -89,6 +96,7 @@ export default class CmdLine {
         this.state.mark([this.curCid, this.curSid, this.chapter]);
         this.chapter = chapter;
         this.nextScene(0);
+        this.state.freeze();
     }
 
     nextScene(sid: number) {
@@ -107,7 +115,7 @@ export default class CmdLine {
         if (!isNaN(sid))
             this.nextScene(sid);
         while (this.curCid < this.cmdArr.length) {
-            this.reporter.callCount = this.cc++;
+            this.cc++;
             let cmd = this.cmdArr[this.curCid++];
             this.reporter.logProcess(cmd, this.cc);//test only
             switch (cmd.code) {
@@ -139,8 +147,8 @@ export default class CmdLine {
                     return this.cc = 0;
                 }
                 case 151: {//"返回游戏界面"
-                    this.state.unfreeze();
-                    this.state.restore();
+                    // this.state.unfreeze();
+                    // this.state.restore();
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
@@ -177,8 +185,9 @@ export default class CmdLine {
 
                 case 206 : //跳转剧情
                 case 251: {//呼叫子剧情
-                    this.state.pause();
                     this.state.mark(cmd.code == 206 ? null : [this.curCid, this.curSid, this.chapter]);
+                    console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], [this.curCid, this.curSid, this.chapter]);
+                    this.state.pause();
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }

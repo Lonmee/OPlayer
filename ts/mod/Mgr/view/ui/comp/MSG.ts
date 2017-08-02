@@ -5,10 +5,8 @@ import Layouter from "./Layouter";
 import Conf from "../../../../../data/Conf";
 import Sprite = laya.display.Sprite;
 import Text = laya.display.Text;
-import Color = laya.utils.Color;
 import Event = laya.events.Event;
-import Handler = laya.utils.Handler;
-import Texture = laya.resource.Texture;
+
 /**
  * Created by ShanFeng on 6/5/2017.
  */
@@ -45,7 +43,7 @@ export class MSG extends Sprite {
             while (vArr.length > 0) {
                 this.txt.color += parseInt(vArr.shift()).toString(16);
             }
-            this.txt.text = this.formatContent(this.cmd.para[2]);
+            this.txt.text = DH.instance.replaceVTX(this.cmd.para[2]);
             switch (this.cmd.para[5]) {
                 case "0":
                     Layouter.top(this.bgImg);
@@ -64,9 +62,9 @@ export class MSG extends Sprite {
     }
 
     protected clickHandler(e: Event) {
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
         if (this.parent)
             this.parent.removeChild(this);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 
     /**
@@ -93,28 +91,8 @@ export class MSG extends Sprite {
      */
     update(cmd: Cmd) {
         this.once(Event.MOUSE_DOWN, this, this.clickHandler);
-        this.txt.text = this.formatContent(cmd.para[2]);
+        this.txt.text = DH.instance.replaceVTX(cmd.para[2]);
         return this;
-    }
-
-    private formatContent(s: string) {
-        // \c \v \ x \t  \w \ s \| \. \> \=
-        s.replace('\\n', '\\n');
-        return s
-    }
-
-    extractStr(s: string) {
-        let ss = s.split('\\t');
-        if (ss.length == 1)
-            return ss[0];
-        else {
-            ss.shift();
-            let rs = "";
-            for (let ele of ss) {
-                rs += DH.instance.sDic.get(parseInt(ele.substr(1, -2)) - 1);
-            }
-            return rs;
-        }
     }
 }
 
