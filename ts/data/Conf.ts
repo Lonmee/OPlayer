@@ -57,6 +57,7 @@ export default class Conf {
     static LOADING_PROGRESS: string = "loading_progress";
     static PLAY_CHAPTER: string = "play_chapter";
     static ITEM_CHOSEN: string = "item_chosen";
+    static RESTORE: string = "restore";
     static CMD_LINE_RESUME: string = "cmd_line_resume";
     static CHANGE_STATE: string = "change_state";
 

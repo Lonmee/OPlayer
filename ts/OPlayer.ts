@@ -22,7 +22,7 @@ export class OPlayer {
 
         Laya.init(Laya.Browser.width, Laya.Browser.height, WebGL);
 
-        DH.instance.reportor = new Reportor();
+        DH.instance.reporter = new Reportor();
         DH.instance.cmdLine = new CmdLine();
         DH.instance.binLoader = new BinLoader();
         // DH.instance.binLoader = new BinLoader(true);

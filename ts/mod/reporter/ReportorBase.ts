@@ -38,7 +38,7 @@ export default class Reportor {
         //     // HttpManager.getInstance().sendPostRequest("http://support.66rpg.com/report/bug", uploadData, null, "json", null);
         // }
         // }
-        Laya.Browser.onMobile
+        Laya.Browser.onMobile;
         /**
          * "Win32"
          * "Win64"

@@ -1,6 +1,5 @@
 import Conf from "../../data/Conf";
 import CmdList from "../cmd/CmdList";
-import DH from "../../data/DH";
 import Chapter from "../cmd/Chapter";
 
 /**
@@ -21,39 +20,28 @@ export default class Reportor {
             this.addInterruptor();
     }
 
-    set showProcess(value: boolean) {
-        if (value)
-            Laya.timer.frameLoop(1, this, this.showFrame);
-        else {
-            Laya.timer.clear(this, this.showFrame);
-        }
-        this.callCount = this.frame = 1;
-        this.pauseCound = 1;
-        this._showProcess = value;
-    }
-
-    get showProcess() {
-        return this._showProcess;
+    showProcess() {
+        this._showProcess = true;
     }
 
     logPause() {
-        if (this.showProcess)
+        if (this._showProcess)
             console.log("           pause:", this.pauseCound++);
     }
 
     logWait(dur) {
-        if (this.showProcess || this.showCode)
+        if (this._showProcess)
             console.log(`waiting for ${dur} frame${dur == 1 ? "" : "s"}`);
     }
 
-    logProcess(cmd) {
-        if (this.showProcess || this.showCode)
-            console.log(cmd.code, this.cmdList.get(cmd.code));
+    logProcess(cmd, cc) {
+        if (this._showProcess)
+            console.log(cmd.code, this.cmdList.get(cmd.code), "@:" + cc);
     }
 
     showFrame() {
-        console.log("frame:", this.frame++, "updated:", this.callCount, "times");
-        this.callCount = 1;
+        if (this._showProcess)
+            console.log("frame:", this.frame++, "updated:", this.callCount, "times");
     }
 
     printSceneArr(chapter: Chapter) {
@@ -95,7 +83,7 @@ export default class Reportor {
         //     // HttpManager.getInstance().sendPostRequest("http://support.66rpg.com/report/bug", uploadData, null, "json", null);
         // }
         // }
-        Laya.Browser.onMobile
+        Laya.Browser.onMobile;
         /**
          * "Win32"
          * "Win64"

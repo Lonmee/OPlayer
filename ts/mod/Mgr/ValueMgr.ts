@@ -46,8 +46,8 @@ export default class ValueMgr extends Mgr {
                 if (cmd.code == 207)
                     this.vDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
                 else
-                    this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]))
-                if (DH.instance.reportor.showValue)
+                    this.exVDic.set(cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1, this.calc(v1, v2, cmd.para[1]));
+                if (DH.instance.reporter.showValue)
                     console.log(cmd.para[4], "set:" + (cmd.para[5] == "0" ? cmd.para[0] : this.vDic.get(cmd.para[0]) - 1), "with:" + this.calc(v1, v2, cmd.para[1]));
                 break;
             case 215://"字符串"

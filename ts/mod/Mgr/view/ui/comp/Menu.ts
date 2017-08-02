@@ -1,15 +1,13 @@
 import Sprite = laya.display.Sprite;
-import Graphics = laya.display.Graphics;
+import Event = laya.events.Event;
 import {BGImg, Button, Label, OtherImg, Slider, UIImg} from "./Comp";
 import DH from "../../../../../data/DH";
 import {CusUI, IdxBtn, Path} from "../../../../../data/sotry/Story";
-import {MgrEnum} from "../../../../CmdLineRev";
+import {MgrEnum} from "../../../../CmdLine";
 import {MenuEnum} from "../UIFac";
 import Conf from "../../../../../data/Conf";
 import {StateEnum} from "../../../../state/State";
 import Chapter from "../../../../cmd/Chapter";
-import Event = laya.events.Event;
-import Handler = laya.utils.Handler;
 
 /**
  * Created by ShanFeng on 5/29/2017.

@@ -16,7 +16,7 @@ export default class FloatLayer extends Layer {
                 if (cmd.para[0] == "1")
                     this.addChild(this.uiFac.getFLayer());
                 else
-                    this.removeChild(this.uiFac.getFLayer())
+                    this.removeChild(this.uiFac.getFLayer());
                 break;
             }
         }

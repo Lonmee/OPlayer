@@ -52,6 +52,8 @@ export class PauseState extends State {
     id = StateEnum.Pause;
 
     resume() {
+        DH.instance.reporter.pauseCound++;
+        DH.instance.reporter.logPause();
     }
 }
 
@@ -102,13 +104,14 @@ export class StateMgr {
 
     constructor() {
         this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
-        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.reset);
+        // this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.reset);
         Laya.timer.frameLoop(1, this, this.tick);
         this.switchState(StateEnum.Pause);
     }
 
     private tick() {
         this.curState.resume();
+        this.dh.reporter.showFrame();
         this.curState.update(this.dh.cmdLine.mgrArr[MgrEnum.view]);
     }
 
@@ -118,13 +121,20 @@ export class StateMgr {
 
     mark(snap) {
         if (snap)
-            this.append.push(snap);
+            this.append.push(snap.push(this.curState.id));
         else
             this.append = [];
     }
 
-    restore() {
-        this.dh.eventPoxy.event(Conf.ITEM_CHOSEN, this.append.pop());
+    restore(): boolean {
+        let snap = this.append.pop();
+        if (snap) {
+            this.switchState(snap.pop());
+            this.dh.eventPoxy.event(Conf.RESTORE, snap);
+            return true;
+        }
+        else
+            return false;
     }
 
     freeze() {
@@ -136,14 +146,17 @@ export class StateMgr {
     }
 
     switchState(idx: StateEnum) {
+        console.log("state:", idx);
         this.curState = this.states[idx];
     }
 
     pause() {
+        this.dh.reporter.pauseCound = 0;
         this.switchState(StateEnum.Pause)
     }
 
     wait(dur: number) {
+        this.dh.reporter.logWait(dur);
         this.curState.wait(dur);
     }
 }

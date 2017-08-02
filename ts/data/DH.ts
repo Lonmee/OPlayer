@@ -1,13 +1,13 @@
 import Dictionary = laya.utils.Dictionary;
+import EventDispatcher = laya.events.EventDispatcher;
 import Conf from "./Conf";
 import CmdLine from "../mod/CmdLine";
 import Story from "./sotry/Story";
 import {IMgr} from "../mod/Mgr/Mgr";
 import Preloader from "../mod/loader/Preloader";
 import {DigitalDic, StringDic} from "../mod/Mgr/value/ODictionary";
-import Reportor from "../mod/reportor/Reportor";
-import EventDispatcher = laya.events.EventDispatcher;
 import {IState} from "../mod/state/State";
+import Reporter from "../mod/reporter/Reporter";
 
 /**
  * Created by ShanFeng on 4/24/2017.
@@ -32,7 +32,7 @@ export default class DH {
     sDic: StringDic;
     exVDic: DigitalDic;
     //endregion
-    reportor: Reportor;
+    reporter: Reporter;
     state: IState;
 
     static get instance(): DH {

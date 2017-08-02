@@ -46,11 +46,12 @@ export default class CmdLine {
     private curCid: number = 0;
 
     constructor() {
-        this.dh.reportor = this.reporter = new Reporter();
+        this.reporter = this.dh.reporter;
         this.state = new StateMgr();
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.resume);
-        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
+        this.dh.eventPoxy.on(Conf.RESTORE, this, this.restore);
+        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.update);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.update);
     }
 
     printScene() {
@@ -67,12 +68,16 @@ export default class CmdLine {
         this.state.reset();
     }
 
-    resume(v: any[] | number | null) {
-        this.update();
+    restore(snap) {
+        this.curCid = snap[0];
+        this.curSid = snap[1];
+        this.chapter = snap[2];
     }
 
     complete() {
-
+        if (!this.state.restore()) {
+            console.log("Story end !");
+        }
     }
 
     /**
@@ -83,6 +88,7 @@ export default class CmdLine {
     insertChapter(chapter: Chapter) {
         this.state.mark([this.curCid, this.curSid, this.chapter]);
         this.chapter = chapter;
+        this.nextScene(0);
     }
 
     nextScene(sid: number) {
@@ -90,8 +96,8 @@ export default class CmdLine {
         let s;
         if (s = this.chapter.getScene(sid)) {
             this.curSid = sid;
-            this.cmdArr = s.cmdArr;
             this.nextSid = s.link;
+            this.cmdArr = s.cmdArr;
         } else {
             this.complete()
         }
@@ -101,14 +107,14 @@ export default class CmdLine {
         if (!isNaN(sid))
             this.nextScene(sid);
         while (this.curCid < this.cmdArr.length) {
-            this.cc++;
+            this.reporter.callCount = this.cc++;
             let cmd = this.cmdArr[this.curCid++];
-            this.reporter.logProcess(cmd);//test only
+            this.reporter.logProcess(cmd, this.cc);//test only
             switch (cmd.code) {
                 //需暂停等待
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
-                    this.state.restore();
+                    // this.state.restore();
                     if (parseInt(cmd.para[0]) == 10008)
                         this.complete();
                     else if (parseInt(cmd.para[0]) == 10009)
@@ -163,23 +169,16 @@ export default class CmdLine {
                 //repeat interrupt
                 case 209: {
                     if (this.cc > 8000) {
-                        this.nextSid = cmd.links[0]
+                        this.nextSid = cmd.links[0];
                         return this.cc = 0;
                     } else
                         return this.update(cmd.links[0]);
                 }
 
-                //跳转剧情
-                case 206 : {
+                case 206 : //跳转剧情
+                case 251: {//呼叫子剧情
                     this.state.pause();
-                    this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    this.state.mark(null);
-                    return this.cc = 0;
-                }
-                //呼叫子剧情
-                case 251: {
-                    this.state.pause();
-                    this.state.mark([this.curCid, this.curSid, this.chapter.id]);
+                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.curSid, this.chapter]);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }

@@ -1,13 +1,11 @@
 import Sprite = laya.display.Sprite;
+import Event = laya.events.Event;
+import Text = laya.display.Text;
 import DH from "../../../../../data/DH";
 import {Button} from "./Comp";
 import Conf from "../../../../../data/Conf";
 import {Cmd} from "../../../../../data/sotry/Story";
 import Layouter from "./Layouter";
-import Event = laya.events.Event;
-import Label = laya.ui.Label;
-import Text = laya.display.Text;
-import Rectangle = laya.maths.Rectangle;
 /**
  * Created by ShanFeng on 6/2/2017.
  */
@@ -53,7 +51,7 @@ export class Selector extends Sprite implements ISelectable {
     }
 
     protected clickHandler(e: Event) {
-        DH.instance.eventPoxy.event(Conf.ITEM_CHOOSEN, this.links[e.target['idx']]);
+        DH.instance.eventPoxy.event(Conf.ITEM_CHOSEN, this.links[e.target['idx']]);
         this.parent.removeChild(this);
         this.destroy(true);
     }

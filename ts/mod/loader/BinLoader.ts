@@ -1,8 +1,7 @@
-import LoaderManager = laya.net.LoaderManager;
 import Handler = laya.utils.Handler;
 import Loader = laya.net.Loader;
-import Sprite = laya.display.Sprite;
-import Browser = laya.utils.Browser;
+import Byte = laya.utils.Byte;
+import Color = laya.utils.Color;
 import Conf from "../../data/Conf";
 import DH, {IBinloader} from "../../data/DH";
 import DStory, {
@@ -12,7 +11,8 @@ import DStory, {
     CGItem,
     Cmd,
     CusUI,
-    CusUIItem, DChapter,
+    CusUIItem,
+    DChapter,
     DFLayer,
     DFLayerItem,
     GameMenu,
@@ -29,9 +29,8 @@ import DStory, {
     Title,
     VPRect
 } from "../../data/sotry/Story";
-import Byte = laya.utils.Byte;
-import Color = laya.utils.Color;
 import Preloader from "./Preloader";
+
 /**
  * Created by ShanFeng on 4/24/2017.
  * assetsmap、storymap加载器
