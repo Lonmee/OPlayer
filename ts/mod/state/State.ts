@@ -28,7 +28,8 @@ class State implements IState {
 
     update(...mgrs: IMgr[]): void {
         if (this.left > 0)
-            this.left--;
+            if (--this.left == 0)
+                DH.instance.eventPoxy.event(Conf.ITEM_CHOSEN);
         if (++this.uc % this.us == 0)
             for (let m of mgrs)
                 m.update(this.uc = this.us);
@@ -39,13 +40,15 @@ class State implements IState {
     }
 
     resume() {
-        if (!this.left)
-            DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
     }
 }
 
 export class PlayState extends State {
     id = StateEnum.Play;
+
+    wait(dur) {
+    }
 }
 
 export class PauseState extends State {
@@ -72,8 +75,7 @@ export class FFState extends State {
             m.update(0);
     }
 
-    wait(dur = 0) {
-        this.resume();
+    wait(dur) {
     }
 }
 
@@ -82,34 +84,32 @@ export class FrozenState extends State {
 
     update(...mgrs: IMgr[]): void {
     }
-
-    wait(dur = 0) {
-        this.resume();
-    }
-
 }
 
 export class StateMgr {
+    private forcePause: boolean = true;
     private dh: DH = DH.instance;
     private append: any[] = [];
     private states: IState[] = [new PlayState(), new AutoState(), new FFState(), new PauseState(), new FrozenState()];
     private curState: IState;
 
     constructor() {
-        this.dh.eventPoxy.on(Conf.CHANGE_STATE, this, this.switchState);
-        // this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.reset);
+        this.dh.eventPoxy.on(Conf.STATE_FF, this, this.fast);
+        this.dh.eventPoxy.on(Conf.STATE_CANCEL, this, this.cancel);
+        this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.cancel);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.play);
         Laya.timer.frameLoop(1, this, this.tick);
         this.curState = this.states[StateEnum.Pause];
     }
 
     private tick() {
         this.dh.reporter.logFrame();//test only
-        this.curState.resume();
         this.curState.update(this.dh.cmdLine.mgrArr[MgrEnum.view]);
+        this.curState.resume();
     }
 
-    reset() {
-        this.switchState(StateEnum.Play);
+    get id() {
+        return this.curState.id;
     }
 
     mark(snap) {
@@ -122,7 +122,9 @@ export class StateMgr {
     restore(): boolean {
         let snap = this.append.pop();
         if (snap) {
-            this.switchState(snap.pop());
+            let idx = snap.pop();
+            this.curState = this.states[idx];
+            this.dh.reporter.logState(idx);//test only
             this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
         }
@@ -130,24 +132,54 @@ export class StateMgr {
             return false;
     }
 
+    switchState(idx: StateEnum) {
+        if (this.curState.id != idx && this.curState.id != StateEnum.Frozen) {
+            this.curState = this.states[idx];
+            this.dh.reporter.logState(idx);//test only
+        }
+    }
+
+    play(v: boolean | number = null) {
+        if (v != null) {
+            this.forcePause = false;
+            this.switchState(StateEnum.Play);
+        } else if (this.curState.id != StateEnum.FF)
+            this.switchState(StateEnum.Play);
+    }
+
+    auto() {
+        this.switchState(StateEnum.Auto);
+    }
+
+    fast() {
+        if (!this.forcePause) {
+            if (this.curState.id == StateEnum.Pause)
+                this.curState.wait(0);
+            this.switchState(StateEnum.FF);
+        }
+    }
+
+    pause(dur: number = 0, force: boolean = false) {
+        if (force) {
+            this.forcePause = force
+            this.switchState(StateEnum.Pause)
+            if (dur > 0)
+                this.curState.wait(dur);
+        } else if (this.curState.id != StateEnum.FF) {
+            this.switchState(StateEnum.Pause)
+            if (dur > 0)
+                this.curState.wait(dur);
+        }
+    }
+
     freeze() {
         this.switchState(StateEnum.Frozen);
     }
 
-    unfreeze() {
-        this.switchState(StateEnum.Play);
-    }
-
-    switchState(idx: StateEnum) {
-        if (this.curState.id != idx)
-            this.curState = this.states[idx];
-    }
-
-    pause() {
-        this.switchState(StateEnum.Pause)
-    }
-
-    wait(dur: number) {
-        this.curState.wait(dur);
+    cancel() {
+        if (this.curState.id == StateEnum.FF)
+            this.switchState(StateEnum.Play);
+        // if (this.curState.id == StateEnum.Frozen)
+        // this.switchState(this.cacheState);
     }
 }

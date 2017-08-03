@@ -63,7 +63,7 @@ export class GameImg extends Sprite {
 
     com(e) {
         while (this.graphics.cmds && this.graphics.cmds.length > 1)
-            this.graphics.cmds.pop();
+            this.graphics.cmds.shift();
     }
 
     moveTo(property: string, value: number, duration: number, passed: number = 0) {

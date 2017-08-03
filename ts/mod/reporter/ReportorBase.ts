@@ -1,10 +1,9 @@
 import Conf from "../../data/Conf";
-import CmdList from "../cmd/CmdList";
-import DH from "../../data/DH";
+
 /**
  * Created by ShanFeng on 6/27/2017.
  */
-export default class Reportor {
+export default class ReportorBase {
 
     constructor() {
         if (!Conf.debug)

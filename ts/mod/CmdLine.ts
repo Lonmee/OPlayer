@@ -50,8 +50,8 @@ export default class CmdLine {
         this.state = new StateMgr();
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
         this.dh.eventPoxy.on(Conf.RESTORE, this, this.restore);
-        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.resume);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.resume);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.nextScene);
+        this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.update);
     }
 
     printScene() {
@@ -65,7 +65,7 @@ export default class CmdLine {
     playHandler(c: DChapter) {
         this.chapter = new Chapter(c);
         this.nextScene(0);
-        this.state.reset();
+        this.state.play(true);
     }
 
     restore(snap) {
@@ -74,11 +74,6 @@ export default class CmdLine {
         this.chapter = snap[2];
         this.cmdArr = this.chapter.getScene(this.curSid).cmdArr;
         console.log("restor:", snap);
-    }
-
-    resume(sid: number = NaN) {
-        this.state.reset();
-        this.update(sid);
     }
 
     complete() {
@@ -94,12 +89,15 @@ export default class CmdLine {
      */
     insertChapter(chapter: Chapter) {
         this.state.mark([this.curCid, this.curSid, this.chapter]);
+        console.log("inser chapter:", [this.curCid, this.curSid, this.chapter]);
         this.chapter = chapter;
         this.nextScene(0);
         this.state.freeze();
     }
 
-    nextScene(sid: number) {
+    nextScene(sid: number = NaN) {
+        if (isNaN(sid))
+            return;
         this.curCid = 0;
         let s;
         if (s = this.chapter.getScene(sid)) {
@@ -123,12 +121,15 @@ export default class CmdLine {
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
                     // this.state.restore();
-                    if (parseInt(cmd.para[0]) == 10008)
+                    if (parseInt(cmd.para[0]) == 10008) {
+                        this.state.mark(null);
                         this.complete();
+                    }
                     else if (parseInt(cmd.para[0]) == 10009)
-                        this.state.switchState(StateEnum.Auto);
+                        this.state.auto();
                     else {
-                        this.state.pause();
+                        this.state.mark([this.curCid, this.curSid, this.chapter]);
+                        this.state.freeze();
                         this.viewMgr.exe(cmd);
                     }
                     return this.cc = 0;
@@ -142,27 +143,32 @@ export default class CmdLine {
                 case 1010: //剧情分歧EX
                 case 1011: //剧情分歧EX2
                 case 204: { //按钮分歧
-                    this.state.pause();
+                    this.state.pause(0, true);
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
                 case 151: {//"返回游戏界面"
-                    // this.state.unfreeze();
-                    // this.state.restore();
+                    this.state.restore();
                     this.viewMgr.exe(cmd);
                     return this.cc = 0;
                 }
                 //状态指令
                 case 210: {//等待
-                    this.state.wait(parseInt(cmd.para[0]));
+                    this.state.pause(parseInt(cmd.para[0]));
                     return this.cc = 0;
                 }
                 case 103: {//"自动播放剧情"
-                    this.state.switchState(cmd.para[0] == "1" ? StateEnum.Auto : StateEnum.Play);
+                    if (cmd.para[0] == "1")
+                        this.state.auto();
+                    else
+                        this.state.cancel();
                     break;
                 }
                 case 104: {//"快进剧情"
-                    this.state.switchState(cmd.para[0] == "1" ? StateEnum.FF : StateEnum.Play);
+                    if (cmd.para[0] == "1")
+                        this.state.fast();
+                    else
+                        this.state.cancel();
                     break;
                 }
                 case 108 :
@@ -186,9 +192,9 @@ export default class CmdLine {
                 case 206 : //跳转剧情
                 case 251: {//呼叫子剧情
                     this.state.mark(cmd.code == 206 ? null : [this.curCid, this.curSid, this.chapter]);
-                    console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], [this.curCid, this.curSid, this.chapter]);
-                    this.state.pause();
+                    this.state.pause(0, true);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
+                    this.reporter.logTrans(cmd, [this.curCid, this.curSid, this.chapter]);//test only
                     return this.cc = 0;
                 }
 
@@ -237,6 +243,8 @@ export default class CmdLine {
                 default: {//非逻辑命令分发
                     for (let mgr of this.mgrArr)
                         mgr.exe(cmd);
+                    // if (this.state.id == StateEnum.FF)
+                    //     this.viewMgr.update(0);
                 }
             }
         }

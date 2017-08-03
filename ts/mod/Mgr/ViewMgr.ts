@@ -74,7 +74,7 @@ export class ViewMgr extends Sprite implements IMgr {
                 this.dh.eventPoxy.event(Conf.ITEM_CHOSEN);
                 break;
             case "KeyZ":
-                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.FF);
+                this.dh.eventPoxy.event(Conf.STATE_FF);
                 break;
             case "Escape":
                 this.dh.eventPoxy.event(e.type);
@@ -85,7 +85,7 @@ export class ViewMgr extends Sprite implements IMgr {
     kuHandler(e: Event) {
         switch (e.nativeEvent.code) {
             case "KeyZ":
-                this.dh.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Play);
+                this.dh.eventPoxy.event(Conf.STATE_CANCEL);
                 break;
         }
     }

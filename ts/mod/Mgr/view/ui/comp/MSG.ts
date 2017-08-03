@@ -64,7 +64,7 @@ export class MSG extends Sprite {
     protected clickHandler(e: Event) {
         if (this.parent)
             this.parent.removeChild(this);
-        DH.instance.eventPoxy.event(Conf.CMD_LINE_RESUME);
+        DH.instance.eventPoxy.event(Conf.ITEM_CHOSEN);
     }
 
     /**

@@ -1,4 +1,5 @@
 import Story from "./sotry/Story";
+
 /**
  * Created by Lonmee on 4/23/2017.
  * 框架静态数据预置
@@ -59,7 +60,8 @@ export default class Conf {
     static ITEM_CHOSEN: string = "item_chosen";
     static RESTORE: string = "restore";
     static CMD_LINE_RESUME: string = "cmd_line_resume";
-    static CHANGE_STATE: string = "change_state";
+    static STATE_FF: string = "state_ff";
+    static STATE_CANCEL: string = "state_cancel";
 
     //static
     static debug: boolean = true;//Todo:发布时关掉
