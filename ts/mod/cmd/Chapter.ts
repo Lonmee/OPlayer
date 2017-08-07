@@ -6,7 +6,7 @@ import {Cmd, DChapter} from "../../data/sotry/Story";
 
 export default class Chapter extends DChapter {
     sceneArr: Scene[] = [];
-    repeat: [number[], Cmd[][]] = [[], []];
+    private repeat: [number[], Cmd[][]] = [[], []];
 
     constructor(dc: DChapter) {
         super(dc);

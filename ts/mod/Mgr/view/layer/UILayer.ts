@@ -41,7 +41,7 @@ export default class UILayer extends Layer {
 
             //UI控制指令
             case 151: //"返回游戏界面"
-                this.closeMenu();
+                this.clearMenu();
                 break;
             case 208: //"返回标题画面"
                 this.showMenu(MenuEnum.title);
@@ -74,25 +74,34 @@ export default class UILayer extends Layer {
     }
 
     private showMenu(idx: number) {
-        if (idx < 1000)
-            this.closeMenu();
+        if (idx < 10000)
+            this.clearMenu();
         let m: Menu = this.uiFac.getMenu(idx);
         m.once(Event.CLOSE, this, this.closeMenu, [idx]);
         this.ml.addChild(m);
     }
 
-    private closeMenu(idx: number = NaN) {
-        if (isNaN(idx))
-            while (this.ml.numChildren)
-                (<Menu>(this.ml.getChildAt(0))).close();
-        else {
-            if (this.ml.numChildren == 0)
-                this.dh.cmdLine.insertChapter(new Chapter({
-                    id: NaN,
-                    name: "code_151",
-                    cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
-                }));
+    private clearMenu() {
+        while (this.ml.numChildren) {
+            let m = <Menu>this.ml.getChildAt(0);
+            if (m.idx < 10000)
+                m.close();
+            this.ml.removeChild(m);
         }
+    }
+
+    private closeMenu(idx: number = NaN) {
+        if (idx > 10000)
+            this.ml.removeChild(this.uiFac.getMenu(idx));
+        else
+            this.clearMenu();
+
+        if (this.ml.numChildren == 0)
+            this.dh.cmdLine.insertChapter(new Chapter({
+                id: NaN,
+                name: "code_151",
+                cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
+            }));
     }
 
     checkHotarea(cmd: Cmd) {

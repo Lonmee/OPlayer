@@ -69,11 +69,11 @@ export default class CmdLine {
     }
 
     restore(snap) {
+        let name = this.chapter.name;
         this.curCid = snap[0];
         this.curSid = snap[1];
         this.chapter = snap[2];
         this.cmdArr = this.chapter.getScene(this.curSid).cmdArr;
-        console.log("restor:", snap);
     }
 
     complete() {
@@ -88,11 +88,11 @@ export default class CmdLine {
      * @returns {number}
      */
     insertChapter(chapter: Chapter) {
-        this.state.mark([this.curCid, this.curSid, this.chapter]);
-        console.log("inser chapter:", [this.curCid, this.curSid, this.chapter]);
+        if (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
+            this.state.mark([this.curCid, this.curSid, this.chapter]);
+        this.state.frozen();
         this.chapter = chapter;
         this.nextScene(0);
-        this.state.freeze();
     }
 
     nextScene(sid: number = NaN) {
@@ -104,14 +104,19 @@ export default class CmdLine {
             this.curSid = sid;
             this.nextSid = s.link;
             this.cmdArr = s.cmdArr;
+        } else if (this.chapter.name == "CUI_load") {
+            this.state.frozenAll();
+            this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
         } else {
             this.complete()
         }
+        return s;
     }
 
     update(sid = NaN) {
         if (!isNaN(sid))
-            this.nextScene(sid);
+            if (this.nextScene(sid) == null)
+                return;
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
             let cmd = this.cmdArr[this.curCid++];
@@ -120,7 +125,6 @@ export default class CmdLine {
                 //需暂停等待
                 case 208: //"返回标题画面"
                 case 214: //"呼叫游戏界面"
-                    // this.state.restore();
                     if (parseInt(cmd.para[0]) == 10008) {
                         this.state.mark(null);
                         this.complete();
@@ -128,8 +132,9 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.state.auto();
                     else {
-                        this.state.mark([this.curCid, this.curSid, this.chapter]);
-                        this.state.freeze();
+                        if (this.state.id < 4)
+                            this.state.mark([this.curCid, this.curSid, this.chapter]);
+                        this.state.frozenAll();
                         this.viewMgr.exe(cmd);
                     }
                     return this.cc = 0;
@@ -243,8 +248,8 @@ export default class CmdLine {
                 default: {//非逻辑命令分发
                     for (let mgr of this.mgrArr)
                         mgr.exe(cmd);
-                    // if (this.state.id == StateEnum.FF)
-                    //     this.viewMgr.update(0);
+                    if (this.state.id == StateEnum.FF)
+                        this.viewMgr.update(0);
                 }
             }
         }

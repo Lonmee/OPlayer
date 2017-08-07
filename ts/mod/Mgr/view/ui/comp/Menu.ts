@@ -15,7 +15,7 @@ import Chapter from "../../../../cmd/Chapter";
 export class Menu extends Sprite {
     protected btnArr: Button[];
 
-    constructor(protected idx: number, protected data: any) {
+    constructor(public idx: number, protected data: any) {
         super();
         this.initView();
         this.initAudio();
@@ -23,7 +23,6 @@ export class Menu extends Sprite {
     }
 
     close() {
-        this.parent.removeChild(this);
         this.event(Event.CLOSE, this.idx);
     }
 
@@ -122,7 +121,7 @@ export class Game extends Menu {
                     case 2:
                         MenuEnum.replay;
                     case 3:
-                        DH.instance.eventPoxy.event(Conf.CHANGE_STATE, StateEnum.Auto);
+                        DH.instance.eventPoxy.event(Conf.STATE_AUTO, StateEnum.Auto);
                     case 4:
                         MenuEnum.setting;
                     case 5:
@@ -374,12 +373,6 @@ export class CUI extends Menu {
     private controlSpr: Sprite;
 
     constructor(ind: number, data: CusUI) {
-        if (data.loadEvent.length)
-            DH.instance.cmdLine.insertChapter(new Chapter({
-                id: NaN,
-                name: "load",
-                cmdArr: data.loadEvent.concat()
-            }));
         super(ind, data);
         data.showEffect;//todo:dcui.showEffect
     }
@@ -392,25 +385,19 @@ export class CUI extends Menu {
             ba[0].unbind(ba[1], ba[2]);
         }
         if (this.data.isMouseExit)
-            DH.instance.eventPoxy.off(Event.RIGHT_CLICK, this, this.close);
+            DH.instance.eventPoxy.off(Event.RIGHT_CLICK, this, super.close);
         if (this.data.isKeyExit)
-            DH.instance.eventPoxy.off("Escape", this, this.close);
-        this.parent.removeChild(this);
+            DH.instance.eventPoxy.off("Escape", this, super.close);
     }
 
     protected initView() {
         this.addChild(this.controlSpr = new Sprite());
         if (this.data.loadEvent.length) {
-            this.loadChapter = new Chapter({id: NaN, name: "load", cmdArr: this.data.loadEvent});
+            this.loadChapter = new Chapter({id: NaN, name: "CUI_load", cmdArr: this.data.loadEvent});
         }
         if (this.data.afterEvent.length)
-            DH.instance.cmdLine.insertChapter(this.afterChapter = new Chapter({
-                id: NaN,
-                name: "after",
-                cmdArr: this.data.afterEvent
-            }));
-        this.updateControls();
-        this.exeAfterChapter();
+            this.afterChapter = new Chapter({id: NaN, name: "after", cmdArr: this.data.afterEvent});
+        this.exeLoadChapter();
     }
 
     updateControls() {
@@ -436,7 +423,7 @@ export class CUI extends Menu {
                 case 2://变量
                     let l: Label;
                     if (ctl.type == 1) {
-                        this.controlSpr.addChild(l = new Label(DH.instance.replaceVTX(DH.instance.sDic.get(ctl.index - 1))));
+                        this.controlSpr.addChild(l = new Label(DH.instance.replaceVTX(DH.instance.sDic.get(ctl.index))));
                         DH.instance.sDic.bind(ctl.index, l.update.bind(l));
                         this.bounds.push([DH.instance.sDic, ctl.index, l.update]);
                     } else {
@@ -455,24 +442,28 @@ export class CUI extends Menu {
                     break;
             }
         }
+        this.initListener();
+        this.exeAfterChapter();
         return this;
     }
 
     exe(c: Chapter) {
         DH.instance.cmdLine.insertChapter(c);
-        return this;
     }
 
     exeLoadChapter() {
-        if (this.loadChapter)
+        if (this.loadChapter) {
+            DH.instance.eventPoxy.once(Conf.CUI_LOAD_READY, this, this.updateControls);
             this.exe(this.loadChapter);
-        return this
+        } else {
+            this.updateControls()
+        }
+        return this;
     }
 
     exeAfterChapter() {
         if (this.afterChapter)
             this.exe(this.afterChapter);
-        return this;
     }
 
     protected initAudio() {
@@ -481,8 +472,8 @@ export class CUI extends Menu {
 
     protected initListener() {
         if (this.data.isMouseExit)
-            DH.instance.eventPoxy.on(Event.RIGHT_CLICK, this, this.close);
+            DH.instance.eventPoxy.on(Event.RIGHT_CLICK, this, super.close);
         if (this.data.isKeyExit)
-            DH.instance.eventPoxy.on("Escape", this, this.close);
+            DH.instance.eventPoxy.on("Escape", this, super.close);
     }
 }

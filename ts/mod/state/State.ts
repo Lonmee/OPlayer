@@ -7,7 +7,7 @@ import {IMgr} from "../Mgr/Mgr";
 import {MgrEnum} from "../CmdLine";
 import Browser = laya.utils.Browser;
 
-export enum StateEnum {Play, Auto, FF, Pause, Frozen}
+export enum StateEnum {Play, Auto, FF, Pause, Frozen, FrozenAll}
 
 export interface IState {
     id: StateEnum
@@ -79,10 +79,23 @@ export class FFState extends State {
     }
 }
 
-export class FrozenState extends State {
+export class Frozen extends State {
     id = StateEnum.Frozen;
 
-    update(...mgrs: IMgr[]): void {
+    update(...mgrs): void {
+    }
+}
+
+export class FrozenAll extends State {
+    id = StateEnum.FrozenAll;
+
+    update(...mgrs): void {
+        if (this.left > 0)
+            if (--this.left == 0)
+                DH.instance.eventPoxy.event(Conf.STATE_FROZEN);
+    }
+
+    resume(): any {
     }
 }
 
@@ -90,14 +103,16 @@ export class StateMgr {
     private forcePause: boolean = true;
     private dh: DH = DH.instance;
     private append: any[] = [];
-    private states: IState[] = [new PlayState(), new AutoState(), new FFState(), new PauseState(), new FrozenState()];
+    private states: IState[] = [new PlayState(), new AutoState(), new FFState(), new PauseState(), new Frozen(), new FrozenAll()];
     private curState: IState;
 
     constructor() {
+        this.dh.eventPoxy.on(Conf.STATE_AUTO, this, this.auto);
         this.dh.eventPoxy.on(Conf.STATE_FF, this, this.fast);
         this.dh.eventPoxy.on(Conf.STATE_CANCEL, this, this.cancel);
         this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.cancel);
         this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.play);
+        this.dh.eventPoxy.on(Conf.STATE_FROZEN, this, this.frozen);
         Laya.timer.frameLoop(1, this, this.tick);
         this.curState = this.states[StateEnum.Pause];
     }
@@ -133,7 +148,7 @@ export class StateMgr {
     }
 
     switchState(idx: StateEnum) {
-        if (this.curState.id != idx && this.curState.id != StateEnum.Frozen) {
+        if (this.curState.id != idx) {
             this.curState = this.states[idx];
             this.dh.reporter.logState(idx);//test only
         }
@@ -143,7 +158,7 @@ export class StateMgr {
         if (v != null) {
             this.forcePause = false;
             this.switchState(StateEnum.Play);
-        } else if (this.curState.id != StateEnum.FF)
+        } else if (!this.forcePause && this.curState.id != StateEnum.FF)
             this.switchState(StateEnum.Play);
     }
 
@@ -161,25 +176,27 @@ export class StateMgr {
 
     pause(dur: number = 0, force: boolean = false) {
         if (force) {
-            this.forcePause = force
-            this.switchState(StateEnum.Pause)
+            this.forcePause = force;
+            this.switchState(StateEnum.Pause);
             if (dur > 0)
                 this.curState.wait(dur);
         } else if (this.curState.id != StateEnum.FF) {
-            this.switchState(StateEnum.Pause)
+            this.switchState(this.curState.id == StateEnum.Frozen ? StateEnum.FrozenAll : StateEnum.Pause);
             if (dur > 0)
                 this.curState.wait(dur);
         }
     }
 
-    freeze() {
+    frozen() {
         this.switchState(StateEnum.Frozen);
+    }
+
+    frozenAll() {
+        this.switchState(StateEnum.FrozenAll);
     }
 
     cancel() {
         if (this.curState.id == StateEnum.FF)
             this.switchState(StateEnum.Play);
-        // if (this.curState.id == StateEnum.Frozen)
-        // this.switchState(this.cacheState);
     }
 }

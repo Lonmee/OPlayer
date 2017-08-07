@@ -83,27 +83,26 @@ export default class GameLayer extends Layer {
                 let i = this.getImg(cmd.para[0]);
                 if (i) {
                     let t = parseInt(cmd.para[9]);//time
-                    i.moveTo("x", cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.getValue(cmd.para[3]), t);
-                    i.moveTo("y", cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.getValue(cmd.para[4]), t);
-                    i.moveTo("alpha", parseInt(cmd.para[7]) / 255, t);
-                    i.moveTo("scaleX", cmd.para[8] == "1" ? -parseInt(cmd.para[5]) / 100 : parseInt(cmd.para[5]) / 100, t);
-                    i.moveTo("scaleY", parseInt(cmd.para[6]) / 100, t);
-                    // let t = parseInt(cmd.para[9]);//time
-                    // let tx = cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.getValue(cmd.para[3]);//x
-                    // if (i.x != tx)
-                    //     i.moveTo("x", tx, t);
-                    // let ty = cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.getValue(cmd.para[4]);//y
-                    // if (i.y != ty)
-                    //     i.moveTo("y", ty, t);
-                    // let a = parseInt(cmd.para[7]) / 255;//alpha
-                    // if (i.alpha != a)
-                    //     i.moveTo("alpha", a, t);
-                    // let tsX = cmd.para[8] == "1" ? -parseInt(cmd.para[5]) / 100 : parseInt(cmd.para[5]) / 100;//scaleX
-                    // if (i.scaleX != tsX)
-                    //     i.moveTo("scaleX", tsX, t);
-                    // let tsY = parseInt(cmd.para[6]) / 100;//scaleY
-                    // if (i.scaleY != tsY)
-                    //     i.moveTo("scaleY", tsY, t);
+                    // i.moveTo("x", cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.getValue(cmd.para[3]), t);
+                    // i.moveTo("y", cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.getValue(cmd.para[4]), t);
+                    // i.moveTo("alpha", parseInt(cmd.para[7]) / 255, t);
+                    // i.moveTo("scaleX", cmd.para[8] == "1" ? -parseInt(cmd.para[5]) / 100 : parseInt(cmd.para[5]) / 100, t);
+                    // i.moveTo("scaleY", parseInt(cmd.para[6]) / 100, t);
+                    let tx = cmd.para[2] == "0" ? parseInt(cmd.para[3]) : this.getValue(cmd.para[3]);//x
+                    if (i.x != tx)
+                        i.moveTo("x", tx, t);
+                    let ty = cmd.para[2] == "0" ? parseInt(cmd.para[4]) : this.getValue(cmd.para[4]);//y
+                    if (i.y != ty)
+                        i.moveTo("y", ty, t);
+                    let a = parseInt(cmd.para[7]) / 255;//alpha
+                    if (i.alpha != a)
+                        i.moveTo("alpha", a, t);
+                    let tsX = cmd.para[8] == "1" ? -parseInt(cmd.para[5]) / 100 : parseInt(cmd.para[5]) / 100;//scaleX
+                    if (i.scaleX != tsX)
+                        i.moveTo("scaleX", tsX, t);
+                    let tsY = parseInt(cmd.para[6]) / 100;//scaleY
+                    if (i.scaleY != tsY)
+                        i.moveTo("scaleY", tsY, t);
                 }
                 break;
             case 403: //"显示心情"

@@ -60,8 +60,12 @@ export default class Conf {
     static ITEM_CHOSEN: string = "item_chosen";
     static RESTORE: string = "restore";
     static CMD_LINE_RESUME: string = "cmd_line_resume";
+    static STATE_AUTO: string = "state_atuo";
     static STATE_FF: string = "state_ff";
+    static STATE_FROZEN: string = "state_froze";
     static STATE_CANCEL: string = "state_cancel";
+
+    static CUI_LOAD_READY: string = "cui_load_ready";
 
     //static
     static debug: boolean = true;//Todo:发布时关掉

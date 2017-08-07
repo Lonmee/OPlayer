@@ -8,7 +8,9 @@ import {Cmd} from "../../../../data/sotry/Story";
 import {MSG} from "./comp/MSG";
 import FLayer from "./comp/FLayer";
 import {HotareaSelector} from "./comp/Hotarea";
-export enum MenuEnum{title, game, replay, CG, BGM, save, restore, setting}
+
+export enum MenuEnum {title, game, replay, CG, BGM, save, restore, setting}
+
 export default class UIFac {
     private fLayer: FLayer;
     private msg: MSG;
@@ -18,11 +20,9 @@ export default class UIFac {
 
     getMenu(type: number) {
         if (this.menuArr[type] && type < 10000) {
-            (<CUI>this.menuArr[type]).exeLoadChapter();
-            (<CUI>this.menuArr[type]).updateControls();
-            (<CUI>this.menuArr[type]).exeAfterChapter();
-        }
-        return this.menuArr[type] || this.constructMenu(type);
+            return (<CUI>this.menuArr[type]).exeLoadChapter();
+        } else
+            return this.menuArr[type] || this.constructMenu(type);
     }
 
     private constructMenu(type: number): Menu {
@@ -57,8 +57,9 @@ export default class UIFac {
             //     break;
             case  10010://新版商城
                 break;
-            default:
+            default: {
                 m = new CUI(type, this.dh.story.sys.Cuis[type]);
+            }
         }
         return this.menuArr[type] = m;
     }
