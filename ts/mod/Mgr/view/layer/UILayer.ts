@@ -73,7 +73,7 @@ export default class UILayer extends Layer {
         this.addChild(this.uiFac.getSelector(cmd));
     }
 
-    private showMenu(idx: number) {
+    showMenu(idx: number) {
         if (idx < 10000)
             this.clearMenu();
         let m: Menu = this.uiFac.getMenu(idx);

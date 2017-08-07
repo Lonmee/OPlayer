@@ -78,7 +78,11 @@ export default class CmdLine {
 
     complete() {
         if (!this.state.restore()) {
-            console.log("Story end !");
+            this.state.pause(0, true);
+            if (this.dh.story.sys.skipTitle)
+                this.dh.story.gotoChapter(this.dh.story.sys.startStoryId);
+            else
+                this.viewMgr.ul.showMenu(-1);
         }
     }
 

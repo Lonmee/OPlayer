@@ -125,7 +125,7 @@ export class Label extends Sprite {
     }
 
     update(v) {
-        this.tf.text = v.toString();
+        this.tf.text = DH.instance.replaceVTX(v);
     }
 }
 

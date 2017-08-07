@@ -378,12 +378,12 @@ export class CUI extends Menu {
     }
 
     close() {
-        while (this.controlSpr.numChildren)
-            this.controlSpr.removeChildAt(0).destroy(true);
         while (this.bounds.length) {
             let ba = this.bounds.pop();
             ba[0].unbind(ba[1], ba[2]);
         }
+        while (this.controlSpr.numChildren)
+            this.controlSpr.removeChildAt(0).destroy(true);
         if (this.data.isMouseExit)
             DH.instance.eventPoxy.off(Event.RIGHT_CLICK, this, super.close);
         if (this.data.isKeyExit)

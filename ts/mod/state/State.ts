@@ -129,7 +129,7 @@ export class StateMgr {
 
     mark(snap) {
         if (snap)
-            this.append.push(snap.concat(this.curState.id));
+            this.append.push(snap.concat(this.curState.id == StateEnum.FF ? StateEnum.Play : this.curState.id));
         else
             this.append = [];
     }
