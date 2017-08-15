@@ -119,6 +119,7 @@ export class StateMgr {
 
     private tick() {
         this.dh.reporter.logFrame();//test only
+        this.dh.cmdLine.mgrArr[MgrEnum.audio].update(1);
         this.curState.update(this.dh.cmdLine.mgrArr[MgrEnum.view]);
         this.curState.resume();
     }

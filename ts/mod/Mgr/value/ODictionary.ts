@@ -26,7 +26,7 @@ class ODic extends Dictionary implements IBindable {
         let wk;
         if (wk = this.watcher[key])
             if (fun == null || wk.length == 1)
-                this.watcher.splice(key, 1);
+                this.watcher[key] = null;
             else
                 wk.splice(wk.indexOf(fun), 1);
     }

@@ -10,7 +10,6 @@ import {Cmd} from "../../data/sotry/Story";
 import FloatLayer from "./view/layer/FloatLayer";
 import {Layer} from "./view/layer/Layer";
 import {IMgr} from "./Mgr";
-import {StateEnum} from "../state/State";
 
 /**
  * Created by Lonmee on 4/23/2017.
