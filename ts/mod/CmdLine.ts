@@ -77,7 +77,7 @@ export default class CmdLine {
         if (this.tempCN == "CUI_load") {
             this.state.frozenAll();
             this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
-            return;
+            return this.tempCN = "";
         }
         if (!this.state.restore()) {
             this.state.pause(0, true);
@@ -94,7 +94,7 @@ export default class CmdLine {
      * @returns {number}
      */
     insertChapter(chapter: Chapter) {
-        if (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
+        if (this.state.id < StateEnum.Frozen)//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
             this.state.mark([this.curCid, this.cmdArr]);
         this.curCid = 0;
         this.tempCN = chapter.name;
@@ -120,7 +120,7 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.state.auto();
                     else {
-                        if (this.state.id < 4)
+                        if (this.state.id < StateEnum.Frozen)
                             this.state.mark([this.curCid, this.cmdArr]);
                         this.state.frozenAll();
                         this.viewMgr.exe(cmd);
