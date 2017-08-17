@@ -116,16 +116,22 @@ export class Game extends Menu {
                 switch ((<Button>e.target).idx) {
                     case 0:
                         MenuEnum.save;
+                        break;
                     case 1:
                         MenuEnum.restore;
+                        break;
                     case 2:
                         MenuEnum.replay;
+                        break;
                     case 3:
                         DH.instance.eventPoxy.event(Conf.STATE_AUTO, StateEnum.Auto);
+                        break;
                     case 4:
                         MenuEnum.setting;
+                        break;
                     case 5:
                         this.close();
+                        break;
                 }
             })
         }
@@ -302,7 +308,7 @@ export class Setting extends Menu {
                         // DH.instance.mgrArr[MgrEnum.view].exe({code: 151, para: [], idt: 0});//so crazy
                         break;
                     case 1:
-                        DH.instance.mgrArr[MgrEnum.view].exe({code: 208, para: [], idt: 0});//so crazy
+                        DH.instance.mgrArr[MgrEnum.view].exe({code: 208, para: []});//so crazy
                         break;
                     case 2:
                         this.btnArr[2].toggled = false;

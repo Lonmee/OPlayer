@@ -42,6 +42,8 @@ export default class CmdLine {
     private cmdArr: Cmd[];
     private curCid: number;
 
+    private tempCN: string;
+
     constructor() {
         this.reporter = this.dh.reporter;
         this.state = new StateMgr();
@@ -72,6 +74,11 @@ export default class CmdLine {
     }
 
     complete() {
+        if (this.tempCN == "CUI_load") {
+            this.state.frozenAll();
+            this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
+            return;
+        }
         if (!this.state.restore()) {
             this.state.pause(0, true);
             if (this.dh.story.sys.skipTitle)
@@ -89,15 +96,15 @@ export default class CmdLine {
     insertChapter(chapter: Chapter) {
         if (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
             this.state.mark([this.curCid, this.cmdArr]);
-        this.state.frozen();
+        this.curCid = 0;
+        this.tempCN = chapter.name;
         this.cmdArr = chapter.cmdArr;
+        this.state.frozen();
     }
 
     update(cid = NaN) {
-        if (!isNaN(cid)) {
+        if (!isNaN(cid))
             this.curCid = cid;
-            cid = NaN;
-        }
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
             let cmd = this.cmdArr[this.curCid++];
