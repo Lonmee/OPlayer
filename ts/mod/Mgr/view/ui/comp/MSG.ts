@@ -62,9 +62,10 @@ export class MSG extends Sprite {
     }
 
     protected clickHandler(e: Event) {
-        if (this.parent)
+        if (this.parent && this.parent.numChildren < 3) {//过滤selector
             this.parent.removeChild(this);
-        DH.instance.eventPoxy.event(Conf.ITEM_CHOSEN);
+            DH.instance.eventPoxy.event(Conf.ITEM_CHOSEN);
+        }
     }
 
     /**

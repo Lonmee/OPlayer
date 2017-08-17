@@ -78,7 +78,7 @@ export default class CmdList extends Dictionary {
     printCmdArr(cmdArr: Cmd[]) {
         for (let i in cmdArr) {
             let cmd = cmdArr[i];
-            console.log("      cid:", i, "code:", cmd.code, this.get(cmd.code), this.getDetails(cmd));
+            console.log("cid:", i, "code:", cmd.code, this.get(cmd.code), this.getDetails(cmd));
         }
     }
 

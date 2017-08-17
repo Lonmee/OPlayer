@@ -100,7 +100,7 @@ export default class UILayer extends Layer {
             this.dh.cmdLine.insertChapter(new Chapter({
                 id: NaN,
                 name: "code_151",
-                cmdArr: [{code: 151, idt: NaN, para: [""], links: []}]
+                cmdArr: [{code: 151, para: [""], links: []}]
             }));
     }
 
