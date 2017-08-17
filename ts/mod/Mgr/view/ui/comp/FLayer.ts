@@ -3,7 +3,7 @@ import {OtherImg} from "./Comp";
 import Sprite = laya.display.Sprite;
 import Event = laya.events.Event;
 import DH from "../../../../../data/DH";
-import Chapter from "../../../../cmd/Chapter";
+import Chapter from "../../../../cmd/chapter/Chapter";
 /**
  * Created by ShanFeng on 6/9/2017.
  */

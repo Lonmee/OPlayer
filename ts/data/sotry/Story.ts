@@ -241,7 +241,7 @@ export interface DFLayerItem {
 
 export interface Cmd {
     code: number
-    idt: number
+    //trashy idt: number
     para: string[]
     links?: number[]
 }

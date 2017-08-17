@@ -1,7 +1,6 @@
 import ValueMgr from "./Mgr/ValueMgr";
 import VideoMgr from "./Mgr/VideoMgr";
 import AudioMgr from "./Mgr/AudioMgr";
-import Chapter from "./cmd/Chapter";
 import {Cmd, DChapter} from "../data/sotry/Story";
 import {StateEnum, StateMgr} from "./state/State";
 import AssMgr from "./Mgr/AssMgr";
@@ -10,6 +9,7 @@ import {IMgr} from "./Mgr/Mgr";
 import DH from "../data/DH";
 import Conf from "../data/Conf";
 import Reporter from "./reporter/Reporter";
+import Chapter from "./cmd/chapter/Chapter";
 
 export enum MgrEnum {ass, view, value, audio, video}
 
@@ -22,7 +22,7 @@ export enum MgrEnum {ass, view, value, audio, video}
 export default class CmdLine {
     private dh: DH = DH.instance;
     private reporter: Reporter;
-    private cc: number = 0;//call counter
+    private cc: number;//call counter
     private state: StateMgr;
 
     private assMgr: AssMgr;
@@ -39,23 +39,20 @@ export default class CmdLine {
         this.videoMgr = new VideoMgr()
     ];
 
-    private chapter: Chapter;
-    private cmdArr: Cmd[] = [];
-    private curSid: number = 0;
-    private nextSid: number = 0;
-    private curCid: number = 0;
+    private cmdArr: Cmd[];
+    private curCid: number;
 
     constructor() {
         this.reporter = this.dh.reporter;
         this.state = new StateMgr();
         this.dh.eventPoxy.on(Conf.PLAY_CHAPTER, this, this.playHandler);
         this.dh.eventPoxy.on(Conf.RESTORE, this, this.restore);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.nextScene);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.update);
         this.dh.eventPoxy.on(Conf.CMD_LINE_RESUME, this, this.update);
     }
 
-    printScene() {
-        this.reporter.printSceneArr(this.chapter);
+    printCmdArr() {
+        this.reporter.printCmdArr(this.cmdArr);
     }
 
     /**
@@ -63,17 +60,15 @@ export default class CmdLine {
      * @param c
      */
     playHandler(c: DChapter) {
-        this.chapter = new Chapter(c);
-        this.nextScene(0);
+        this.cmdArr = new Chapter(c).cmdArr;
+        this.curCid = 0;
         this.state.play(true);
     }
 
     restore(snap) {
-        let name = this.chapter.name;
+        this.reporter.logRestore(snap);//test only
         this.curCid = snap[0];
-        this.curSid = snap[1];
-        this.chapter = snap[2];
-        this.cmdArr = this.chapter.getScene(this.curSid).cmdArr;
+        this.cmdArr = snap[1];
     }
 
     complete() {
@@ -93,34 +88,16 @@ export default class CmdLine {
      */
     insertChapter(chapter: Chapter) {
         if (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
-            this.state.mark([this.curCid, this.curSid, this.chapter]);
+            this.state.mark([this.curCid, this.cmdArr]);
         this.state.frozen();
-        this.chapter = chapter;
-        this.nextScene(0);
+        this.cmdArr = chapter.cmdArr;
     }
 
-    nextScene(sid: number = NaN) {
-        if (isNaN(sid))
-            return;
-        this.curCid = 0;
-        let s;
-        if (s = this.chapter.getScene(sid)) {
-            this.curSid = sid;
-            this.nextSid = s.link;
-            this.cmdArr = s.cmdArr;
-        } else if (this.chapter.name == "CUI_load") {
-            this.state.frozenAll();
-            this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
-        } else {
-            this.complete()
+    update(cid = NaN) {
+        if (!isNaN(cid)) {
+            this.curCid = cid;
+            cid = NaN;
         }
-        return s;
-    }
-
-    update(sid = NaN) {
-        if (!isNaN(sid))
-            if (this.nextScene(sid) == null)
-                return;
         while (this.curCid < this.cmdArr.length) {
             this.cc++;
             let cmd = this.cmdArr[this.curCid++];
@@ -137,7 +114,7 @@ export default class CmdLine {
                         this.state.auto();
                     else {
                         if (this.state.id < 4)
-                            this.state.mark([this.curCid, this.curSid, this.chapter]);
+                            this.state.mark([this.curCid, this.cmdArr]);
                         this.state.frozenAll();
                         this.viewMgr.exe(cmd);
                     }
@@ -192,7 +169,7 @@ export default class CmdLine {
                 //repeat interrupt
                 case 209: {
                     if (this.cc > 8000) {
-                        this.nextSid = cmd.links[0];
+                        this.curCid = cmd.links[0];
                         return this.cc = 0;
                     } else
                         return this.update(cmd.links[0]);
@@ -200,10 +177,10 @@ export default class CmdLine {
 
                 case 206 : //跳转剧情
                 case 251: {//呼叫子剧情
-                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.curSid, this.chapter]);
+                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.cmdArr]);
+                    this.reporter.logTrans(cmd, cmd.code == 206 ? "" : [this.curCid, this.cmdArr]);//test only
                     this.state.pause(0, true);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
-                    this.reporter.logTrans(cmd, [this.curCid, this.curSid, this.chapter]);//test only
                     return this.cc = 0;
                 }
 
@@ -212,7 +189,7 @@ export default class CmdLine {
                     let bingo;
                     if (cmd.para[0].split("|")[0] == "MO") {
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
-                        this.nextSid = cmd.links[bingo ? 0 : 1];
+                        this.curCid = cmd.links[bingo ? 0 : 1];
                         if (bingo && cmd.para[3] == '1')
                             return this.cc = 0;
                     } else
@@ -225,7 +202,7 @@ export default class CmdLine {
                         let p = cmd.para[i].split("&");
                         if (cmd.para[0] == "0") { // cmd.para[0] || : &&;
                             if (p[0].split("|")[0] == "MO") {
-                                let moCmd: Cmd = {code: 200, idt: NaN, para: p};
+                                let moCmd: Cmd = {code: 200, para: p};
                                 this.viewMgr.exe(moCmd);
                                 bingo = this.viewMgr.ul.checkHotarea(moCmd);
                             } else {
@@ -236,7 +213,7 @@ export default class CmdLine {
                         }
                         else {
                             if (p[0].split("|")[0] == "MO") {
-                                let moCmd: Cmd = {code: 200, idt: NaN, para: p};
+                                let moCmd: Cmd = {code: 200, para: p};
                                 bingo = this.viewMgr.ul.checkHotarea(moCmd);
                             } else {
                                 bingo = this.valueMgr.judge(p);
@@ -257,6 +234,6 @@ export default class CmdLine {
                 }
             }
         }
-        return this.update(this.nextSid);
+        return this.complete();
     }
 };

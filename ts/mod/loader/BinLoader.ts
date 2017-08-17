@@ -597,7 +597,10 @@ export class BinLoader implements IBinloader {
 
         function parseCmd(): Cmd {
             byte.pos += 4;
-            return {code: byte.getInt32(), idt: byte.getInt32(), para: parsePara()};
+            let c = byte.getInt32();
+            byte.pos += 4;
+            let p = parsePara();
+            return {code: c, para: p};//{code: byte.getInt32(), idt: byte.getInt32(), para: parsePara()};
         }
 
         function parsePara(): string[] {

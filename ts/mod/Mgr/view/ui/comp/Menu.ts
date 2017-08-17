@@ -7,7 +7,7 @@ import {MgrEnum} from "../../../../CmdLine";
 import {MenuEnum} from "../UIFac";
 import Conf from "../../../../../data/Conf";
 import {StateEnum} from "../../../../state/State";
-import Chapter from "../../../../cmd/Chapter";
+import Chapter from "../../../../cmd/chapter/Chapter";
 
 /**
  * Created by ShanFeng on 5/29/2017.

@@ -75,15 +75,11 @@ export default class CmdList extends Dictionary {
     /**
      * 打印解析结果
      */
-    printChapter(s: Scene, sceneArr: Scene[]) {
-        console.log("Scene:", sceneArr.indexOf(s));
-        if (s == null) {
-            return;
+    printCmdArr(cmdArr: Cmd[]) {
+        for (let i in cmdArr) {
+            let cmd = cmdArr[i];
+            console.log("      cid:", i, "code:", cmd.code, this.get(cmd.code), this.getDetails(cmd));
         }
-        for (let cmd of s.cmdArr) {
-            console.log("      code:", cmd.code, this.get(cmd.code), this.getDetails(cmd));
-        }
-        console.log("               next scene: ", s.link);
     }
 
     getDetails(cmd: Cmd) {

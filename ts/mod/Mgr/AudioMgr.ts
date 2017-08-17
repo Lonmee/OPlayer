@@ -50,22 +50,22 @@ export default class AudioMgr implements IMgr {
     play(c: ChannelEnum, url: string, v: number) {
         switch (c) {
             case ChannelEnum.bg:
-                this.channels[c] = SoundManager.playSound(url);
+                // this.channels[c] = SoundManager.playSound(url);
                 break;
             case ChannelEnum.fx:
-                this.channels[c] = SoundManager.playSound(url);
+                // this.channels[c] = SoundManager.playSound(url);
                 break;
             case ChannelEnum.vo:
-                this.channels[c] = SoundManager.playSound(url);
+                // this.channels[c] = SoundManager.playSound(url);
                 break;
             case ChannelEnum.bfx:
-                this.channels[c] = SoundManager.playSound(url);
+                // this.channels[c] = SoundManager.playSound(url);
         }
 
     }
 
     stop(c: ChannelEnum) {
-        this.channels[c].stop();
+        // this.channels[c].stop();
     }
 
     pause() {

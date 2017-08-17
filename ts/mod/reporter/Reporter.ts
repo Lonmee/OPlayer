@@ -1,6 +1,6 @@
 import CmdList from "../cmd/CmdList";
-import Chapter from "../cmd/Chapter";
 import {StateEnum} from "../state/State";
+import {Cmd} from "../../data/sotry/Story";
 
 /**
  * Created by ShanFeng on 6/27/2017.
@@ -29,12 +29,16 @@ export default class Reportor {
         console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], snap);
     }
 
+    logRestore(snap) {
+        console.log("restore to ", snap);
+    }
+
     logState(idx: StateEnum) {
         if (this.showState)
             console.log("switch state to:", StateEnum[idx]);
     }
 
-    printSceneArr(chapter: Chapter) {
+    printCmdArr(cmdArr: Cmd[]) {
         //for dynamic usage
         /*if (this.cmdList == null)
          require(["js/mod/cmd/CmdList.js"], (CmdList) => {
@@ -42,7 +46,6 @@ export default class Reportor {
          for (let s of this.sceneArr)
          this.cmdList.printChapter(s, this.sceneArr);
          });*/
-        for (let s of chapter.sceneArr)
-            this.cmdList.printChapter(s, chapter.sceneArr);
+        this.cmdList.printCmdArr(cmdArr);
     }
 }

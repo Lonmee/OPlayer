@@ -131,16 +131,15 @@ export class StateMgr {
     mark(snap) {
         if (snap)
             this.append.push(snap.concat(this.curState.id == StateEnum.FF ? StateEnum.Play : this.curState.id));
-        else
+        else if (this.append.length)
             this.append = [];
     }
 
     restore(): boolean {
         let snap = this.append.pop();
         if (snap) {
-            let idx = snap.pop();
-            this.curState = this.states[idx];
-            this.dh.reporter.logState(idx);//test only
+            this.curState = this.states[snap.pop()];
+            this.dh.reporter.logState(this.curState.id);//test only
             this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
         }

@@ -8,7 +8,7 @@ import {Cmd} from "../../../../data/sotry/Story";
 import {Layer} from "./Layer";
 import {Menu} from "../ui/comp/Menu";
 import {MSG} from "../ui/comp/MSG";
-import Chapter from "../../../cmd/Chapter";
+import Chapter from "../../../cmd/chapter/Chapter";
 
 export default class UILayer extends Layer {
     ml: Sprite;
