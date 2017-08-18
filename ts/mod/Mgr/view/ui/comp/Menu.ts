@@ -384,7 +384,7 @@ export class CUI extends Menu {
     }
 
     close() {
-        while (this.bounds.length) {
+        while (this.bounds && this.bounds.length) {
             let ba = this.bounds.pop();
             ba[0].unbind(ba[1], ba[2]);
         }

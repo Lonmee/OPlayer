@@ -49,9 +49,6 @@ export default class UILayer extends Layer {
             case 214: //"呼叫游戏界面"
                 this.showMenu(parseInt(cmd.para[0]));
                 break;
-            case 218: //"强制存档读档"
-                this.showMenu(MenuEnum.save);
-                break;
             case 110: //"打开指定网页";
                 break;
             case 111: //"禁用开启菜单功能";
@@ -99,7 +96,7 @@ export default class UILayer extends Layer {
         if (this.ml.numChildren == 0)
             this.dh.cmdLine.insertChapter(new Chapter({
                 id: NaN,
-                name: "code_151",
+                name: "code_151(close win)",
                 cmdArr: [{code: 151, para: [""], links: []}]
             }));
     }

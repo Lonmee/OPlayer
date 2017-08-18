@@ -80,12 +80,11 @@ export default class CmdLine {
     }
 
     complete() {
-        if (this.chapter.name == "CUI_load") {
+        if (this.state.id == StateEnum.Frozen) {
             this.state.frozenAll();
-            this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
-            return;
-        }
-        if (!this.state.restore()) {
+            if (this.chapter.name == "CUI_load")
+                this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
+        } else if (!this.state.restore()) {
             if (this.dh.story.sys.skipTitle)
                 this.dh.story.gotoChapter(this.dh.story.sys.startStoryId);
             else
@@ -99,8 +98,10 @@ export default class CmdLine {
      * @returns {number}
      */
     insertChapter(chapter: Chapter) {
-        if (this.state.id < StateEnum.Frozen)//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
+        if (this.state.id < StateEnum.Frozen) {//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
+            console.log("temp inster:" + chapter.name + " @ story: " + this.chapter.id + ":" + (this.curCid - 1) + ":" + this.state.id);
             this.state.mark([this.chapter.id, this.curCid]);
+        }
         this.curCid = 0;
         this.chapter = chapter;
         this.cmdArr = chapter.cmdArr;
@@ -126,6 +127,7 @@ export default class CmdLine {
                         this.state.auto();
                     else {
                         if (this.state.id < StateEnum.Frozen) {
+                            console.log("open win:" + parseInt(cmd.para[0]) + " @ story: " + this.chapter.id + ":" + (this.curCid - 1) + ":" + this.state.id);
                             this.state.mark([this.chapter.id, this.curCid]);
                         }
                         this.state.frozenAll();

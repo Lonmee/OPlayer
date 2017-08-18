@@ -138,8 +138,8 @@ export class StateMgr {
     restore(): boolean {
         this.pause(0, true);
         let snap = this.append.pop();
-        this.dh.reporter.logRestore(snap);//test only
         if (snap) {
+            this.dh.reporter.logRestore(snap);//test only
             this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
         }
@@ -188,10 +188,12 @@ export class StateMgr {
     }
 
     frozen() {
+        this.forcePause = true;
         this.switchState(StateEnum.Frozen);
     }
 
     frozenAll() {
+        this.forcePause = true;
         this.switchState(StateEnum.FrozenAll);
     }
 

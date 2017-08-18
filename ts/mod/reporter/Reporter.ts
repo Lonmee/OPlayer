@@ -25,11 +25,6 @@ export default class Reportor {
             console.log("frame:", this.frame++);
     }
 
-    logTrans(snap) {
-        if (snap)
-            console.log("inset @ ", snap);
-    }
-
     logRestore(snap) {
         console.log("restore to ", snap);
     }
