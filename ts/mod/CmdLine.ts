@@ -39,10 +39,9 @@ export default class CmdLine {
         this.videoMgr = new VideoMgr()
     ];
 
+    private chapter: Chapter;
     private cmdArr: Cmd[];
     private curCid: number;
-
-    private tempCN: string;
 
     constructor() {
         this.reporter = this.dh.reporter;
@@ -62,7 +61,8 @@ export default class CmdLine {
      * @param c
      */
     playHandler(c: DChapter) {
-        this.cmdArr = new Chapter(c).cmdArr;
+        this.chapter = new Chapter(c);
+        this.cmdArr = this.chapter.cmdArr;
         this.curCid = 0;
         this.state.play(true);
     }
@@ -74,10 +74,10 @@ export default class CmdLine {
     }
 
     complete() {
-        if (this.tempCN == "CUI_load") {
+        if (this.chapter.name == "CUI_load") {
             this.state.frozenAll();
             this.dh.eventPoxy.event(Conf.CUI_LOAD_READY);
-            return this.tempCN = "";
+            return;
         }
         if (!this.state.restore()) {
             this.state.pause(0, true);
@@ -97,7 +97,7 @@ export default class CmdLine {
         if (this.state.id < StateEnum.Frozen)//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
             this.state.mark([this.curCid, this.cmdArr]);
         this.curCid = 0;
-        this.tempCN = chapter.name;
+        this.chapter = chapter;
         this.cmdArr = chapter.cmdArr;
         this.state.frozen();
     }
@@ -197,8 +197,7 @@ export default class CmdLine {
                     if (cmd.para[0].split("|")[0] == "MO") {
                         bingo = this.viewMgr.ul.checkHotarea(cmd);
                         this.curCid = cmd.links[bingo ? 0 : 1];
-                        if (bingo && cmd.para[3] == '1')
-                            return this.cc = 0;
+                        return bingo && cmd.para[3] == '1' ? this.cc = 0 : this.update(this.curCid);
                     } else
                         return this.update(cmd.links[this.valueMgr.judge(cmd.para) ? 0 : 1]);
                 }
