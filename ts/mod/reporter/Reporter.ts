@@ -25,8 +25,9 @@ export default class Reportor {
             console.log("frame:", this.frame++);
     }
 
-    logTrans(cmd, snap) {
-        console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], snap);
+    logTrans(snap) {
+        if (snap)
+            console.log("inset @ ", snap);
     }
 
     logRestore(snap) {

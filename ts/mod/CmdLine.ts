@@ -65,7 +65,7 @@ export default class CmdLine {
         this.chapter = new Chapter(c);
         this.cmdArr = this.chapter.cmdArr;
         if (this.snap) {
-            this.curCid = this.snap[0];
+            this.curCid = this.snap[1];
             this.state.switchState(this.snap[2]);
             this.snap = null;
         } else {
@@ -75,9 +75,8 @@ export default class CmdLine {
     }
 
     restore(snap) {
-        this.reporter.logRestore(snap);//test only
         this.snap = snap;
-        this.dh.story.gotoChapter(snap[1]);
+        this.dh.story.gotoChapter(snap[0]);
     }
 
     complete() {
@@ -101,7 +100,7 @@ export default class CmdLine {
      */
     insertChapter(chapter: Chapter) {
         if (this.state.id < StateEnum.Frozen)//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
-            this.state.mark([this.curCid, this.chapter.id]);
+            this.state.mark([this.chapter.id, this.curCid]);
         this.curCid = 0;
         this.chapter = chapter;
         this.cmdArr = chapter.cmdArr;
@@ -126,8 +125,9 @@ export default class CmdLine {
                     else if (parseInt(cmd.para[0]) == 10009)
                         this.state.auto();
                     else {
-                        if (this.state.id < StateEnum.Frozen)
-                            this.state.mark([this.curCid, this.chapter.id]);
+                        if (this.state.id < StateEnum.Frozen) {
+                            this.state.mark([this.chapter.id, this.curCid]);
+                        }
                         this.state.frozenAll();
                         this.viewMgr.exe(cmd);
                     }
@@ -190,8 +190,9 @@ export default class CmdLine {
 
                 case 206 : //跳转剧情
                 case 251: {//呼叫子剧情
-                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.chapter.id]);
-                    this.reporter.logTrans(cmd, cmd.code == 206 ? "" : [this.curCid, this.cmdArr]);//test only
+                    console.log((cmd.code == 206 ? "goto: " : "insert:") +
+                        parseInt(cmd.para[0]) + " @ story: " + this.chapter.id + ":" + (this.curCid - 1) + ":" + this.state.id);
+                    this.state.mark(cmd.code == 206 ? null : [this.chapter.id, this.curCid]);
                     this.state.pause(0, true);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));
                     return this.cc = 0;

@@ -138,6 +138,7 @@ export class StateMgr {
     restore(): boolean {
         this.pause(0, true);
         let snap = this.append.pop();
+        this.dh.reporter.logRestore(snap);//test only
         if (snap) {
             this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
