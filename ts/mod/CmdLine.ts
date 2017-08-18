@@ -20,6 +20,7 @@ export enum MgrEnum {ass, view, value, audio, video}
  * alias "TimeLine"
  */
 export default class CmdLine {
+    snap: any;
     private dh: DH = DH.instance;
     private reporter: Reporter;
     private cc: number;//call counter
@@ -63,14 +64,20 @@ export default class CmdLine {
     playHandler(c: DChapter) {
         this.chapter = new Chapter(c);
         this.cmdArr = this.chapter.cmdArr;
-        this.curCid = 0;
-        this.state.play(true);
+        if (this.snap) {
+            this.curCid = this.snap[0];
+            this.state.switchState(this.snap[2]);
+            this.snap = null;
+        } else {
+            this.curCid = 0;
+            this.state.play(true);
+        }
     }
 
     restore(snap) {
         this.reporter.logRestore(snap);//test only
-        this.curCid = snap[0];
-        this.cmdArr = snap[1];
+        this.snap = snap;
+        this.dh.story.gotoChapter(snap[1]);
     }
 
     complete() {
@@ -80,7 +87,6 @@ export default class CmdLine {
             return;
         }
         if (!this.state.restore()) {
-            this.state.pause(0, true);
             if (this.dh.story.sys.skipTitle)
                 this.dh.story.gotoChapter(this.dh.story.sys.startStoryId);
             else
@@ -95,7 +101,7 @@ export default class CmdLine {
      */
     insertChapter(chapter: Chapter) {
         if (this.state.id < StateEnum.Frozen)//equl (this.state.id != StateEnum.Frozen && this.state.id != StateEnum.FrozenAll)
-            this.state.mark([this.curCid, this.cmdArr]);
+            this.state.mark([this.curCid, this.chapter.id]);
         this.curCid = 0;
         this.chapter = chapter;
         this.cmdArr = chapter.cmdArr;
@@ -121,7 +127,7 @@ export default class CmdLine {
                         this.state.auto();
                     else {
                         if (this.state.id < StateEnum.Frozen)
-                            this.state.mark([this.curCid, this.cmdArr]);
+                            this.state.mark([this.curCid, this.chapter.id]);
                         this.state.frozenAll();
                         this.viewMgr.exe(cmd);
                     }
@@ -184,7 +190,7 @@ export default class CmdLine {
 
                 case 206 : //跳转剧情
                 case 251: {//呼叫子剧情
-                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.cmdArr]);
+                    this.state.mark(cmd.code == 206 ? null : [this.curCid, this.chapter.id]);
                     this.reporter.logTrans(cmd, cmd.code == 206 ? "" : [this.curCid, this.cmdArr]);//test only
                     this.state.pause(0, true);
                     this.dh.story.gotoChapter(parseInt(cmd.para[0]));

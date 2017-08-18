@@ -26,11 +26,11 @@ export default class Reportor {
     }
 
     logTrans(cmd, snap) {
-        // console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], snap);
+        console.log((cmd.code == 206 ? "go" : "inset") + " story:" + cmd.para[0], snap);
     }
 
     logRestore(snap) {
-        // console.log("restore to ", snap);
+        console.log("restore to ", snap);
     }
 
     logState(idx: StateEnum) {

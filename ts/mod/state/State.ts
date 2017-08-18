@@ -111,7 +111,7 @@ export class StateMgr {
         this.dh.eventPoxy.on(Conf.STATE_FF, this, this.fast);
         this.dh.eventPoxy.on(Conf.STATE_CANCEL, this, this.cancel);
         this.dh.eventPoxy.on(Conf.STAGE_BLUR, this, this.cancel);
-        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.play);
+        this.dh.eventPoxy.on(Conf.ITEM_CHOSEN, this, this.play, [true]);
         this.dh.eventPoxy.on(Conf.STATE_FROZEN, this, this.frozen);
         Laya.timer.frameLoop(1, this, this.tick);
         this.curState = this.states[StateEnum.Pause];
@@ -136,10 +136,9 @@ export class StateMgr {
     }
 
     restore(): boolean {
+        this.pause(0, true);
         let snap = this.append.pop();
         if (snap) {
-            this.curState = this.states[snap.pop()];
-            this.dh.reporter.logState(this.curState.id);//test only
             this.dh.eventPoxy.event(Conf.RESTORE, [snap]);
             return true;
         }
