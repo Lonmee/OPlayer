@@ -94,7 +94,7 @@ export default class DH {
             "\ndh.story.gotoChapter([chapterId]) //跟据剧情ID跳转到scene",
             "\ndh.cmdLine.state.switchState([number] state) //设置播放状态，0：正常、1：自动、2：快进",
             "\nshortcut:\"s\"//开关state面板; \"n\"//单步步进; \"z\"//快进",
-            "\n@ OPlayer:26 new BinLoader([boolean] local?) //开启本地数据模式，文件置于oplayer/local，默认不开启"
+            "\n@ OPlayer:27 new BinLoader([boolean] local?) //开启本地数据模式，文件置于oplayer/local，默认不开启"
         );
     }
 };
