@@ -8,7 +8,7 @@ import Conf from "../../data/Conf";
  * Created by ShanFeng on 6/5/2017.
  */
 export default class Preloader extends LoaderManager {
-    preArr: [string[]];
+    private preArr: string[][];
 
     constructor() {
         super();

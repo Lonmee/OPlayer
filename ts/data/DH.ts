@@ -87,11 +87,12 @@ export default class DH {
 
     get help() {
         return console.log(
-            "@ DH:58 static debug: boolean = [boolean] on //调试模式开关 ps.发布时关掉",
-            "\ndh.cmdLine.showCode = [boolean] on //开关命令码log",
-            "\ndh.cmdLine.showProcess = [boolean] on //开关执行过程log",
-            "\ndh.cmdLine.chapter.printSceneArr() //打印当前scene详情",
-            "\ndh.cmdLine.switchState([number] state) //设置播放状态，0：正常、1：自动、2：快进",
+            "conf.debug: boolean = [boolean] on //调试模式开关 ps.发布时关掉",
+            "\ndh.cmdLine.reporter.showState = [boolean] on //状态机log",
+            "\ndh.cmdLine.reporter.showProcess = [boolean] on //开关执行过程log",
+            "\ndh.cmdLine.printCmdArr() //打印当前scene详情, 相关事件(206:跳转剧情 / 251:呼叫子剧情)",
+            "\ndh.story.gotoChapter([chapterId]) //跟据剧情ID跳转到scene",
+            "\ndh.cmdLine.state.switchState([number] state) //设置播放状态，0：正常、1：自动、2：快进",
             "\nshortcut:\"s\"//开关state面板; \"n\"//单步步进; \"z\"//快进",
             "\n@ OPlayer:26 new BinLoader([boolean] local?) //开启本地数据模式，文件置于oplayer/local，默认不开启"
         );

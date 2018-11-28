@@ -24,8 +24,8 @@ export class OPlayer {
 
         DH.instance.reporter = new Reportor();
         DH.instance.cmdLine = new CmdLine();
-        DH.instance.binLoader = new BinLoader();
-        // DH.instance.binLoader = new BinLoader(true);
+        // DH.instance.binLoader = new BinLoader();
+        DH.instance.binLoader = new BinLoader(true);
     }
 
 }

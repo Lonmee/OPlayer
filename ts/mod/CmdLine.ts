@@ -54,6 +54,7 @@ export default class CmdLine {
     }
 
     printCmdArr() {
+        console.log("scene id: " + this.chapter.id + "\nscene name: " + this.chapter.name);
         this.reporter.printCmdArr(this.cmdArr);
     }
 
@@ -72,6 +73,9 @@ export default class CmdLine {
             this.curCid = 0;
             this.state.play(true);
         }
+
+        //for preview cmd
+        // DH.instance.cmdLine.printCmdArr();
     }
 
     restore(snap) {
